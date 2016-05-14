@@ -55,9 +55,7 @@ public class MU {
     public static double arctan(double theta) {
         return Math.atan(theta);
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //squares///////////////////////////////////////////////////////////////////////////////////////
     @Contract(pure = true)
     public static int makeSquareI(boolean shift, int i, int size) {
         if (i < 0) {
@@ -145,9 +143,7 @@ public class MU {
         }
         return i > 3 * half && i <= 7 * half && inverse;
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //circles///////////////////////////////////////////////////////////////////////////////////////
     @Contract(pure = true)
     public static double getRadiusCircum(double circumference) {
         return circumference / (2.0 * Math.PI);
@@ -177,9 +173,7 @@ public class MU {
     public static double getCircumRadius(double radius) {
         return 2.0 * Math.PI * radius;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //other//////////////////////////////////////////////////////////////////////////////////////////
     public static double getDistance(double x1, double y1, double x2, double y2) {
         return Math.sqrt(square(x1 - x2) + square(y1 - y2));
     }
@@ -188,6 +182,5 @@ public class MU {
     public static double getPercent(double val1, double val2){
      return val1/val2;
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
 
 }

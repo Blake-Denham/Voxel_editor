@@ -5,16 +5,11 @@ import util.MU;
 import util.Vector2D;
 
 class CirclePoint {
-    //ints------------------
     private final int pnts;
-    //----------------------
 
-    //Vectors---------------
     @NotNull
     private final Vector2D[] pts;
-    //----------------------
 
-    //constructor/////////////////////////////////////////////////////////////////////////////////////////////////////
     public CirclePoint(int pnts, int x, int y, int r, double rotate, double rotatex, double rotatey, double rotatez) {
         this.pnts = pnts;
         int x_;
@@ -26,9 +21,7 @@ class CirclePoint {
             pts[i] = new Vector2D(x_, y_);
         }
     }
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //drawing and graphics update////////////////////////////////////////////////////////////////////////////////
     public void update(int x, int y, int r, double rotate, double rotatex, double rotatey, double rotatez) {
         int x_;
         int y_;
@@ -38,13 +31,10 @@ class CirclePoint {
             pts[i].update(x_, y_);
         }
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //accessors////////////////////////////////
     @NotNull
     public Vector2D[] getPts() {
         return pts;
     }
-    ///////////////////////////////////////////
 
 }

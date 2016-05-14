@@ -15,51 +15,38 @@ import java.awt.event.MouseWheelEvent;
 
 public class Canvas extends GuiComponent {
 
-    //int------------------------------                                                                                 //mouse location variables (mx,my)
     private static int mx, my, mb;
     private int noCubes = 0;
-    private int maxNoCubes = 0;                                                                                          //and a variable to indicate which button was clicked on the mouse (mb)
-    //---------------------------------                                                                                 //
+    private int maxNoCubes = 0;
 
-    //Grid-----------------------------                                                                                 //
     @NotNull
-    private final Grid grid;                                                                                                  //grid variable, when instantiated,
-    //---------------------------------                                                                                 //it will hold every point in 3-Dimension(grid)
+    private final Grid grid;
 
-    //Cube-----------------------------                                                                                 //
     @NotNull
-    private final Cube[][][] cubes;                                                                                           //all the cube data each dimension of the array represents a dimension in
-    //---------------------------------                                                                                 //3-Dimensions (cubes)
+    private final Cube[][][] cubes;
 
-    //Rectangle------------------------                                                                                 //
     @NotNull
-    private final Rectangle pnt;                                                                                              //a pixel which is used which follows the mouse used for interaction such as
-    //---------------------------------                                                                                 //hovering and clicking
+    private final Rectangle pnt;
 
-    //boolean--------------------------                                                                                 //
-    private boolean square, shiftSquare, half;                                                                          //used for deciding the order the cubes are drawn
-    //---------------------------------                                                                                 //
+    private boolean square, shiftSquare, half;
 
-    //VEvents--------------------------                                                                                 //these variables are a part of the paint ordering
     @NotNull
     private final PaintEvent paintX;
     @NotNull
-    private final PaintEvent paintY;                                                                                    //basically methods stored in a variable
-    //---------------------------------                                                                                 //PaintEvent is an interface with one method called event
+    private final PaintEvent paintY;
 
-    //constructor////////////////////////////
     @SuppressWarnings("SameParameterValue")
     public Canvas(int side, int height) {
         super(0, 0, EditorScreen.s_maxWidth, EditorScreen.s_maxHeight);
-        grid = new Grid(side, height, EditorScreen.s_maxWidth / 2, EditorScreen.s_maxHeight / 2);           // instantiates the grid, starts in isometric view and centers it.
-        cubes = new Cube[height - 1][side - 1][side - 1];                                                               // instantiates the cube data to fit the grid points as z,x,y
-        pnt = new Rectangle(0, 0, 1, 1);                                                                                // instantiates the mouse pointer
-        square = MU.makeSquareB(false, (int) grid.getRotate(), 360);                                                    //}
-        shiftSquare = MU.makeSquareB(true, (int) grid.getRotate(), 360);                                                //}~~ instantiates the booleans which decide the draw order
-        half = MU.makeHalvesB(true, (int) grid.getRotate(), 360);                                                       //}
+        grid = new Grid(side, height, EditorScreen.s_maxWidth / 2, EditorScreen.s_maxHeight / 2);
+        cubes = new Cube[height - 1][side - 1][side - 1];
+        pnt = new Rectangle(0, 0, 1, 1);
+        square = MU.makeSquareB(false, (int) grid.getRotate(), 360);
+        shiftSquare = MU.makeSquareB(true, (int) grid.getRotate(), 360);
+        half = MU.makeHalvesB(true, (int) grid.getRotate(), 360);
         maxNoCubes = (int) MU.square(side - 1) * (height - 1);
-        paintY = (PaintEvent e, int z, int y, Graphics2D g2d) -> {                                               // instantiates the PaintEvent method paintX which will either draw cubes forward or backwards
-            if (!square) {                                                                                              // according to their x values
+        paintY = (PaintEvent e, int z, int y, Graphics2D g2d) -> {
+            if (!square) {
                 for (int yi = 0; yi < grid.getSide() - 1; yi++) {
                     e.event(null, z, yi, g2d);
                 }
@@ -69,8 +56,8 @@ public class Canvas extends GuiComponent {
                 }
             }
         };
-        paintX = (PaintEvent e, int z, int y, Graphics2D g2d) -> {                                               // instantiates the PaintEvent method paintX which will either draw cubes forward or backwards
-            if (!shiftSquare) {                                                                                         // according to their y values
+        paintX = (PaintEvent e, int z, int y, Graphics2D g2d) -> {
+            if (!shiftSquare) {
                 for (int xi = 0; xi < grid.getSide() - 1; xi++) {
                     if (!(cubes[z][xi][y] == null)) {
                         cubes[z][xi][y].fillCube(g2d);
@@ -88,11 +75,9 @@ public class Canvas extends GuiComponent {
         sphere((int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0));
         //cuboid(12,12,12,1,1,1);
     }
-    /////////////////////////////////////////
 
-    //shapes//////////////////////////////////////////////////////////////////////////////////
     @SuppressWarnings({"ConstantConditions", "SameParameterValue", "unused"})
-    private void cuboid(int x, int y, int z, int width, int length, int height) {                                       // makes a cuboid with specified location and dimensions
+    private void cuboid(int x, int y, int z, int width, int length, int height) {
         for (int xi = x; xi < x + width; xi += 1) {
             for (int yi = y; yi < y + length; yi += 1) {
                 for (int zi = z; zi < z + height; zi += 1) {
@@ -105,7 +90,7 @@ public class Canvas extends GuiComponent {
         }
     }
 
-    private void sphere(int x, int y, int z, double width, double length, double height) {                               // makes a 3D ellipse(irregular sphere) with a specified location and dimensions
+    private void sphere(int x, int y, int z, double width, double length, double height) {
         for (int theta = 0; theta < 2880; theta += 5) {
             for (int pi = -1440; pi < 1440; pi += 5) {
                 int xi = (int) (Math.round(x + (width * MU.cos(theta / 8.0) * MU.cos(pi / 8.0))));
@@ -117,27 +102,25 @@ public class Canvas extends GuiComponent {
             }
         }
     }
-    //////////////////////////////////////////////////////////////////////////////////////////
 
-    //drawing and graphics updates////////////////
     @Override
     public void paintGuiComponent(@NotNull Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);   //increases speed of opaque cubes
-        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);              //makes graphics choose speed over quality
+        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
         g2d.setColor(Color.black);
 
         if (half) {
             paintZ(paintY, g2d);
             grid.paintAxis(g2d);
         } else {
-            grid.paintAxis(g2d);                                                                                        //ui graphic
+            grid.paintAxis(g2d);
             paintZ(paintY, g2d);
         }
     }
 
     @Override
-    public void update() {                                                                                               //updates the graphics objects
+    public void update() {
         grid.update();
         pnt.setLocation(mx, my);
         square = MU.makeSquareB(false, (int) grid.getRotate(), 360);
@@ -147,7 +130,7 @@ public class Canvas extends GuiComponent {
         for (int zi = 0; zi < grid.getHeight() - 1; zi++) {
             for (int yi = 0; yi < grid.getSide() - 1; yi++) {
                 for (int xi = 0; xi < grid.getSide() - 1; xi++) {
-                    if (!(cubes[zi][xi][yi] == null)) {                                                                 //ignores empty spaces
+                    if (!(cubes[zi][xi][yi] == null)) {
                         cubes[zi][xi][yi].updateCube();
                         cubes[zi][xi][yi].hover(pnt);
                         noCubes++;
@@ -156,16 +139,14 @@ public class Canvas extends GuiComponent {
             }
         }
     }
-    //////////////////////////////////////////////
 
-    //canvas manipulation////////////////////////////////////////////////////////
     @SuppressWarnings("unused")
-    public void addCube(int x, int y, int z, int red, int green, int blue) {                                            //creates a cube at a specified location
+    public void addCube(int x, int y, int z, int red, int green, int blue) {
         cubes[z][x][y] = new Cube(this, x, y, z, red, green, blue);
     }
 
     @SuppressWarnings("unused")
-    public void clearCanvas() {                                                                                         //clears the canvas of all cubes
+    public void clearCanvas() {
         for (int z = 0; z < grid.getHeight() - 2; z++) {
             for (int y = 0; y < grid.getSide() - 1; y++) {
                 for (int x = 0; x < grid.getSide() - 1; x++) {
@@ -176,11 +157,11 @@ public class Canvas extends GuiComponent {
     }
 
     @SuppressWarnings("unused")
-    public static boolean checkForCube(@NotNull Canvas c, int x, int y, int z) {                                                 //searches for a cube at certain location
+    public static boolean checkForCube(@NotNull Canvas c, int x, int y, int z) {
         return c.cubes[z][x][y] != null;
     }
 
-    private void paintZ(@NotNull PaintEvent e, Graphics2D g2d) {                                                                 //decides whether to draw the cubes forwards or backwards according to their z values
+    private void paintZ(@NotNull PaintEvent e, Graphics2D g2d) {
         if (grid.getRotateY() < 0) {
             for (int zi = grid.getHeight() - 2; zi > -1; zi--) {
                 e.event(paintX, zi, 0, g2d);
@@ -193,9 +174,7 @@ public class Canvas extends GuiComponent {
             }
         }
     }
-    /////////////////////////////////////////////////////////////////////////////
 
-    //user input//////////////////////////////////////////////////
     @Override
     public void hover(@NotNull MouseEvent e) {
         mx = e.getX();
@@ -228,7 +207,7 @@ public class Canvas extends GuiComponent {
     }
 
     @Override
-    public void mousePress(@NotNull MouseEvent e) {                                                                              //is called whenever a button is pressed down on the mouse
+    public void mousePress(@NotNull MouseEvent e) {
         mb = e.getButton();
         mx = e.getX();
         my = e.getY();
@@ -250,7 +229,7 @@ public class Canvas extends GuiComponent {
 
     }
     @Override
-    public void keyPress(@NotNull KeyEvent ke) {                                                                                 //is called whenever a key on the keyboard is pressed
+    public void keyPress(@NotNull KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_W) {
             grid.rotatey(2);
         }
@@ -274,20 +253,18 @@ public class Canvas extends GuiComponent {
     }
 
     @Override
-    public void scroll(@NotNull MouseWheelEvent e) {                                                                         //is called whenever the mouse wheel is scrolled
+    public void scroll(@NotNull MouseWheelEvent e) {
         int n = e.getWheelRotation();
         grid.zoom((int) (-2.5 * n));
     }
-    /////////////////////////////////////////////////////////////
 
-    //accessors/////////////////////////////////////
     @NotNull
-    public Grid getGrid() {                                                                                             //returns the grid
+    public Grid getGrid() {
         return grid;
     }
 
     @NotNull
-    public Cube[][][] getCubes() {                                                                                      //returns the cube data
+    public Cube[][][] getCubes() {
         return cubes;
     }
 
@@ -312,5 +289,4 @@ public class Canvas extends GuiComponent {
     public void setZoom(int zoom){
         grid.setZoom(zoom);
     }
-    ///////////////////////////////////////////////
 }

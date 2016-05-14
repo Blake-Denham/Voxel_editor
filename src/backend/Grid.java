@@ -13,7 +13,6 @@ public class Grid {
      * @see GridPoint is combined
      * @see CirclePoint
      */
-    //ints-------------------------
     private int x;
     private int y;
     private final int height;
@@ -22,35 +21,23 @@ public class Grid {
     private final int[][][] xp;
     @NotNull
     private final int[][][] yp;
-    //-----------------------------
 
-    //doubles----------------------------
     private double rotate, rotatey, zoom;
-    //-----------------------------------
 
-    //Crosses---------------
     @NotNull
     private final GridPoint[][][] pts;
-    //----------------------
 
-    //Polygons---------------
     @NotNull
     private final Polygon[][] p;
-    //-----------------------
 
-    //Circles-------------------------
     @NotNull
     private final CirclePoint[] zAxis;
     @NotNull
     private final CirclePoint cent;
-    //--------------------------------
 
-    //Colors------------------------------------------------------
     private static final Color colorGridp = new Color(1f, 1f, 1f, 0.6f);
     private static final Color colorGridn = new Color(1f, 1f, 1f, 0.3f);
-    //------------------------------------------------------------
 
-    //Constructor////////////////////////////////////////////////////////////////////////////////////
     @SuppressWarnings("SameParameterValue")
     public Grid(int side, int height, int x, int y) {
         /**
@@ -96,9 +83,7 @@ public class Grid {
             }
         }
     }
-    /////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //drawing and updates//////////////////////
     public void update() {
 
         cent.update(x, y, (int) (Math.sqrt(MU.square(100 * (side - 1) * MU.cos(45)) + MU.square(100 * (side - 1) * MU.sin(45))) / 2), rotate - 135, 90, rotatey, zoom);
@@ -160,9 +145,7 @@ public class Grid {
         g2d.setColor(Color.BLUE);
         g2d.drawLine((int) pts[0][0][0].getVecs().getX(), (int) pts[0][0][0].getVecs().getY(), (int) pts[height - 1][0][0].getVecs().getX(), (int) pts[height - 1][0][0].getVecs().getY());
     }
-    ///////////////////////////////////////////
 
-    //mutators////////////////////////////////////////////////////
     public void rotate(double direction) {
         if (rotate + direction < 0) {
             rotate += 360;
@@ -203,9 +186,6 @@ public class Grid {
         this.x = x;
         this.y = y;
     }
-    /////////////////////////////////////////////////////////////
-
-    ///////////////////////////////////////
 
     public int getSide() {
         return side;
@@ -243,8 +223,4 @@ public class Grid {
     public void setZoom(int zoom) {
         this.zoom = zoom;
     }
-
-
-
-    ////////////////////////////////////////////////
 }

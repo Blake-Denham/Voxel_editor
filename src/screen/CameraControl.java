@@ -94,8 +94,7 @@ public class CameraControl extends GuiComponent {
         rotate.setDisplay((int) (ComponentManager.getCanvas().getGrid().getRotate()) + "");
         rotate.setBounds(PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.05), width * 0.15, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
         rotateSlider.setBounds(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.2), width * 0.5, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
-        if (rotateSlider.getChanging())
-            ComponentManager.setRotateCamera((int) ((rotateSlider.getPercent()) * 360));
+        if (rotateSlider.getChanging()) ComponentManager.setRotateCamera((int) ((rotateSlider.getPercent()) * 360));
         rotateSlider.setPercent((float) (ComponentManager.getCanvas().getGrid().getRotate() / 360));
         rotator.setBounds(PU.getXInBounds(bounds, width * 0.1, 0. + 0.14), PU.getYInBounds(bounds, width * 0.1, 0.12), width * 0.1, width * 0.1);
         rotatey.setDisplay((int) (ComponentManager.getCanvas().getGrid().getRotateY()) + "");
@@ -108,20 +107,14 @@ public class CameraControl extends GuiComponent {
         zoom.setDisplay((int) (MU.sin(ComponentManager.getCanvas().getGrid().getZoom()) * 100) + "");
         zoom.setBounds(PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37 + 0.32), width * 0.15, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
         zoomSlider.setBounds(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.53 + 0.33), width * 0.5, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
-        if (zoomSlider.getChanging())
-            ComponentManager.setZoomCamera((int) (zoomSlider.getPercent() * 90));
+        if (zoomSlider.getChanging()) ComponentManager.setZoomCamera((int) (zoomSlider.getPercent() * 90));
         zoomSlider.setPercent((float) ((ComponentManager.getCanvas().getGrid().getZoom()) / 90));
-
-        if (rotationx > 0) {
+        if (rotationx > 0)
             ComponentManager.setRotateCamera((int) (ComponentManager.getCanvas().getGrid().getRotate() + 1));
-        }
-        if (rotationy > 0) {
-
-            if (ComponentManager.getCanvas().getGrid().getRotateY() == 90 || ComponentManager.getCanvas().getGrid().getRotateY() == -90) {
+        if (rotationy > 0)
+            if (ComponentManager.getCanvas().getGrid().getRotateY() == 90 || ComponentManager.getCanvas().getGrid().getRotateY() == -90)
                 direction *= -1;
-            }
-            ComponentManager.setRotateyCamera((int) (ComponentManager.getCanvas().getGrid().getRotateY() + direction));
-        }
+        ComponentManager.setRotateyCamera((int) (ComponentManager.getCanvas().getGrid().getRotateY() + direction));
     }
 
     @Override

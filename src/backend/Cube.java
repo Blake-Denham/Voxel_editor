@@ -9,40 +9,27 @@ import java.awt.event.KeyEvent;
 
 public class Cube {
 
-    //int-------------------
     private int x;
     private int y;
     private int z;
     private int[][] a, b;
 
-    //----------------------
 
-    //Boolean---------------
     private boolean tb, bf, lr;
     private static boolean isHover;
-    //----------------------
 
-    //Polygon---------------
     private Polygon[] cube;
     private static Polygon hover;
     private static Polygon[] cubeHover;
-    //----------------------
 
-    //Color-----------------
     private Color color[];
     private Color top, bot, back, front, left, right;
     private static Color hoverC;
-    //----------------------
 
-    //Grid------------------
     private Grid grid;
-    //----------------------
 
-    //Canvas----------------
     private Canvas can;
-    //----------------------
 
-    //Constructor and init////////////////////////////////////////////////////////////////////
     public Cube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue) {
         initCube(can, x, y, z, red, green, blue);
     }
@@ -96,11 +83,8 @@ public class Cube {
         for (int i = 0; i < 3; i++) {
             cubeHover[i] = new Polygon();
         }
-
     }
-    //////////////////////////////////////////////////////////////////////////////////////////
 
-    //drawing and graphics update//////////////
     public void updateCube() {
         {
             int drawTop;
@@ -248,11 +232,8 @@ public class Cube {
 
 
     }
-    ///////////////////////////////////////////
 
-    ////////////////////////////////
 
-    //misc//////////////////////////
     private boolean cubeAbove() {
         return z + 1 < grid.getHeight() - 1 && can.getCubes()[z + 1][x][y] != null;
     }
@@ -282,9 +263,7 @@ public class Cube {
     public String toString() {
         return x + " : " + y + " : " + z;
     }
-    ////////////////////////////////
 
-    //user input////////////////////
     public void hover(@NotNull Rectangle pnt) {
         for (int i = 0; i < 3; i++) {
             if (pnt.intersects(cube[i].getBounds())) {
@@ -305,7 +284,5 @@ public class Cube {
     public void click(Rectangle pnt) {
 
     }
-    ////////////////////////////////
-
 
 }
