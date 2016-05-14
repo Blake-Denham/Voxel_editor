@@ -1,8 +1,8 @@
 package guiTools;
 
 
+import org.jetbrains.annotations.NotNull;
 import util.PU;
-import util.Vector2D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -13,11 +13,17 @@ import java.awt.geom.AffineTransform;
 public class Button extends GuiComponent {
 
     private Image buttonImage;
-    private AffineTransform af;
-    private GuiEvent event;
-    private Rectangle hoverBounds,defaultBounds,clickBounds;
+    @NotNull
+    private final AffineTransform af;
+    private final GuiEvent event;
+    @NotNull
+    private final Rectangle hoverBounds;
+    @NotNull
+    private final Rectangle defaultBounds;
+    @NotNull
+    private final Rectangle clickBounds;
 
-    public Button(double x_, double y_, double width, double height, Image buttonImage, GuiEvent event) {
+    public Button(double x_, double y_, double width, double height, @NotNull Image buttonImage, GuiEvent event) {
         super(x_, y_, width, height, new Color(0,0,0), 4, false);
         this.buttonImage = buttonImage;
         double ibr = (width)/buttonImage.getWidth(null);
@@ -29,7 +35,7 @@ public class Button extends GuiComponent {
     }
 
     @Override
-    protected void paintGuiComponent(Graphics2D g2d) {
+    protected void paintGuiComponent(@NotNull Graphics2D g2d) {
         g2d.drawImage(buttonImage, af, null);
     }
 
@@ -43,7 +49,7 @@ public class Button extends GuiComponent {
     }
 
     @Override
-    public void hover(MouseEvent e) {
+    protected void hover(@NotNull MouseEvent e) {
         int mx = e.getX();
         int my = e.getY();
         if (bounds.contains(mx, my)) {
@@ -60,10 +66,6 @@ public class Button extends GuiComponent {
     }
 
     @Override
-    public void click(MouseEvent e) {
-    }
-
-    @Override
     public void drag(MouseEvent e) {
     }
 
@@ -76,11 +78,7 @@ public class Button extends GuiComponent {
     }
 
     @Override
-    public void keyRelease(KeyEvent e) {
-    }
-
-    @Override
-    public void mousePress(MouseEvent e) {
+    public void mousePress(@NotNull MouseEvent e) {
         int mx = e.getX();
         int my = e.getY();
         if (bounds.contains(mx, my)) {
@@ -96,7 +94,7 @@ public class Button extends GuiComponent {
     }
 
     @Override
-    public void mouseRelease(MouseEvent e) {
+    public void mouseRelease(@NotNull MouseEvent e) {
         double ibr = (width)/buttonImage.getWidth(null);
         af.setTransform(ibr,0,0,ibr, PU.getXInBounds(bounds,width,0.5),PU.getYInBounds(bounds,height,0.5));
         setBounds(defaultBounds);

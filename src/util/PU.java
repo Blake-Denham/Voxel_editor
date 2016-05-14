@@ -2,23 +2,26 @@ package util;
 
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 public class PU {
 
+    @NotNull
     @Contract("_, _ -> !null")
-    public static Color saturateColor(Color c, double percent) {
+    public static Color saturateColor(@NotNull Color c, double percent) {
         return new Color((int) (c.getRed() * percent), (int) (c.getGreen() * percent), (int) (c.getBlue() * percent));
     }
 
+    @NotNull
     @Contract("_ -> !null")
-    public static Color inverseColor(Color c) {
+    public static Color inverseColor(@NotNull Color c) {
         return new Color(255 - c.getRed(), 255 - c.getGreen(), 255 - c.getBlue());
     }
 
-    public static void castShadow(Graphics2D g2d, Rectangle r, int size, Color c) {
+    public static void castShadow(@NotNull Graphics2D g2d, @NotNull Rectangle r, int size, @NotNull Color c) {
         double x = r.getX();
         double y = r.getY();
         double width = r.getWidth();
@@ -45,7 +48,8 @@ public class PU {
         g2d.fill(r);
     }
 
-    public static void castShadow(Graphics2D g2d, Ellipse2D r, int size, Color c) {
+    @SuppressWarnings("SameParameterValue")
+    public static void castShadow(@NotNull Graphics2D g2d, @NotNull Ellipse2D r, int size, @NotNull Color c) {
         double x = r.getX();
         double y = r.getY();
         double width = r.getWidth();
@@ -72,7 +76,7 @@ public class PU {
         g2d.fill(r);
     }
 
-    public static float getOptimalFontsize(Graphics2D g2d, Font f, String str, float stringHeight, double areaWidth) {
+    public static float getOptimalFontsize(@NotNull Graphics2D g2d, @NotNull Font f, @NotNull String str, float stringHeight, double areaWidth) {
         float fontSize = stringHeight;
         do {
             fontSize--;
@@ -81,28 +85,24 @@ public class PU {
         return fontSize;
     }
 
-    public static void setTextRenderingQuality(Graphics2D g2d, boolean flag) {
-        if (flag) {
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        } else {
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
-            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-        }
+    public static void setTextRenderingQuality(@NotNull Graphics2D g2d) {
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
 
+    @NotNull
     @Contract("_, _, _, _, _ -> !null")
-    public static Vector2D getVecotrInBounds(Rectangle bounds, double width, double height, double percentX, double percentY) {
+    public static Vector2D getVectorInBounds(@NotNull Rectangle bounds, double width, double height, double percentX, double percentY) {
         return new Vector2D(getXInBounds(bounds, width, percentX), getYInBounds(bounds, height, percentY));
     }
 
-    public static double getXInBounds(Rectangle bounds, double width, double percentX) {
+    public static double getXInBounds(@NotNull Rectangle bounds, double width, double percentX) {
         double x = bounds.getX();
         double bw = bounds.getWidth();
         return x + (bw - width) * (percentX);
     }
 
-    public static double getYInBounds(Rectangle bounds, double height, double percentY) {
+    public static double getYInBounds(@NotNull Rectangle bounds, double height, double percentY) {
         double y = bounds.getY();
         double bh = bounds.getHeight();
         return y + (bh - height) * (percentY);

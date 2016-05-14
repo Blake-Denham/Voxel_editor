@@ -1,5 +1,6 @@
 package guiTools;
 
+import org.jetbrains.annotations.NotNull;
 import screen.EditorScreen;
 import util.MU;
 import util.PU;
@@ -11,7 +12,9 @@ import java.awt.event.MouseWheelEvent;
 
 
 public class TextArea extends GuiComponent {
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private boolean typing = false;
+    @NotNull
     private String display="";
     private char[] displayChar;
 
@@ -24,7 +27,7 @@ public class TextArea extends GuiComponent {
     }
 
     @Override
-    protected void paintGuiComponent(Graphics2D g2d) {
+    protected void paintGuiComponent(@NotNull Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         PU.castShadow(g2d, bounds, 8, Color.white);
         g2d.setColor(Color.black);
@@ -40,12 +43,12 @@ public class TextArea extends GuiComponent {
 
             }
         }
-        PU.setTextRenderingQuality(g2d,true);
+        PU.setTextRenderingQuality(g2d);
         g2d.drawString(display, (int) (x), (int) (y + height - height / 8));
 
     }
 
-    public void setDisplay(String display) {
+    public void setDisplay(@NotNull String display) {
         displayChar = display.toCharArray();
     }
 
@@ -56,11 +59,6 @@ public class TextArea extends GuiComponent {
 
     @Override
     public void hover(MouseEvent e) {
-
-    }
-
-    @Override
-    public void click(MouseEvent e) {
 
     }
 
@@ -80,12 +78,7 @@ public class TextArea extends GuiComponent {
     }
 
     @Override
-    public void keyRelease(KeyEvent e) {
-
-    }
-
-    @Override
-    public void mousePress(MouseEvent e) {
+    public void mousePress(@NotNull MouseEvent e) {
         int mx = e.getX();
         int my = e.getY();
         if(bounds.contains(mx,my)){

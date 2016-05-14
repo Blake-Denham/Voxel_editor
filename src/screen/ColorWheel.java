@@ -1,7 +1,9 @@
 package screen;
 
-import guiTools.*;
+import guiTools.GuiComponent;
+import guiTools.Slider;
 import guiTools.TextArea;
+import org.jetbrains.annotations.NotNull;
 import util.MU;
 import util.PU;
 
@@ -16,12 +18,21 @@ public class ColorWheel extends GuiComponent {
     private double r;
     private double xc;
     private double yc;
-    private Slider saturation;
-    private TextArea ta;
-    private Ellipse2D colorWheel;
+    @NotNull
+    private final Slider saturation;
+    @NotNull
+    private final TextArea ta;
+    @NotNull
+    private final Ellipse2D colorWheel;
     private Color selectedC;
-    private Rectangle pt, display, selected;
+    @NotNull
+    private final Rectangle pt;
+    @NotNull
+    private final Rectangle display;
+    @NotNull
+    private final Rectangle selected;
 
+    @SuppressWarnings("SameParameterValue")
     public ColorWheel(double x_, double y_, double width, Color bgColor) {
         super(x_, y_, width, width*1.5, bgColor, 14, true);
         r = width * 0.4;
@@ -57,11 +68,6 @@ public class ColorWheel extends GuiComponent {
     }
 
     @Override
-    public void click(MouseEvent e) {
-
-    }
-
-    @Override
     public void drag(MouseEvent e) {
 
     }
@@ -77,12 +83,7 @@ public class ColorWheel extends GuiComponent {
     }
 
     @Override
-    public void keyRelease(KeyEvent e) {
-
-    }
-
-    @Override
-    public void mousePress(MouseEvent e) {
+    public void mousePress(@NotNull MouseEvent e) {
         int mx = e.getX();
         int my = e.getY();
         int dxpix = e.getXOnScreen() - mx;
@@ -110,7 +111,7 @@ public class ColorWheel extends GuiComponent {
     }
 
     @Override
-    public void paintGuiComponent(Graphics2D g2d) {
+    public void paintGuiComponent(@NotNull Graphics2D g2d) {
         double t;
         double circum;
         double cb6;
@@ -176,6 +177,7 @@ public class ColorWheel extends GuiComponent {
 
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "---------------------------\nColor Wheel:\n\tx: " + (int)x+"\n\ty: " + (int)y + "\n\twidth: " + (int)width + "\n\theight: " + (int)height+ "\n\t# of subComponents: " + subComponents.size()+ " \n---------------------------";

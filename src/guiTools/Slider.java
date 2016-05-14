@@ -1,5 +1,6 @@
 package guiTools;
 
+import org.jetbrains.annotations.NotNull;
 import util.PU;
 
 import java.awt.*;
@@ -8,17 +9,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.Ellipse2D;
 
+@SuppressWarnings("SameParameterValue")
 public class Slider extends GuiComponent {
-    public static final int VERTICAL = 0;
+    private static final int VERTICAL = 0;
     public static final int HORIZONTAL = 1;
 
-    private Color sliderColor, bgColor;
+    private final Color sliderColor;
+    private final Color bgColor;
     private float percent;
-    private int direction, mb;
+    private final int direction;
+    private int mb;
     private double sx, sy, ssize, isize;
     private boolean changing = false, grow = false;
     private Ellipse2D slider, inslider;
-    private GuiEvent event;
 
     public Slider(double x, double y, int direction, double width, double height, Color bgColor, Color sliderColor) {
         super(x, y, width, height);
@@ -33,14 +36,12 @@ public class Slider extends GuiComponent {
                 sy = ((y + (height - ssize / 2) * percent));
                 slider = new Ellipse2D.Double(sx, sy, (7 * width / 8), 15);
                 inslider = new Ellipse2D.Double(sx + ssize / 2, sy + ssize / 2, isize, isize);
-
                 break;
             case HORIZONTAL:
                 sx = (x + (width - ssize / 2) * percent);
                 sy = (y + (height / 8));
                 slider = new Ellipse2D.Double(sx, sy, 15, (7 * height / 8));
                 inslider = new Ellipse2D.Double(sx + ssize / 2, sy + ssize / 2, isize, isize);
-
                 break;
         }
         if (direction != 0 && direction != 1) {
@@ -52,7 +53,7 @@ public class Slider extends GuiComponent {
 
 
     @Override
-    protected void paintGuiComponent(Graphics2D g2d) {
+    protected void paintGuiComponent(@NotNull Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         PU.castShadow(g2d, bounds, 8, bgColor);
@@ -99,7 +100,7 @@ public class Slider extends GuiComponent {
     }
 
     @Override
-    public void hover(MouseEvent e) {
+    public void hover(@NotNull MouseEvent e) {
         int mx = e.getX();
         int my = e.getY();
         if (slider.contains(mx, my)) {
@@ -113,11 +114,7 @@ public class Slider extends GuiComponent {
     }
 
     @Override
-    public void click(MouseEvent e) {
-    }
-
-    @Override
-    public void drag(MouseEvent e) {
+    public void drag(@NotNull MouseEvent e) {
         int mx = e.getX();
         int my = e.getY();
 
@@ -158,25 +155,17 @@ public class Slider extends GuiComponent {
     }
 
     @Override
-    public void keyRelease(KeyEvent e) {
-    }
-
-    @Override
-    public void mousePress(MouseEvent e) {
+    public void mousePress(@NotNull MouseEvent e) {
         mb = e.getButton();
         int mx = e.getX();
         int my = e.getY();
 
         Rectangle pt = new Rectangle(mx, my, 1, 1);
-        if (pt.intersects(slider.getBounds())) {
-            changing = true;
-
-
-        } else changing = false;
+        changing = pt.intersects(slider.getBounds());
     }
 
     @Override
-    public void mouseRelease(MouseEvent e) {
+    public void mouseRelease(@NotNull MouseEvent e) {
         if (!slider.contains(e.getX(), e.getY())) {
             grow = false;
             ssize = height/2;
@@ -186,10 +175,6 @@ public class Slider extends GuiComponent {
 
     public float getPercent() {
         return percent;
-    }
-
-    public void setEvent(GuiEvent event) {
-        this.event = event;
     }
 
     public boolean getChanging(){

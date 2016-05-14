@@ -1,5 +1,6 @@
 package guiTools;
 
+import org.jetbrains.annotations.NotNull;
 import screen.EditorScreen;
 import util.MU;
 import util.PU;
@@ -12,7 +13,9 @@ import java.awt.event.MouseWheelEvent;
 /**
  * Created by Blake on 5/13/2016.
  */
+@SuppressWarnings("DefaultFileTemplate")
 public class Label extends GuiComponent {
+    @NotNull
     private String display="";
     private char[] displayChar;
 
@@ -24,7 +27,7 @@ public class Label extends GuiComponent {
     }
 
     @Override
-    protected void paintGuiComponent(Graphics2D g2d) {
+    protected void paintGuiComponent(@NotNull Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         PU.castShadow(g2d, bounds, 6, bgColor);
         g2d.setColor(Color.black);
@@ -40,7 +43,7 @@ public class Label extends GuiComponent {
 
             }
         }
-        PU.setTextRenderingQuality(g2d,true);
+        PU.setTextRenderingQuality(g2d);
         g2d.drawString(display, (int) (x+3), (int) (y+height-(height-4.6)/4.0));
     }
 
@@ -51,11 +54,6 @@ public class Label extends GuiComponent {
 
     @Override
     protected void hover(MouseEvent e) {
-
-    }
-
-    @Override
-    protected void click(MouseEvent e) {
 
     }
 
@@ -75,11 +73,6 @@ public class Label extends GuiComponent {
     }
 
     @Override
-    protected void keyRelease(KeyEvent e) {
-
-    }
-
-    @Override
     protected void mousePress(MouseEvent e) {
 
     }
@@ -89,11 +82,8 @@ public class Label extends GuiComponent {
 
     }
 
-    public void setDisplay(String display) {
+    public void setDisplay(@NotNull String display) {
         displayChar = display.toCharArray();
     }
 
-    public void setFontSizeScale(double percent){
-
-    }
 }

@@ -2,30 +2,36 @@ package util;
 
 
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class MU {
 
     //rotation and scale////////////////////////////////////////////////////////////////////////////
+    @NotNull
     @Contract("_, _, _ -> !null")
     public static Vector2D rotate(int a, int pnts, double rotate) {
         return new Vector2D(cos(360 / pnts * (a + 1) + rotate), sin(360 / pnts * (a + 1) + rotate));
     }
 
+    @NotNull
     @Contract("_ -> !null")
     public static Vector2D rotate(double rotate) {
         return new Vector2D(cos(rotate), sin(rotate));
     }
 
+    @NotNull
     @Contract("_ -> !null")
     public static Vector2D zoom(double zoom) {
         return new Vector2D(sin(zoom), sin(zoom));
     }
 
+    @NotNull
     @Contract("_ -> !null")
     public static Vector2D rotatex(double rotate) {
         return new Vector2D(sin(rotate), 1);
     }
 
+    @NotNull
     @Contract("_ -> !null")
     public static Vector2D rotatey(double rotate) {
         return new Vector2D(1, sin(rotate));
@@ -41,6 +47,7 @@ public class MU {
         return Math.sin(Math.toRadians(degree));
     }
 
+    @SuppressWarnings("unused")
     public static double tan(double degree) {
         return Math.tan(Math.toRadians(degree));
     }
@@ -142,10 +149,11 @@ public class MU {
 
     //circles///////////////////////////////////////////////////////////////////////////////////////
     @Contract(pure = true)
-    public static double getRadiusCircum(double circumfrence) {
-        return circumfrence / (2.0 * Math.PI);
+    public static double getRadiusCircum(double circumference) {
+        return circumference / (2.0 * Math.PI);
     }
 
+    @SuppressWarnings("unused")
     public static double getRadiusArea(double area) {
         return Math.sqrt(area / Math.PI);
     }
@@ -160,6 +168,7 @@ public class MU {
         return square(circumference) / (4.0 * Math.PI);
     }
 
+    @SuppressWarnings("unused")
     public static double getCircumArea(double area) {
         return 2.0 * Math.PI * Math.sqrt(area / Math.PI);
     }

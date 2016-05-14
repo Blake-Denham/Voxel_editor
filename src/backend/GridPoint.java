@@ -1,11 +1,13 @@
 package backend;
 
+import org.jetbrains.annotations.NotNull;
 import util.MU;
 import util.Vector2D;
 
 class GridPoint {
 
     //Vectors-------------
+    @NotNull
     private final Vector2D vecs;
     //--------------------
 
@@ -30,6 +32,7 @@ class GridPoint {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //accessors/////////////////////////////////
+    @NotNull
      public Vector2D getVecs() {
         return vecs;
     }

@@ -7,13 +7,13 @@ import java.io.InputStream;
 public class Main {
 
     public static Robot programRobot;
-    public static final int tickRate = 10;
+    private static final int tickRate = 10;
 
 
 
     public static void main(String[] args) throws InterruptedException {
 
-        EditorScreen editor = new EditorScreen("Voxel Editor");
+        EditorScreen editor = new EditorScreen();
         try {
             programRobot = new Robot();
         } catch (AWTException e) {
@@ -27,6 +27,7 @@ public class Main {
     }
 
     public static InputStream getResource(String fileName) {
+        //noinspection EqualsBetweenInconvertibleTypes
         if (!ClassLoader.getSystemResourceAsStream(fileName).equals("null")) {
             System.out.println("resource loaded: " +fileName);
         } else {

@@ -1,5 +1,6 @@
 package guiTools;
 
+import org.jetbrains.annotations.NotNull;
 import screen.EditorScreen;
 import screen.Main;
 import util.PU;
@@ -12,38 +13,40 @@ import java.awt.event.MouseWheelEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
+@SuppressWarnings("WeakerAccess")
 public abstract class GuiComponent {
 
-    protected double x, y, width, height, shadowSize;
-    protected Rectangle bounds;
-    protected Color bgColor;
-    protected ArrayList<GuiComponent> subComponents;
+    protected double x;
+    protected double y;
+    protected double width;
+    protected double height;
+    private double shadowSize;
+    @NotNull
+    protected final Rectangle bounds;
+    Color bgColor;
+    @NotNull
+    protected final ArrayList<GuiComponent> subComponents;
 
     private int minimized = 1;
-    private boolean drawBackground, minimizable, ignoreMinimize = false;
+    private final boolean drawBackground;
+    private final boolean minimizable;
+    private boolean ignoreMinimize = false;
     private Rectangle toolBar;
     private Button minimize;
     private String toolBarTitle = "";
 
-    public GuiComponent(double x, double y, double width, double height, Color bgColor, int shadowSize, boolean minimizable) {
+    protected GuiComponent(double x, double y, double width, double height, Color bgColor, int shadowSize, boolean minimizable) {
         this.minimizable = minimizable;
-
         subComponents = new ArrayList<>();
-
-
         if (minimizable) {
-
             bounds = new Rectangle((int) x, (int) y + 30, (int) width, (int) height);
             setLocation(x, y + 30);
             toolBar = new Rectangle((int) x, (int) bounds.getY() - 30, (int) width, 30);
         } else {
-
             bounds = new Rectangle((int) x, (int) y, (int) width, (int) height);
             setLocation(x, y);
             toolBar = new Rectangle(0, 0, 0, 0);
         }
-
-
         if (minimizable) {
             try {
                 final Image buttonSprite1 = ImageIO.read(Main.getResource("minimize.png"));
@@ -55,22 +58,20 @@ public abstract class GuiComponent {
                     } else {
                         minimize.setButtonImage(buttonSprite2);
                     }
-
                 });
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            minimize.setIgnoreMinimize(true);
+            minimize.setIgnoreMinimize();
             add(minimize);
         }
         this.bgColor = bgColor;
         this.shadowSize = shadowSize;
         drawBackground = true;
         setDimensions(width, height);
-
     }
 
-    public GuiComponent(double x, double y, double width, double height) {
+    protected GuiComponent(double x, double y, double width, double height) {
 
         drawBackground = false;
         minimizable = false;
@@ -81,13 +82,13 @@ public abstract class GuiComponent {
         subComponents = new ArrayList<>();
     }
 
-    private void paintBackground(Graphics2D g2d) {
+    private void paintBackground(@NotNull Graphics2D g2d) {
         if (drawBackground) {
             PU.castShadow(g2d, bounds, (int) shadowSize, bgColor);
         }
     }
 
-    private void paintToolBar(Graphics2D g2d) {
+    private void paintToolBar(@NotNull Graphics2D g2d) {
         if (drawBackground) {
             PU.castShadow(g2d, toolBar, (int) shadowSize, bgColor);
             g2d.setColor(Color.gray);
@@ -96,14 +97,14 @@ public abstract class GuiComponent {
             }
             g2d.setColor(Color.white);
             g2d.setFont(EditorScreen.font.deriveFont(PU.getOptimalFontsize(g2d, EditorScreen.font, toolBarTitle, (float) 14, width)));
-            PU.setTextRenderingQuality(g2d, true);
+            PU.setTextRenderingQuality(g2d);
             g2d.drawString(toolBarTitle, (int) (x + 6), (int) (y - 30 / 2 + 12 / 2));
         }
 
 
     }
 
-    private void paintSubComponents(Graphics2D g2d) {
+    private void paintSubComponents(@NotNull Graphics2D g2d) {
         for (GuiComponent subComponent : subComponents) {
 
             if (minimized < 0) {
@@ -115,19 +116,18 @@ public abstract class GuiComponent {
         }
     }
 
-    public void paintAll(Graphics2D g2d) {
+    public void paintAll(@NotNull Graphics2D g2d) {
         if (minimizable) {
             paintToolBar(g2d);
         }
         if (minimized > 0) {
             paintBackground(g2d);
             paintGuiComponent(g2d);
-
         }
         paintSubComponents(g2d);
     }
 
-    public void setShadowSize(double shadowSize) {
+    void setShadowSize(double shadowSize) {
         this.shadowSize = shadowSize;
     }
 
@@ -140,19 +140,6 @@ public abstract class GuiComponent {
                 }
             } else {
                 subComponent.hover(e);
-            }
-        }
-    }
-
-    public void mouseClick(MouseEvent e) {
-        click(e);
-        for (GuiComponent subComponent : subComponents) {
-            if (minimized < 0) {
-                if (subComponent.ignoreMinimize) {
-                    subComponent.click(e);
-                }
-            } else {
-                subComponent.click(e);
             }
         }
     }
@@ -196,18 +183,7 @@ public abstract class GuiComponent {
         }
     }
 
-    public void keyReleaseSC(KeyEvent e) {
-        keyRelease(e);
-        for (GuiComponent subComponent : subComponents) {
-            if (minimized < 0) {
-                if (subComponent.ignoreMinimize) {
-                    subComponent.keyRelease(e);
-                }
-            } else {
-                subComponent.keyRelease(e);
-            }
-        }
-    }
+
 
     public void mousePressSC(MouseEvent e) {
         mousePress(e);
@@ -245,18 +221,18 @@ public abstract class GuiComponent {
         subComponents.forEach(GuiComponent::update);
     }
 
-    public void add(GuiComponent subComponent) {
+    protected void add(GuiComponent subComponent) {
         subComponents.add(subComponent);
     }
 
-    public void setLocation(double x, double y) {
+    private void setLocation(double x, double y) {
         this.x = x;
         this.y = y;
         bounds.setLocation((int) x, (int) y);
 
     }
 
-    public void setDimensions(double width, double height) {
+    private void setDimensions(double width, double height) {
         this.width = width;
         this.height = height;
 
@@ -271,7 +247,7 @@ public abstract class GuiComponent {
         bounds.setBounds((int) x, (int) y, (int) width, (int) height);
     }
 
-    public void setBounds(Rectangle newBounds) {
+    void setBounds(@NotNull Rectangle newBounds) {
         x = newBounds.getX();
         y = newBounds.getY();
         width = newBounds.getWidth();
@@ -279,11 +255,11 @@ public abstract class GuiComponent {
         bounds.setBounds(newBounds);
     }
 
-    public void setIgnoreMinimize(boolean ignoreMinimize) {
-        this.ignoreMinimize = ignoreMinimize;
+    void setIgnoreMinimize() {
+        this.ignoreMinimize = true;
     }
 
-    public void setToolBarTitle(String title) {
+    protected void setToolBarTitle(String title) {
         toolBarTitle = title;
     }
 
@@ -295,10 +271,12 @@ public abstract class GuiComponent {
         return y;
     }
 
+    @SuppressWarnings("unused")
     public double getX(){
         return x;
     }
 
+    @SuppressWarnings("unused")
     public double getWidth(){
         return width;
     }
@@ -307,6 +285,7 @@ public abstract class GuiComponent {
         return  height;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return "---------------------------\nx: " + x + "\ny: " + y + "\nwidth: " + width + "\nheight: " + height + "\n# of subComponents: " + subComponents.size() + " \n---------------------------";
@@ -318,15 +297,11 @@ public abstract class GuiComponent {
 
     protected abstract void hover(MouseEvent e);
 
-    protected abstract void click(MouseEvent e);
-
     protected abstract void drag(MouseEvent e);
 
     protected abstract void scroll(MouseWheelEvent mwe);
 
     protected abstract void keyPress(KeyEvent e);
-
-    protected abstract void keyRelease(KeyEvent e);
 
     protected abstract void mousePress(MouseEvent e);
 

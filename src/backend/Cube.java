@@ -1,7 +1,8 @@
 package backend;
 
-import util.MU;
+import org.jetbrains.annotations.NotNull;
 import screen.Canvas;
+import util.MU;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -42,17 +43,18 @@ public class Cube {
     //----------------------
 
     //Constructor and init////////////////////////////////////////////////////////////////////
-    public Cube(Canvas can, int x, int y, int z, int red, int green, int blue) {
+    public Cube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue) {
         initCube(can, x, y, z, red, green, blue);
     }
 
-    private void initCube(Canvas can, int x, int y, int z, int red, int green, int blue) {
+    private void initCube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue) {
         this.can = can;
         this.grid = can.getGrid();
         this.x = x;
         this.y = y;
         this.z = z;
         this.color = new Color[3];
+        //noinspection UnusedAssignment
         int colorHex = (red << 16) | (green << 8) | (blue);
 
         back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
@@ -217,7 +219,7 @@ public class Cube {
         }
     }
 
-    public void fillCube(Graphics2D g2d) {
+    public void fillCube(@NotNull Graphics2D g2d) {
         if (tb) {
             g2d.setColor(color[0]);
             g2d.fill(cube[0]);
@@ -236,7 +238,7 @@ public class Cube {
         }
     }
 
-    private void drawCube(Graphics2D g2d) {
+    private void drawCube(@NotNull Graphics2D g2d) {
         g2d.setColor(Color.black);
         for (int i = 0; i < 3; i++) {
             g2d.draw(cubeHover[i]);
@@ -275,6 +277,7 @@ public class Cube {
         return y - 1 >= 0 && can.getCubes()[z][x][y - 1] != null;
     }
 
+    @NotNull
     @Override
     public String toString() {
         return x + " : " + y + " : " + z;
@@ -282,7 +285,7 @@ public class Cube {
     ////////////////////////////////
 
     //user input////////////////////
-    public void hover(Rectangle pnt) {
+    public void hover(@NotNull Rectangle pnt) {
         for (int i = 0; i < 3; i++) {
             if (pnt.intersects(cube[i].getBounds())) {
                 cubeHover = cube;
@@ -292,15 +295,15 @@ public class Cube {
         }
     }
 
-    public void click(Rectangle pnt) {
-
-    }
-
-    public static void keyPressed(KeyEvent e) {
+    public static void keyPressed(@NotNull KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_1) {
             isHover = !isHover;
             System.out.println("hover: " + isHover);
         }
+    }
+
+    public void click(Rectangle pnt) {
+
     }
     ////////////////////////////////
 

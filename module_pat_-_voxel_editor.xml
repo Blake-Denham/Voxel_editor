@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
 <project name="module_pat_-_voxel_editor" default="compile.module.pat_-_voxel_editor">
   <dirname property="module.pat_-_voxel_editor.basedir" file="${ant.file.module_pat_-_voxel_editor}"/>
   
@@ -53,14 +54,8 @@
   
   <target name="compile.module.pat_-_voxel_editor.production" depends="register.custom.compilers" description="Compile module PAT - Voxel editor; production classes">
     <mkdir dir="${pat_-_voxel_editor.output.dir}"/>
-    <javac2 destdir="${pat_-_voxel_editor.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pat_-_voxel_editor}/javac">
-      <compilerarg line="${compiler.args.pat_-_voxel_editor}"/>
-      <bootclasspath refid="pat_-_voxel_editor.module.bootclasspath"/>
-      <classpath refid="pat_-_voxel_editor.module.production.classpath"/>
-      <src refid="pat_-_voxel_editor.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.pat_-_voxel_editor"/>
-    </javac2>
-    
+
+
     <copy todir="${pat_-_voxel_editor.output.dir}">
       <fileset dir="${module.pat_-_voxel_editor.basedir}/src">
         <patternset refid="compiler.resources"/>

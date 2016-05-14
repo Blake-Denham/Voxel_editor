@@ -1,13 +1,9 @@
 package backend;
 
-import screen.Canvas;
-import screen.EditorScreen;
+import org.jetbrains.annotations.NotNull;
 import util.MU;
 
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.Color;
+import java.awt.*;
 
 public class Grid {
 
@@ -22,7 +18,9 @@ public class Grid {
     private int y;
     private final int height;
     private final int side;
+    @NotNull
     private final int[][][] xp;
+    @NotNull
     private final int[][][] yp;
     //-----------------------------
 
@@ -31,15 +29,19 @@ public class Grid {
     //-----------------------------------
 
     //Crosses---------------
+    @NotNull
     private final GridPoint[][][] pts;
     //----------------------
 
     //Polygons---------------
+    @NotNull
     private final Polygon[][] p;
     //-----------------------
 
     //Circles-------------------------
+    @NotNull
     private final CirclePoint[] zAxis;
+    @NotNull
     private final CirclePoint cent;
     //--------------------------------
 
@@ -49,7 +51,8 @@ public class Grid {
     //------------------------------------------------------------
 
     //Constructor////////////////////////////////////////////////////////////////////////////////////
-    public Grid(int side, int height, int x, int y, double rotate, double rotatey, double zoom) {
+    @SuppressWarnings("SameParameterValue")
+    public Grid(int side, int height, int x, int y) {
         /**
          * creates the 3D space with specified location, dimensions, rotations and scale
          * as point falls on a circle of radius r, offset by p degrees the points are
@@ -60,24 +63,24 @@ public class Grid {
          */
         this.y = y;
         this.x = x;
-        this.rotate = rotate;
-        this.rotatey = rotatey;
-        this.zoom = zoom;
+        this.rotate = (double) 45;
+        this.rotatey = (double) 37;
+        this.zoom = (double) 15;
         this.side = side;
         this.height = height;
         zAxis = new CirclePoint[height];
-        cent = new CirclePoint(90, x, y, (int) (Math.sqrt(MU.square(100 * side * MU.cos(45)) + MU.square(100 * side * MU.sin(45)))), -rotate, 90, rotatey, zoom);
+        cent = new CirclePoint(90, x, y, (int) (Math.sqrt(MU.square(100 * side * MU.cos(45)) + MU.square(100 * side * MU.sin(45)))), -(double) 45, 90, (double) 37, (double) 15);
         pts = new GridPoint[height][side][side];
         int y_ = (int) cent.getPts()[0].getY();
         int x_ = (int) cent.getPts()[0].getX();
         for (int z = 0; z < height; z++) {
             for (int xi = 0; xi < side; xi++) {
                 for (int yi = 0; yi < side; yi++) {
-                    pts[z][xi][yi] = new GridPoint(x_, y_, (int) (Math.sqrt(MU.square(100 * (xi) * MU.cos(45)) + MU.square(100 * yi * MU.sin(45)))), rotate, Math.toDegrees(MU.arctan((double) yi / (double) xi)), rotatey, zoom);
+                    pts[z][xi][yi] = new GridPoint(x_, y_, (int) (Math.sqrt(MU.square(100 * (xi) * MU.cos(45)) + MU.square(100 * yi * MU.sin(45)))), (double) 45, Math.toDegrees(MU.arctan((double) yi / (double) xi)), (double) 37, (double) 15);
                 }
             }
             pts[z][0][0].setVec(x_, y_);
-            zAxis[z] = new CirclePoint(1, x_, y_, 50 * z, 90, 0, rotatey - 90, zoom);
+            zAxis[z] = new CirclePoint(1, x_, y_, 50 * z, 90, 0, (double) 37 - 90, (double) 15);
             y_ = (int) (zAxis[z].getPts()[0].getY());
         }
         p = new Polygon[(side) - 1][side - 1];
@@ -125,7 +128,7 @@ public class Grid {
         }
     }
 
-    public void paint(Graphics2D g2d) {
+    public void paint(@NotNull Graphics2D g2d) {
         g2d.setColor(colorGridp);
         if (rotatey < 0) {
             g2d.setColor(colorGridn);
@@ -149,7 +152,7 @@ public class Grid {
         }
     }
 
-    public void paintAxis(Graphics2D g2d) {
+    public void paintAxis(@NotNull Graphics2D g2d) {
         g2d.setColor(Color.RED);
         g2d.drawLine((int) pts[0][0][0].getVecs().getX(), (int) pts[0][0][0].getVecs().getY(), (int) pts[0][side - 1][0].getVecs().getX(), (int) pts[0][side - 1][0].getVecs().getY());
         g2d.setColor(Color.GREEN);
@@ -202,9 +205,6 @@ public class Grid {
     }
     /////////////////////////////////////////////////////////////
 
-    //user input///////////////////////////
-    public void hover(Rectangle pnt) {
-    }
     ///////////////////////////////////////
 
     public int getSide() {
@@ -223,6 +223,7 @@ public class Grid {
         return rotatey;
     }
 
+    @NotNull
     public GridPoint[][][] getPts() {
         return pts;
     }

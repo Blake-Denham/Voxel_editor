@@ -1,5 +1,6 @@
 package backend;
 
+import org.jetbrains.annotations.NotNull;
 import util.MU;
 import util.Vector2D;
 
@@ -9,6 +10,7 @@ class CirclePoint {
     //----------------------
 
     //Vectors---------------
+    @NotNull
     private final Vector2D[] pts;
     //----------------------
 
@@ -39,6 +41,7 @@ class CirclePoint {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //accessors////////////////////////////////
+    @NotNull
     public Vector2D[] getPts() {
         return pts;
     }

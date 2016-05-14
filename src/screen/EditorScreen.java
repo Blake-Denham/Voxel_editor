@@ -1,5 +1,7 @@
 package screen;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,17 +10,19 @@ import java.io.IOException;
 public class EditorScreen extends JPanel {
     public static int s_maxWidth, s_maxHeight;
     public static Font font;
+    @NotNull
     private final JFrame jf;
+    @NotNull
     private final ComponentManager cm;
 
-    public EditorScreen(String title) {
+    public EditorScreen() {
         super();
         try {
             font = Font.createFont(Font.TRUETYPE_FONT, Main.getResource("Montserrat-Regular.ttf"));
-        } catch (FontFormatException | IOException e) {
+        } catch (@NotNull FontFormatException | IOException e) {
             e.printStackTrace();
         }
-        jf = new JFrame(title);
+        jf = new JFrame("Voxel Editor");
         Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
         s_maxHeight = ss.height;
         s_maxWidth = ss.width;
@@ -42,7 +46,7 @@ public class EditorScreen extends JPanel {
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                cm.click(e);
+
             }
 
             @Override
@@ -76,7 +80,7 @@ public class EditorScreen extends JPanel {
 
             @Override
             public void keyReleased(KeyEvent e) {
-                cm.keyRelease(e);
+
             }
         });
         setFocusable(true);
@@ -111,7 +115,7 @@ public class EditorScreen extends JPanel {
         g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
 
-    public void displayScreenInfo(){
+    private void displayScreenInfo() {
         System.out.println("---------------------------");
         System.out.println("Screen info:");
         System.out.println("\tx: " + jf.getX());

@@ -1,8 +1,29 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Blake">
     <words>
+      <w>arctan</w>
+      <w>bootclasspath</w>
       <w>circum</w>
+      <w>dxpix</w>
+      <w>dypix</w>
+      <w>fontsize</w>
+      <w>gridn</w>
+      <w>gridp</w>
+      <w>inslider</w>
+      <w>isize</w>
+      <w>kotlinc</w>
       <w>mutators</w>
+      <w>pnts</w>
+      <w>rotatex</w>
+      <w>rotatey</w>
+      <w>rotatez</w>
+      <w>rotationx</w>
+      <w>rotationy</w>
+      <w>rotator</w>
+      <w>sourcepath</w>
+      <w>ssize</w>
+      <w>testoutput</w>
+      <w>vecs</w>
     </words>
   </dictionary>
 </component>
