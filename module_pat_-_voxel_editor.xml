@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pat_-_voxel_editor" default="compile.module.pat_-_voxel_editor">
+  <dirname property="module.pat_-_voxel_editor.basedir" file="${ant.file.module_pat_-_voxel_editor}"/>
+  
+  <property name="module.jdk.home.pat_-_voxel_editor" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pat_-_voxel_editor" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pat_-_voxel_editor" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pat_-_voxel_editor" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="pat_-_voxel_editor.output.dir" value="${module.pat_-_voxel_editor.basedir}/out/production/PAT - Voxel editor"/>
+  <property name="pat_-_voxel_editor.testoutput.dir" value="${module.pat_-_voxel_editor.basedir}/out/test/PAT - Voxel editor"/>
+  
+  <path id="pat_-_voxel_editor.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pat_-_voxel_editor.module.production.classpath">
+    <path refid="${module.jdk.classpath.pat_-_voxel_editor}"/>
+  </path>
+  
+  <path id="pat_-_voxel_editor.runtime.production.module.classpath">
+    <pathelement location="${pat_-_voxel_editor.output.dir}"/>
+  </path>
+  
+  <path id="pat_-_voxel_editor.module.classpath">
+    <path refid="${module.jdk.classpath.pat_-_voxel_editor}"/>
+    <pathelement location="${pat_-_voxel_editor.output.dir}"/>
+  </path>
+  
+  <path id="pat_-_voxel_editor.runtime.module.classpath">
+    <pathelement location="${pat_-_voxel_editor.testoutput.dir}"/>
+    <pathelement location="${pat_-_voxel_editor.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pat_-_voxel_editor">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pat_-_voxel_editor">
+    <patternset refid="excluded.from.module.pat_-_voxel_editor"/>
+  </patternset>
+  
+  <path id="pat_-_voxel_editor.module.sourcepath">
+    <dirset dir="${module.pat_-_voxel_editor.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pat_-_voxel_editor" depends="compile.module.pat_-_voxel_editor.production,compile.module.pat_-_voxel_editor.tests" description="Compile module PAT - Voxel editor"/>
+  
+  <target name="compile.module.pat_-_voxel_editor.production" depends="register.custom.compilers" description="Compile module PAT - Voxel editor; production classes">
+    <mkdir dir="${pat_-_voxel_editor.output.dir}"/>
+    <javac2 destdir="${pat_-_voxel_editor.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pat_-_voxel_editor}/javac">
+      <compilerarg line="${compiler.args.pat_-_voxel_editor}"/>
+      <bootclasspath refid="pat_-_voxel_editor.module.bootclasspath"/>
+      <classpath refid="pat_-_voxel_editor.module.production.classpath"/>
+      <src refid="pat_-_voxel_editor.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pat_-_voxel_editor"/>
+    </javac2>
+    
+    <copy todir="${pat_-_voxel_editor.output.dir}">
+      <fileset dir="${module.pat_-_voxel_editor.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pat_-_voxel_editor.tests" depends="register.custom.compilers,compile.module.pat_-_voxel_editor.production" description="compile module PAT - Voxel editor; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pat_-_voxel_editor" description="cleanup module">
+    <delete dir="${pat_-_voxel_editor.output.dir}"/>
+    <delete dir="${pat_-_voxel_editor.testoutput.dir}"/>
+  </target>
+</project>

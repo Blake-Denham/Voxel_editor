@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="PAT - Voxel editor:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/PAT___Voxel_editor_jar</output-path>
+    <root id="archive" name="PAT - Voxel editor.jar">
+      <element id="module-output" name="PAT - Voxel editor" />
+    </root>
+  </artifact>
+</component>
