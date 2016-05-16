@@ -18,6 +18,7 @@ class ComponentManager extends JComponent {
     private static ColorWheel colorWheel;
     private static Canvas canvas;
     private static CameraControl ci;
+    private static CanvasManipulator cm;
 
     public ComponentManager() {
 
@@ -25,9 +26,11 @@ class ComponentManager extends JComponent {
         canvas = new Canvas(24, 24);
         colorWheel = new ColorWheel(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * MU.getPercent(300, 1920), new Color(55, 55, 55));
         ci = new CameraControl(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxHeight * MU.getPercent(EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4 - 1080 - 8, 1080), EditorScreen.s_maxWidth * MU.getPercent(250, 1920), new Color(55, 55, 55));
+        cm = new CanvasManipulator(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, new Color(55, 55, 55));
         addComponent(canvas);
         addComponent(colorWheel);
         addComponent(ci);
+        addComponent(cm);
 
     }
 

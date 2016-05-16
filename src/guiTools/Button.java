@@ -15,6 +15,7 @@ public class Button extends GuiComponent {
     private Image buttonImage;
     @NotNull
     private final AffineTransform af;
+    @NotNull
     private final GuiEvent event;
     @NotNull
     private final Rectangle hoverBounds;
@@ -23,7 +24,8 @@ public class Button extends GuiComponent {
     @NotNull
     private final Rectangle clickBounds;
 
-    public Button(double x_, double y_, double width, double height, @NotNull Image buttonImage, GuiEvent event) {
+
+    public Button(double x_, double y_, double width, double height, @NotNull Image buttonImage, @NotNull GuiEvent event) {
         super(x_, y_, width, height, new Color(0,0,0), 4, false);
         this.buttonImage = buttonImage;
         double ibr = (width)/buttonImage.getWidth(null);

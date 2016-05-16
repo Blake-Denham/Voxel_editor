@@ -21,8 +21,6 @@ import java.io.IOException;
 @SuppressWarnings("DefaultFileTemplate")
 public class CameraControl extends GuiComponent {
     @NotNull
-    private final guiTools.Label cubes;
-    @NotNull
     private final guiTools.Label rotate;
     @NotNull
     private final guiTools.Label rotatey;
@@ -38,6 +36,9 @@ public class CameraControl extends GuiComponent {
     private final guiTools.Button rotator;
     @NotNull
     private final guiTools.Button rotatorY;
+    @NotNull
+    private final guiTools.Button isometricView;
+
     private int rotationx = -1, rotationy = -1;
     private int direction = 1;
 
@@ -46,21 +47,25 @@ public class CameraControl extends GuiComponent {
         //noinspection SuspiciousNameCombination
         super(x, y, width, width, bgColor, 14, true);
         Image rotateImage = null;
+        Image isometricImg = null;
         try {
             rotateImage = ImageIO.read(Main.getResource("rotate.png"));
+            isometricImg = ImageIO.read(Main.getResource("isometric.png"));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         rotate = new Label(PU.getXInBounds(bounds, width * 0.15, 0.5), PU.getYInBounds(bounds, 25, 0.15), width * 0.15);
         rotateSlider = new Slider(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, 30, 0.2), Slider.HORIZONTAL, width * 0.5, 20, new Color(130, 130, 130), new Color(20, 20, 20));
         assert (rotateImage != null ? rotateImage : null) != null;
-        rotator = new Button(PU.getXInBounds(bounds, width * 0.1, 0. + 0.14), PU.getYInBounds(bounds, width * 0.1, 0.15), width * 0.1, width * 0.1, rotateImage, () -> rotationx *= -1);
+        assert isometricImg != null;
+        rotator = new Button(PU.getXInBounds(bounds, width * 0.1, 0.14), PU.getYInBounds(bounds, width * 0.1, 0.15), width * 0.1, width * 0.1, rotateImage, () -> rotationx *= -1);
         add(rotate);
         add(rotateSlider);
         add(rotator);
         rotatey = new Label(PU.getXInBounds(bounds, width * 0.15, 0.5), PU.getYInBounds(bounds, 25, 0.42), width * 0.15);
         rotateySlider = new Slider(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, 30, 0.53), Slider.HORIZONTAL, width * 0.5, 20, new Color(130, 130, 130), new Color(20, 20, 20));
-        rotatorY = new Button(PU.getXInBounds(bounds, width * 0.1, 0. + 0.14), PU.getYInBounds(bounds, width * 0.1, 0.37), width * 0.1, width * 0.1, rotateImage, () -> rotationy *= -1);
+        rotatorY = new Button(PU.getXInBounds(bounds, width * 0.1, 0.14), PU.getYInBounds(bounds, width * 0.1, 0.37), width * 0.1, width * 0.1, rotateImage, () -> rotationy *= -1);
         add(rotatey);
         add(rotateySlider);
         add(rotatorY);
@@ -68,9 +73,12 @@ public class CameraControl extends GuiComponent {
         zoomSlider = new Slider(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, 30, 0.53 + 0.33), Slider.HORIZONTAL, width * 0.5, 20, new Color(130, 130, 130), new Color(20, 20, 20));
         add(zoom);
         add(zoomSlider);
-        cubes = new Label(PU.getXInBounds(bounds, width * 0.45, 0.5), PU.getYInBounds(bounds, 25, 0.42 + 0.27 + 0.27), width * 0.45);
-        cubes.setBackgroundColor(new Color(150, 150, 150));
-        add(cubes);
+
+        isometricView = new Button(PU.getXInBounds(bounds, width * 0.1, 0.6), PU.getYInBounds(bounds, width * 0.1, 0.37), width * 0.1, width * 0.1, isometricImg, () -> {
+            ComponentManager.setRotateCamera(45);
+            ComponentManager.setRotateyCamera(37);
+        });
+        add(isometricView);
         setToolBarTitle("CAMERA CONTROL");
     }
 
@@ -97,6 +105,7 @@ public class CameraControl extends GuiComponent {
         if (rotateSlider.getChanging()) ComponentManager.setRotateCamera((int) ((rotateSlider.getPercent()) * 360));
         rotateSlider.setPercent((float) (ComponentManager.getCanvas().getGrid().getRotate() / 360));
         rotator.setBounds(PU.getXInBounds(bounds, width * 0.1, 0. + 0.14), PU.getYInBounds(bounds, width * 0.1, 0.12), width * 0.1, width * 0.1);
+        isometricView.setBounds(PU.getXInBounds(bounds, width * 0.1, 0.72), PU.getYInBounds(bounds, width * 0.1, 0.03), width * 0.1, width * 0.1);
         rotatey.setDisplay((int) (ComponentManager.getCanvas().getGrid().getRotateY()) + "");
         rotatey.setBounds(PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37), width * 0.15, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
         rotateySlider.setBounds(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.53), width * 0.5, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
@@ -109,12 +118,14 @@ public class CameraControl extends GuiComponent {
         zoomSlider.setBounds(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.53 + 0.33), width * 0.5, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
         if (zoomSlider.getChanging()) ComponentManager.setZoomCamera((int) (zoomSlider.getPercent() * 90));
         zoomSlider.setPercent((float) ((ComponentManager.getCanvas().getGrid().getZoom()) / 90));
-        if (rotationx > 0)
+        if (rotationx > 0) {
             ComponentManager.setRotateCamera((int) (ComponentManager.getCanvas().getGrid().getRotate() + 1));
-        if (rotationy > 0)
+        }
+        if (rotationy > 0) {
             if (ComponentManager.getCanvas().getGrid().getRotateY() == 90 || ComponentManager.getCanvas().getGrid().getRotateY() == -90)
                 direction *= -1;
-        ComponentManager.setRotateyCamera((int) (ComponentManager.getCanvas().getGrid().getRotateY() + direction));
+            ComponentManager.setRotateyCamera((int) (ComponentManager.getCanvas().getGrid().getRotateY() + direction));
+        }
     }
 
     @Override

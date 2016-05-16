@@ -28,6 +28,7 @@ public abstract class GuiComponent {
     protected final ArrayList<GuiComponent> subComponents;
 
     private int minimized = 1;
+    private double p = 0.98;
     private final boolean drawBackground;
     private final boolean minimizable;
     private boolean ignoreMinimize = false;
@@ -51,7 +52,7 @@ public abstract class GuiComponent {
             try {
                 final Image buttonSprite1 = ImageIO.read(Main.getResource("minimize.png"));
                 final Image buttonSprite2 = ImageIO.read(Main.getResource("maximize.png"));
-                minimize = new Button(PU.getXInBounds(toolBar, toolBar.getWidth() * 0.1, 0.98), PU.getYInBounds(toolBar, toolBar.getWidth() * 0.1, 0.5), toolBar.getWidth() * 0.1, toolBar.getWidth() * 0.1,  buttonSprite1, () -> {
+                minimize = new Button(PU.getXInBounds(toolBar, 25, 0.98), PU.getYInBounds(toolBar, 25, 0.5), 25, 25, buttonSprite1, () -> {
                     minimized *= -1;
                     if (minimized > 0) {
                         minimize.setButtonImage(buttonSprite1);
@@ -214,7 +215,7 @@ public abstract class GuiComponent {
     public void updateAll() {
         update();
         if (drawBackground) {
-            minimize.setBounds(PU.getXInBounds(toolBar, toolBar.getWidth() * 0.1, 0.98), PU.getYInBounds(toolBar, toolBar.getWidth() * 0.1, 0.5), toolBar.getWidth() * 0.1, toolBar.getWidth() * 0.1);
+            minimize.setBounds(PU.getXInBounds(toolBar, 25, p), PU.getYInBounds(toolBar, 25, 0.5), 25, 25);
             toolBar.setBounds((int) x, (int) bounds.getY() - 30, (int) width, 30);
 
         }
@@ -309,5 +310,9 @@ public abstract class GuiComponent {
 
     public void setBackgroundColor(Color backgroundColor) {
         this.bgColor = backgroundColor;
+    }
+
+    public void setP(double p) {
+        this.p = p;
     }
 }
