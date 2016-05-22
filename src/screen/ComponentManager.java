@@ -44,39 +44,27 @@ class ComponentManager extends JComponent {
     }
 
     public void hover(MouseEvent e) {
-        for (GuiComponent guiComponent : guiComponents) {
-            guiComponent.mouseMove(e);
-        }
+        guiComponents.stream().filter(guiComponent -> !guiComponent.getDisabled()).forEach(guiComponent -> guiComponent.mouseMove(e));
     }
 
     public void drag(MouseEvent e) {
-        for (GuiComponent guiComponent : guiComponents) {
-            guiComponent.mouseDrag(e);
-        }
+        guiComponents.stream().filter(guiComponent -> !guiComponent.getDisabled()).forEach(guiComponent -> guiComponent.mouseDrag(e));
     }
 
     public void keyPress(KeyEvent e) {
-        for (GuiComponent guiComponent : guiComponents) {
-            guiComponent.keyPressedSC(e);
-        }
+        guiComponents.stream().filter(guiComponent -> !guiComponent.getDisabled()).forEach(guiComponent -> guiComponent.keyPressedSC(e));
     }
 
     public void mouseWheel(MouseWheelEvent e) {
-        for (GuiComponent guiComponent : guiComponents) {
-            guiComponent.mouseWheel(e);
-        }
+        guiComponents.stream().filter(guiComponent -> !guiComponent.getDisabled()).forEach(guiComponent -> guiComponent.mouseWheel(e));
     }
 
     public void mousePress(MouseEvent e) {
-        for (GuiComponent guiComponent : guiComponents) {
-            guiComponent.mousePressSC(e);
-        }
+        guiComponents.stream().filter(guiComponent -> !guiComponent.getDisabled()).forEach(guiComponent -> guiComponent.mousePressSC(e));
     }
 
     public void mouseRelease(MouseEvent e) {
-        for (GuiComponent guiComponent : guiComponents) {
-            guiComponent.mouseReleaseSC(e);
-        }
+        guiComponents.stream().filter(guiComponent -> !guiComponent.getDisabled()).forEach(guiComponent -> guiComponent.mouseReleaseSC(e));
     }
 
     @Override
@@ -122,5 +110,9 @@ class ComponentManager extends JComponent {
 
     public static void setZoomCamera(int zoom) {
         canvas.setZoom(zoom);
+    }
+
+    public static void setTool(int tool) {
+        canvas.setSelectedTool(tool);
     }
 }

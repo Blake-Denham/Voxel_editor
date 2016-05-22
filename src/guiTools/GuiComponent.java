@@ -13,7 +13,6 @@ import java.awt.event.MouseWheelEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 
-@SuppressWarnings("WeakerAccess")
 public abstract class GuiComponent {
 
     protected double x;
@@ -23,7 +22,7 @@ public abstract class GuiComponent {
     private double shadowSize;
     @NotNull
     protected final Rectangle bounds;
-    Color bgColor;
+    protected Color bgColor;
     @NotNull
     protected final ArrayList<GuiComponent> subComponents;
 
@@ -35,6 +34,8 @@ public abstract class GuiComponent {
     private Rectangle toolBar;
     private Button minimize;
     private String toolBarTitle = "";
+    // TODO: 5/22/2016 make disabling components possible. 
+    private boolean disabled = false;
 
     protected GuiComponent(double x, double y, double width, double height, Color bgColor, int shadowSize, boolean minimizable) {
         this.minimizable = minimizable;
@@ -50,8 +51,8 @@ public abstract class GuiComponent {
         }
         if (minimizable) {
             try {
-                final Image buttonSprite1 = ImageIO.read(Main.getResource("minimize.png"));
-                final Image buttonSprite2 = ImageIO.read(Main.getResource("maximize.png"));
+                final Image buttonSprite1 = ImageIO.read(Main.getResource("Images/minimize.png"));
+                final Image buttonSprite2 = ImageIO.read(Main.getResource("Images/maximize.png"));
                 minimize = new Button(PU.getXInBounds(toolBar, 25, 0.98), PU.getYInBounds(toolBar, 25, 0.5), 25, 25, buttonSprite1, () -> {
                     minimized *= -1;
                     if (minimized > 0) {
@@ -134,7 +135,7 @@ public abstract class GuiComponent {
 
     public void mouseMove(MouseEvent e) {
         hover(e);
-        for (GuiComponent subComponent : subComponents) {
+        subComponents.stream().filter(subComponent -> !subComponent.getDisabled()).forEach(subComponent -> {
             if (minimized < 0) {
                 if (subComponent.ignoreMinimize) {
                     subComponent.hover(e);
@@ -142,12 +143,13 @@ public abstract class GuiComponent {
             } else {
                 subComponent.hover(e);
             }
-        }
+        });
     }
+
 
     public void mouseDrag(MouseEvent e) {
         drag(e);
-        for (GuiComponent subComponent : subComponents) {
+        subComponents.stream().filter(subComponent -> !subComponent.getDisabled()).forEach(subComponent -> {
             if (minimized < 0) {
                 if (subComponent.ignoreMinimize) {
                     subComponent.drag(e);
@@ -155,12 +157,12 @@ public abstract class GuiComponent {
             } else {
                 subComponent.drag(e);
             }
-        }
+        });
     }
 
     public void mouseWheel(MouseWheelEvent e) {
         scroll(e);
-        for (GuiComponent subComponent : subComponents) {
+        subComponents.stream().filter(subComponent -> !subComponent.getDisabled()).forEach(subComponent -> {
             if (minimized < 0) {
                 if (subComponent.ignoreMinimize) {
                     subComponent.scroll(e);
@@ -168,12 +170,12 @@ public abstract class GuiComponent {
             } else {
                 subComponent.scroll(e);
             }
-        }
+        });
     }
 
     public void keyPressedSC(KeyEvent e) {
         keyPress(e);
-        for (GuiComponent subComponent : subComponents) {
+        subComponents.stream().filter(subComponent -> !subComponent.getDisabled()).forEach(subComponent -> {
             if (minimized < 0) {
                 if (subComponent.ignoreMinimize) {
                     subComponent.keyPress(e);
@@ -181,14 +183,12 @@ public abstract class GuiComponent {
             } else {
                 subComponent.keyPress(e);
             }
-        }
+        });
     }
-
-
 
     public void mousePressSC(MouseEvent e) {
         mousePress(e);
-        for (GuiComponent subComponent : subComponents) {
+        subComponents.stream().filter(subComponent -> !subComponent.getDisabled()).forEach(subComponent -> {
             if (minimized < 0) {
                 if (subComponent.ignoreMinimize) {
                     subComponent.mousePress(e);
@@ -196,12 +196,12 @@ public abstract class GuiComponent {
             } else {
                 subComponent.mousePress(e);
             }
-        }
+        });
     }
 
     public void mouseReleaseSC(MouseEvent e) {
         mouseRelease(e);
-        for (GuiComponent subComponent : subComponents) {
+        subComponents.stream().filter(subComponent -> !subComponent.getDisabled()).forEach(subComponent -> {
             if (minimized < 0) {
                 if (subComponent.ignoreMinimize) {
                     subComponent.mouseRelease(e);
@@ -209,7 +209,7 @@ public abstract class GuiComponent {
             } else {
                 subComponent.mouseRelease(e);
             }
-        }
+        });
     }
 
     public void updateAll() {
@@ -248,7 +248,7 @@ public abstract class GuiComponent {
         bounds.setBounds((int) x, (int) y, (int) width, (int) height);
     }
 
-    void setBounds(@NotNull Rectangle newBounds) {
+    protected void setBounds(@NotNull Rectangle newBounds) {
         x = newBounds.getX();
         y = newBounds.getY();
         width = newBounds.getWidth();
@@ -256,7 +256,7 @@ public abstract class GuiComponent {
         bounds.setBounds(newBounds);
     }
 
-    void setIgnoreMinimize() {
+    protected void setIgnoreMinimize() {
         this.ignoreMinimize = true;
     }
 
@@ -264,7 +264,7 @@ public abstract class GuiComponent {
         toolBarTitle = title;
     }
 
-    public int getMinimized(){
+    public int getMinimized() {
         return minimized;
     }
 
@@ -273,17 +273,17 @@ public abstract class GuiComponent {
     }
 
     @SuppressWarnings("unused")
-    public double getX(){
+    public double getX() {
         return x;
     }
 
     @SuppressWarnings("unused")
-    public double getWidth(){
+    public double getWidth() {
         return width;
     }
 
-    public double getHeight(){
-        return  height;
+    public double getHeight() {
+        return height;
     }
 
     @NotNull
@@ -308,11 +308,15 @@ public abstract class GuiComponent {
 
     protected abstract void mouseRelease(MouseEvent e);
 
-    public void setBackgroundColor(Color backgroundColor) {
-        this.bgColor = backgroundColor;
-    }
-
     public void setP(double p) {
         this.p = p;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public boolean getDisabled() {
+        return disabled;
     }
 }

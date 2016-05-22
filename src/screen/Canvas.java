@@ -4,6 +4,7 @@ package screen;
 import backend.Cube;
 import backend.Grid;
 import guiTools.GuiComponent;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import util.MU;
 
@@ -15,21 +16,16 @@ import java.awt.event.MouseWheelEvent;
 
 public class Canvas extends GuiComponent {
 
-    private static int mx, my, mb;
+    private static int mx, my, mb, selectedTool;
     private int noCubes = 0;
     private int maxNoCubes = 0;
-
     @NotNull
     private final Grid grid;
-
     @NotNull
     private final Cube[][][] cubes;
-
     @NotNull
     private final Rectangle pnt;
-
     private boolean square, shiftSquare, half;
-
     @NotNull
     private final PaintEvent paintX;
     @NotNull
@@ -72,8 +68,9 @@ public class Canvas extends GuiComponent {
             }
         };
         //cuboid(0, 0, 0, side - 1, side - 1, height - 1);
-        sphere((int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0));
+        //sphere((int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0));
         //cuboid(12,12,12,1,1,1);
+        rayCast(0);
     }
 
     @SuppressWarnings({"ConstantConditions", "SameParameterValue", "unused"})
@@ -90,6 +87,7 @@ public class Canvas extends GuiComponent {
         }
     }
 
+    @SuppressWarnings("unused")
     private void sphere(int x, int y, int z, double width, double length, double height) {
         for (int theta = 0; theta < 2880; theta += 5) {
             for (int pi = -1440; pi < 1440; pi += 5) {
@@ -103,51 +101,15 @@ public class Canvas extends GuiComponent {
         }
     }
 
-    @Override
-    public void paintGuiComponent(@NotNull Graphics2D g2d) {
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        g2d.setColor(Color.black);
-
-        if (half) {
-            paintZ(paintY, g2d);
-            grid.paintAxis(g2d);
-        } else {
-            grid.paintAxis(g2d);
-            paintZ(paintY, g2d);
-        }
-    }
-
-    @Override
-    public void update() {
-        grid.update();
-        pnt.setLocation(mx, my);
-        square = MU.makeSquareB(false, (int) grid.getRotate(), 360);
-        shiftSquare = MU.makeSquareB(true, (int) grid.getRotate(), 360);
-        half = MU.makeHalvesB(true, (int) grid.getRotate(), 360);
-        noCubes = 0;
-        for (int zi = 0; zi < grid.getHeight() - 1; zi++) {
-            for (int yi = 0; yi < grid.getSide() - 1; yi++) {
-                for (int xi = 0; xi < grid.getSide() - 1; xi++) {
-                    if (!(cubes[zi][xi][yi] == null)) {
-                        cubes[zi][xi][yi].updateCube();
-                        cubes[zi][xi][yi].hover(pnt);
-                        noCubes++;
-                    }
-                }
-            }
-        }
-    }
-
     @SuppressWarnings("unused")
-    public void addCube(int x, int y, int z, int red, int green, int blue) {
-        cubes[z][x][y] = new Cube(this, x, y, z, red, green, blue);
+    public void setCube(int x, int y, int z, int red, int green, int blue) {
+        if (!(x < 0) && !(x >= grid.getSide() - 1) && !(y < 0) && !(y >= grid.getSide() - 1) && !(z < 0) && !(z >= grid.getHeight() - 1))
+            cubes[z][x][y] = new Cube(this, x, y, z, red, green, blue);
     }
 
     @SuppressWarnings("unused")
     public void clearCanvas() {
-        for (int z = 0; z < grid.getHeight() - 2; z++) {
+        for (int z = 0; z < grid.getHeight() - 1; z++) {
             for (int y = 0; y < grid.getSide() - 1; y++) {
                 for (int x = 0; x < grid.getSide() - 1; x++) {
                     cubes[z][x][y] = null;
@@ -156,6 +118,7 @@ public class Canvas extends GuiComponent {
         }
     }
 
+    @Contract(pure = true)
     @SuppressWarnings("unused")
     public static boolean checkForCube(@NotNull Canvas c, int x, int y, int z) {
         return c.cubes[z][x][y] != null;
@@ -175,27 +138,121 @@ public class Canvas extends GuiComponent {
         }
     }
 
+    double i = -(22);
+    double c = 0.2;
+
     @Override
-    public void hover(@NotNull MouseEvent e) {
-        mx = e.getX();
-        my = e.getY();
+    protected void paintGuiComponent(@NotNull Graphics2D g2d) {
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+        g2d.setColor(Color.black);
+
+        if (half) {
+            paintZ(paintY, g2d);
+            grid.paintAxis(g2d);
+        } else {
+            grid.paintAxis(g2d);
+            paintZ(paintY, g2d);
+        }
+
+        g2d.setColor(Color.white);
+
+
+        clearCanvas();
+        rayCast(0);
+        if (i >= grid.getSide() - 1 || i <= -(grid.getSide() - 1)) {
+            c *= -1;
+        }
+        i += c;
+    }
+
+    @SuppressWarnings("unused")
+    private void drawPolyhedron(int[] xp, int[] yp, int[] zp, int np) {
+        // TODO: 5/22/2016 make polyhedrons.
+    }
+
+    @SuppressWarnings("unused")
+    private void drawRect(int x, int y, int z, int width, int length, boolean rotate90) {
+        // TODO: 5/22/2016 make rectangles.
+    }
+
+    @SuppressWarnings("unused")
+    private void drawLine(int x1, int y1, int z1, int x2, int y2, int z2) {
+        // TODO: 5/22/2016 make drawLine method.
+    }
+
+    private void rayCast(double dx) {
+        // TODO: 5/22/2016 fix vertical ray casting and expand from 90 to 360 degrees.
+        int side = (int) ((grid.getSide() - 1) / MU.cos(grid.getRotateY()));
+        double rotate = grid.getRotate();
+        int r = (int) (MU.min(Math.abs(side * MU.sec(rotate)), Math.abs(side * MU.cosec(rotate))));
+        for (int z = 0; z < r * 360; z++) {
+            double x_ = ((z / 360.0) * MU.sin(rotate));
+            double y_ = ((z / 360.0) * MU.cos(rotate));
+            if (dx < 0) {
+                y_ += -dx;
+            } else {
+                x_ += dx;
+            }
+            setCube((int) x_, (int) y_, (int) ((z / 360) * MU.sin(grid.getRotateY())), 0, 0, 0xff);
+        }
+  /*            for (int i = 0; i < r * 360; i++) {
+            double x_ = ((i / 360.0) * MU.sin(rotate));
+            double y_ = ((i / 360.0) * MU.cos(rotate));
+            double z_ = (1);
+            if (dx < 0) {
+                y_ += -dx;
+            } else {
+                x_ += dx;
+            }
+            setCube((int) x_, (int) y_, (int) z_, 0xff, 0x00, 0x00);
+
+        }
+          for(int z = 0;z<h;z++){
+            double x_ = ((r) * MU.sin(rotate));
+            double y_ = ((r) * MU.cos(rotate));
+            if (dx < 0) {
+                y_ += -dx;
+            } else {
+                x_ += dx;
+            }
+            setCube((int) x_, (int) y_, z, 0x00,0xff,0x00);
+        }*/
+    }
+
+    @Override
+    protected void update() {
+        grid.update();
+        pnt.setLocation(mx, my);
+        square = MU.makeSquareB(false, (int) grid.getRotate(), 360);
+        shiftSquare = MU.makeSquareB(true, (int) grid.getRotate(), 360);
+        half = MU.makeHalvesB(true, (int) grid.getRotate(), 360);
+        noCubes = 0;
         for (int zi = 0; zi < grid.getHeight() - 1; zi++) {
             for (int yi = 0; yi < grid.getSide() - 1; yi++) {
                 for (int xi = 0; xi < grid.getSide() - 1; xi++) {
-                    if (!(cubes[zi][xi][yi] == null)) {
-                        cubes[zi][xi][yi].hover(pnt);
-                    }
+                    if (cubes[zi][xi][yi] != null)
+                        cubes[zi][xi][yi].updateCube();
                 }
             }
         }
     }
+
     @Override
-    public void drag(@NotNull MouseEvent e) {
+    protected void hover(@NotNull MouseEvent e) {
+        mx = e.getX();
+        my = e.getY();
+
+    }
+
+    @Override
+    protected void drag(@NotNull MouseEvent e) {
         int dx = mx - e.getX();
         int dy = my - e.getY();
         if (mb == 2) {
             grid.update();
-            grid.setLocation(mx,my);
+            grid.setLocation(mx, my);
         }
         mx = e.getX();
         my = e.getY();
@@ -207,53 +264,46 @@ public class Canvas extends GuiComponent {
     }
 
     @Override
-    public void mousePress(@NotNull MouseEvent e) {
+    protected void mousePress(@NotNull MouseEvent e) {
         mb = e.getButton();
         mx = e.getX();
         my = e.getY();
         if (mb == 1) {
-            for (int zi = 0; zi < grid.getHeight() - 1; zi++) {
-                for (int yi = 0; yi < grid.getSide() - 1; yi++) {
-                    for (int xi = 0; xi < grid.getSide() - 1; xi++) {
-                        if (!(cubes[zi][xi][yi] == null)) {
-                            cubes[zi][xi][yi].click(pnt);
-                            break;
-                        }
-                    }
-                }
-            }
+
         }
     }
+
     @Override
-    public void mouseRelease(MouseEvent e) {
+    protected void mouseRelease(MouseEvent e) {
 
     }
+
     @Override
-    public void keyPress(@NotNull KeyEvent ke) {
+    protected void keyPress(@NotNull KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_W) {
-            grid.rotatey(2);
+            grid.rotatey(1);
         }
         if (ke.getKeyCode() == KeyEvent.VK_S) {
-            grid.rotatey(-2);
+            grid.rotatey(-1);
         }
         if (ke.getKeyCode() == KeyEvent.VK_E) {
-            grid.rotate(2);
+            grid.rotate(1);
         }
         if (ke.getKeyCode() == KeyEvent.VK_Q) {
-            grid.rotate(-2);
+            grid.rotate(-1);
         }
         if (ke.getKeyCode() == KeyEvent.VK_UP) {
-            grid.zoom(2);
+            grid.zoom(1);
         }
         if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-            grid.zoom(-2);
+            grid.zoom(-1);
         }
 
         Cube.keyPressed(ke);
     }
 
     @Override
-    public void scroll(@NotNull MouseWheelEvent e) {
+    protected void scroll(@NotNull MouseWheelEvent e) {
         int n = e.getWheelRotation();
         grid.zoom((int) (-2.5 * n));
     }
@@ -282,11 +332,15 @@ public class Canvas extends GuiComponent {
         grid.setRotate(direction);
     }
 
-    public void setRotatey(int direction){
+    public void setRotatey(int direction) {
         grid.setRotatey(direction);
     }
 
-    public void setZoom(int zoom){
+    public void setZoom(int zoom) {
         grid.setZoom(zoom);
+    }
+
+    public void setSelectedTool(int tool) {
+        selectedTool = tool;
     }
 }

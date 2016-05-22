@@ -91,7 +91,7 @@ public class PU {
     }
 
     @NotNull
-    @Contract("_, _, _, _, _ -> !null")
+    @SuppressWarnings("unused")
     public static Vector2D getVectorInBounds(@NotNull Rectangle bounds, double width, double height, double percentX, double percentY) {
         return new Vector2D(getXInBounds(bounds, width, percentX), getYInBounds(bounds, height, percentY));
     }

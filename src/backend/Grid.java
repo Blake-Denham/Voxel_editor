@@ -44,7 +44,7 @@ public class Grid {
          * creates the 3D space with specified location, dimensions, rotations and scale
          * as point falls on a circle of radius r, offset by p degrees the points are
          * made using the formulae.
-         * r = squareRoot((100*side*xPoint*cos(45)+100*side**yPoint*sin(45))^2).
+         * r = squareRoot((100*side*xPoint*cos(45)+100*side*yPoint*sin(45))^2).
          * p = (180*arctan(yPoint/xPoint))/PI.
          * a circle,with a radius of root(200)*n,n increments until it is equal to height, and side^2 crosses are made at every rotatey of each one of the circles which were created
          */
@@ -56,14 +56,14 @@ public class Grid {
         this.side = side;
         this.height = height;
         zAxis = new CirclePoint[height];
-        cent = new CirclePoint(90, x, y, (int) (Math.sqrt(MU.square(100 * side * MU.cos(45)) + MU.square(100 * side * MU.sin(45)))), -(double) 45, 90, (double) 37, (double) 15);
+        cent = new CirclePoint(90, x, y, (int) (Math.sqrt(MU.square(100 * side * MU.cos(45)) + MU.square(100 * side * MU.sin(45)))), -(double) 0, 90, (double) 90, (double) 15);
         pts = new GridPoint[height][side][side];
         int y_ = (int) cent.getPts()[0].getY();
         int x_ = (int) cent.getPts()[0].getX();
         for (int z = 0; z < height; z++) {
             for (int xi = 0; xi < side; xi++) {
                 for (int yi = 0; yi < side; yi++) {
-                    pts[z][xi][yi] = new GridPoint(x_, y_, (int) (Math.sqrt(MU.square(100 * (xi) * MU.cos(45)) + MU.square(100 * yi * MU.sin(45)))), (double) 45, Math.toDegrees(MU.arctan((double) yi / (double) xi)), (double) 37, (double) 15);
+                    pts[z][xi][yi] = new GridPoint(x_, y_, (int) (Math.sqrt(MU.square(100 * (xi) * MU.cos(45)) + MU.square(100 * yi * MU.sin(45)))), (double) 0, Math.toDegrees(MU.arctan((double) yi / (double) xi)), (double) 90, (double) 15);
                 }
             }
             pts[z][0][0].setVec(x_, y_);
@@ -222,5 +222,13 @@ public class Grid {
 
     public void setZoom(int zoom) {
         this.zoom = zoom;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }

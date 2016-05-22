@@ -12,20 +12,13 @@ public class Cube {
     private int x;
     private int y;
     private int z;
+    private int colorHex;
     private int[][] a, b;
-
-
     private boolean tb, bf, lr;
     private static boolean isHover;
-
     private Polygon[] cube;
-    private static Polygon hover;
-    private static Polygon[] cubeHover;
-
     private Color color[];
     private Color top, bot, back, front, left, right;
-    private static Color hoverC;
-
     private Grid grid;
 
     private Canvas can;
@@ -41,48 +34,22 @@ public class Cube {
         this.y = y;
         this.z = z;
         this.color = new Color[3];
-        //noinspection UnusedAssignment
-        int colorHex = (red << 16) | (green << 8) | (blue);
-
+        colorHex = (red << 16) | (green << 8) | (blue);
         back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
         bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
         left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
         right = new Color((int) (red * 0.8), (int) (green * 0.8), (int) (blue * 0.8));
         top = new Color((int) (red * 0.9), (int) (green * 0.9), (int) (blue * 0.9));
         front = new Color(red, green, blue);
-        hoverC = new Color(0.2f, 1f, 0.2f, 0.6f);
         this.color[0] = top;
         this.color[1] = front;
         this.color[2] = right;
         cube = new Polygon[3];
         a = new int[3][4];
         b = new int[3][4];
-        {
-            for (int i = 0; i < 4; i++) {
-                a[0][i] = (int) grid.getPts()[z][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVecs().getX();
-                b[0][i] = (int) grid.getPts()[z][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVecs().getY();
-            }
-        }
-        cube[0] = new Polygon(a[0], b[0], 4);
-        {
-            for (int i = 0; i < 4; i++) {
-                a[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y].getVecs().getX();
-                b[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y].getVecs().getY();
-            }
-        }
-        cube[1] = new Polygon(a[1], b[1], 4);
-        {
-            for (int i = 0; i < 4; i++) {
-                a[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x][y + MU.makeSquareI(false, i, 4)].getVecs().getX();
-                b[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x][y + MU.makeSquareI(false, i, 4)].getVecs().getY();
-            }
-        }
-        cube[2] = new Polygon(a[2], b[2], 4);
-        hover = new Polygon();
-        cubeHover = new Polygon[3];
-        for (int i = 0; i < 3; i++) {
-            cubeHover[i] = new Polygon();
-        }
+        cube[0] = new Polygon();
+        cube[1] = new Polygon();
+        cube[2] = new Polygon();
     }
 
     public void updateCube() {
@@ -217,20 +184,6 @@ public class Cube {
             g2d.fill(cube[2]);
         }
 
-        if (isHover) {
-            drawCube(g2d);
-        }
-    }
-
-    private void drawCube(@NotNull Graphics2D g2d) {
-        g2d.setColor(Color.black);
-        for (int i = 0; i < 3; i++) {
-            g2d.draw(cubeHover[i]);
-        }
-        g2d.setColor(hoverC);
-        g2d.fill(hover);
-
-
     }
 
 
@@ -264,16 +217,6 @@ public class Cube {
         return x + " : " + y + " : " + z;
     }
 
-    public void hover(@NotNull Rectangle pnt) {
-        for (int i = 0; i < 3; i++) {
-            if (pnt.intersects(cube[i].getBounds())) {
-                cubeHover = cube;
-                hover = cube[i];
-
-            }
-        }
-    }
-
     public static void keyPressed(@NotNull KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_1) {
             isHover = !isHover;
@@ -281,8 +224,11 @@ public class Cube {
         }
     }
 
-    public void click(Rectangle pnt) {
-
+    public int getColorHex() {
+        return colorHex;
     }
 
+    public void setColorHex(int colorHex) {
+        this.colorHex = colorHex;
+    }
 }

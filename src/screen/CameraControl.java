@@ -38,9 +38,15 @@ public class CameraControl extends GuiComponent {
     private final guiTools.Button rotatorY;
     @NotNull
     private final guiTools.Button isometricView;
+    @NotNull
+    private guiTools.Button lockY;
+    @NotNull
+    private guiTools.Button lockX;
 
     private int rotationx = -1, rotationy = -1;
     private int direction = 1;
+    private boolean lockedY = false;
+    private boolean lockedX = false;
 
 
     public CameraControl(double x, double y, double width, Color bgColor) {
@@ -48,16 +54,17 @@ public class CameraControl extends GuiComponent {
         super(x, y, width, width, bgColor, 14, true);
         Image rotateImage = null;
         Image isometricImg = null;
+
         try {
-            rotateImage = ImageIO.read(Main.getResource("rotate.png"));
-            isometricImg = ImageIO.read(Main.getResource("isometric.png"));
+            rotateImage = ImageIO.read(Main.getResource("Images/rotate.png"));
+            isometricImg = ImageIO.read(Main.getResource("Images/isometric.png"));
 
         } catch (IOException e) {
             e.printStackTrace();
         }
         rotate = new Label(PU.getXInBounds(bounds, width * 0.15, 0.5), PU.getYInBounds(bounds, 25, 0.15), width * 0.15);
         rotateSlider = new Slider(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, 30, 0.2), Slider.HORIZONTAL, width * 0.5, 20, new Color(130, 130, 130), new Color(20, 20, 20));
-        assert (rotateImage != null ? rotateImage : null) != null;
+        assert rotateImage != null;
         assert isometricImg != null;
         rotator = new Button(PU.getXInBounds(bounds, width * 0.1, 0.14), PU.getYInBounds(bounds, width * 0.1, 0.15), width * 0.1, width * 0.1, rotateImage, () -> rotationx *= -1);
         add(rotate);
@@ -73,12 +80,45 @@ public class CameraControl extends GuiComponent {
         zoomSlider = new Slider(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, 30, 0.53 + 0.33), Slider.HORIZONTAL, width * 0.5, 20, new Color(130, 130, 130), new Color(20, 20, 20));
         add(zoom);
         add(zoomSlider);
-
         isometricView = new Button(PU.getXInBounds(bounds, width * 0.1, 0.6), PU.getYInBounds(bounds, width * 0.1, 0.37), width * 0.1, width * 0.1, isometricImg, () -> {
             ComponentManager.setRotateCamera(45);
             ComponentManager.setRotateyCamera(37);
         });
         add(isometricView);
+
+        try {
+            final Image lock = ImageIO.read(Main.getResource("Images/lock.png"));
+            final Image unlock = ImageIO.read(Main.getResource("Images/unlock.png"));
+            lockY = new Button(0, 0, 0, 0, unlock, () -> {
+                if (lockedY) {
+                    lockY.setButtonImage(unlock);
+                    lockedY = false;
+                    rotateSlider.setDisabled(true);
+                } else {
+                    lockY.setButtonImage(lock);
+                    lockedY = true;
+                    rotateSlider.setDisabled(false);
+                }
+            });
+            lockX = new Button(0, 0, 0, 0, unlock, () -> {
+                if (lockedX) {
+                    lockX.setButtonImage(unlock);
+                    lockedX = false;
+                    rotateySlider.setDisabled(true);
+                } else {
+                    lockX.setButtonImage(lock);
+                    lockedX = true;
+                    rotateySlider.setDisabled(false);
+                }
+            });
+            add(lockX);
+            add(lockY);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
         setToolBarTitle("CAMERA CONTROL");
     }
 
@@ -126,6 +166,8 @@ public class CameraControl extends GuiComponent {
                 direction *= -1;
             ComponentManager.setRotateyCamera((int) (ComponentManager.getCanvas().getGrid().getRotateY() + direction));
         }
+        lockX.setBounds(PU.getXInBounds(bounds, width * 0.1, 0.85), PU.getYInBounds(bounds, width * 0.1, 0.12), width * 0.1, width * 0.1);
+        lockY.setBounds(PU.getXInBounds(bounds, width * 0.1, 0.85), PU.getYInBounds(bounds, width * 0.1, 0.43), width * 0.1, width * 0.1);
     }
 
     @Override
@@ -156,5 +198,13 @@ public class CameraControl extends GuiComponent {
     @Override
     protected void mouseRelease(MouseEvent e) {
 
+    }
+
+    public boolean isLockedY() {
+        return lockedY;
+    }
+
+    public boolean isLockedX() {
+        return lockedX;
     }
 }

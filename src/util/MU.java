@@ -56,6 +56,28 @@ public class MU {
         return Math.atan(theta);
     }
 
+    @SuppressWarnings("unused")
+    public static double arcsin(double theta) {
+        return Math.asin(theta);
+    }
+
+    @SuppressWarnings("unused")
+    public static double arccos(double theta) {
+        return Math.acos(theta);
+    }
+
+    public static double sec(double degree) {
+        return 1 / cos(degree);
+    }
+
+    public static double cosec(double degree) {
+        return 1 / sin(degree);
+    }
+
+    public static double cot(double degree) {
+        return 1 / tan(degree);
+    }
+
     @Contract(pure = true)
     public static int makeSquareI(boolean shift, int i, int size) {
         if (i < 0) {
@@ -179,8 +201,12 @@ public class MU {
     }
 
     @Contract(pure = true)
-    public static double getPercent(double val1, double val2){
-     return val1/val2;
+    public static double getPercent(double val1, double val2) {
+        return val1 / val2;
+    }
+
+    public static double min(double val1, double val2) {
+        return val1 <= val2 ? val1 : val2;
     }
 
 }

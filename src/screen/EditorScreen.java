@@ -26,12 +26,13 @@ public class EditorScreen extends JPanel {
         Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();
         s_maxHeight = ss.height;
         s_maxWidth = ss.width;
-        cm = new ComponentManager();
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jf.setLocation(0, 0);
         jf.setSize((int)(s_maxWidth*0.9), (int)(s_maxHeight*0.9));
 
-        //jf.setResizable(false);
+        s_maxWidth = jf.getWidth();
+        s_maxHeight = jf.getHeight();
+        cm = new ComponentManager();
         addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
@@ -94,8 +95,6 @@ public class EditorScreen extends JPanel {
         jf.setVisible(true);
         jf.setResizable(false);
         jf.setLocationRelativeTo(null);
-        s_maxWidth = jf.getWidth();
-        s_maxHeight = jf.getHeight();
         displayScreenInfo();
 
     }

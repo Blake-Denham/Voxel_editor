@@ -52,7 +52,7 @@ public class ColorWheel extends GuiComponent {
 
     @Override
     public void update() {
-        setBounds(EditorScreen.s_maxWidth*(1-MU.getPercent(305,1920))-16, 10+26,EditorScreen.s_maxWidth*MU.getPercent(300,1920),EditorScreen.s_maxWidth*MU.getPercent(300,1920)*1.4);
+        setBounds(EditorScreen.s_maxWidth * (1 - MU.getPercent(305, 1920)) - 16, 36, EditorScreen.s_maxWidth * MU.getPercent(300, 1920), EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4);
         r = width * 0.4;
         colorWheel.setFrame(PU.getXInBounds(bounds, r * 2, 0.5), PU.getYInBounds(bounds, r * 2, MU.getPercent(30, height)), r * 2, r * 2);
         xc = colorWheel.getCenterX();

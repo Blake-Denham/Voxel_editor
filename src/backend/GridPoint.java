@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import util.MU;
 import util.Vector2D;
 
-class GridPoint {
+public class GridPoint {
 
     @NotNull
     private final Vector2D vecs;
