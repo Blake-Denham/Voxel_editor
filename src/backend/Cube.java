@@ -186,7 +186,6 @@ public class Cube {
 
     }
 
-
     private boolean cubeAbove() {
         return z + 1 < grid.getHeight() - 1 && can.getCubes()[z + 1][x][y] != null;
     }
@@ -224,11 +223,21 @@ public class Cube {
         }
     }
 
+    @SuppressWarnings("unused")
     public int getColorHex() {
         return colorHex;
     }
 
+    @SuppressWarnings("unused")
     public void setColorHex(int colorHex) {
         this.colorHex = colorHex;
+    }
+
+    public int[][] getXPts() {
+        return a;
+    }
+
+    public int[][] getYPts() {
+        return b;
     }
 }

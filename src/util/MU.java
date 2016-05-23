@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class MU {
 
-    //rotation and scale////////////////////////////////////////////////////////////////////////////
     @NotNull
     @Contract("_, _, _ -> !null")
     public static Vector2D rotate(int a, int pnts, double rotate) {
@@ -36,9 +35,7 @@ public class MU {
     public static Vector2D rotatey(double rotate) {
         return new Vector2D(1, sin(rotate));
     }
-    ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //trig functions////////////////////////////////////////////////////////////////////////////////
     public static double cos(double degree) {
         return Math.cos(Math.toRadians(degree));
     }
@@ -74,6 +71,7 @@ public class MU {
         return 1 / sin(degree);
     }
 
+    @SuppressWarnings("unused")
     public static double cot(double degree) {
         return 1 / tan(degree);
     }

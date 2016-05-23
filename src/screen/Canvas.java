@@ -70,7 +70,6 @@ public class Canvas extends GuiComponent {
         //cuboid(0, 0, 0, side - 1, side - 1, height - 1);
         //sphere((int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0));
         //cuboid(12,12,12,1,1,1);
-        rayCast(0);
     }
 
     @SuppressWarnings({"ConstantConditions", "SameParameterValue", "unused"})
@@ -103,7 +102,7 @@ public class Canvas extends GuiComponent {
 
     @SuppressWarnings("unused")
     public void setCube(int x, int y, int z, int red, int green, int blue) {
-        if (!(x < 0) && !(x >= grid.getSide() - 1) && !(y < 0) && !(y >= grid.getSide() - 1) && !(z < 0) && !(z >= grid.getHeight() - 1))
+        if (checkIfInBounds(x, y, z))
             cubes[z][x][y] = new Cube(this, x, y, z, red, green, blue);
     }
 
@@ -118,6 +117,9 @@ public class Canvas extends GuiComponent {
         }
     }
 
+    public boolean checkIfInBounds(int x, int y, int z) {
+        return (!(x < 0) && !(x >= grid.getSide() - 1) && !(y < 0) && !(y >= grid.getSide() - 1) && !(z < 0) && !(z >= grid.getHeight() - 1));
+    }
     @Contract(pure = true)
     @SuppressWarnings("unused")
     public static boolean checkForCube(@NotNull Canvas c, int x, int y, int z) {
@@ -160,7 +162,7 @@ public class Canvas extends GuiComponent {
 
 
         clearCanvas();
-        rayCast(0);
+        rayCast(g2d);
         if (i >= grid.getSide() - 1 || i <= -(grid.getSide() - 1)) {
             c *= -1;
         }
@@ -182,43 +184,21 @@ public class Canvas extends GuiComponent {
         // TODO: 5/22/2016 make drawLine method.
     }
 
-    private void rayCast(double dx) {
-        // TODO: 5/22/2016 fix vertical ray casting and expand from 90 to 360 degrees.
-        int side = (int) ((grid.getSide() - 1) / MU.cos(grid.getRotateY()));
-        double rotate = grid.getRotate();
-        int r = (int) (MU.min(Math.abs(side * MU.sec(rotate)), Math.abs(side * MU.cosec(rotate))));
-        for (int z = 0; z < r * 360; z++) {
-            double x_ = ((z / 360.0) * MU.sin(rotate));
-            double y_ = ((z / 360.0) * MU.cos(rotate));
-            if (dx < 0) {
-                y_ += -dx;
-            } else {
-                x_ += dx;
-            }
-            setCube((int) x_, (int) y_, (int) ((z / 360) * MU.sin(grid.getRotateY())), 0, 0, 0xff);
+    private void rayCast(Graphics2D g2d) {
+        // TODO: 5/22/2016 90 to 360 degrees needed, make dependant on mouse location.
+        int side = (grid.getSide());
+        double sidey = MU.min(Math.abs(side * MU.sec(grid.getRotateY())), Math.abs(side * MU.cosec(grid.getRotateY())));
+        double r = MU.min(Math.abs(sidey * MU.sec(grid.getRotate())), Math.abs(sidey * MU.cosec(grid.getRotate())));
+        double x_;
+        double y_;
+        double z_;
+        for (int i = 0; i < (int) r * 360; i++) {
+            x_ = (i / 360.0) * MU.cos(grid.getRotateY()) * MU.sin(grid.getRotate());
+            y_ = (i / 360.0) * MU.cos(grid.getRotateY()) * MU.cos(grid.getRotate());
+            z_ = (i / 360.0) * MU.sin(grid.getRotateY());
+            setCube((int) x_, (int) y_, (int) z_, 0xff, 0xff, 0xff);
         }
-  /*            for (int i = 0; i < r * 360; i++) {
-            double x_ = ((i / 360.0) * MU.sin(rotate));
-            double y_ = ((i / 360.0) * MU.cos(rotate));
-            double z_ = (1);
-            if (dx < 0) {
-                y_ += -dx;
-            } else {
-                x_ += dx;
-            }
-            setCube((int) x_, (int) y_, (int) z_, 0xff, 0x00, 0x00);
 
-        }
-          for(int z = 0;z<h;z++){
-            double x_ = ((r) * MU.sin(rotate));
-            double y_ = ((r) * MU.cos(rotate));
-            if (dx < 0) {
-                y_ += -dx;
-            } else {
-                x_ += dx;
-            }
-            setCube((int) x_, (int) y_, z, 0x00,0xff,0x00);
-        }*/
     }
 
     @Override
