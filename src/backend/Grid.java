@@ -8,7 +8,6 @@ import java.awt.*;
 public class Grid {
 
     /**
-     * -use
      * class is used for creating 3-Dimensional space which can my rotated and scaled
      * @see GridPoint is combined
      * @see CirclePoint
@@ -21,15 +20,11 @@ public class Grid {
     private final int[][][] xp;
     @NotNull
     private final int[][][] yp;
-
     private double rotate, rotatey, zoom;
-
     @NotNull
     private final GridPoint[][][] pts;
-
     @NotNull
     private final Polygon[][] p;
-
     @NotNull
     private final CirclePoint[] zAxis;
     @NotNull
@@ -67,7 +62,7 @@ public class Grid {
                 }
             }
             pts[z][0][0].setVec(x_, y_);
-            zAxis[z] = new CirclePoint(1, x_, y_, 50 * z, 90, 0, (double) 37 - 90, (double) 15);
+            zAxis[z] = new CirclePoint(1, x_, y_, 50 * (z + 1), 90, 0, (double) 37 - 90, (double) 15);
             y_ = (int) (zAxis[z].getPts()[0].getY());
         }
         p = new Polygon[(side) - 1][side - 1];
@@ -96,7 +91,7 @@ public class Grid {
                 }
             }
             pts[zi][0][0].setVec(x_, y_);
-            zAxis[zi].update(x_, (int) (y - (y - cent.getPts()[0].getY())), (int) (zi * Math.abs(Math.sqrt(MU.square(100 * MU.cos(45)) + MU.square(100 * MU.sin(45))) - Math.sqrt(MU.square(100 * 2 * MU.cos(45)) + MU.square(100 * 2 * MU.sin(45)))) / Math.sqrt(2)), 90, 0, rotatey - 90, zoom);
+            zAxis[zi].update(x_, (int) (y - (y - cent.getPts()[0].getY())), (int) ((zi + 1) * Math.abs(Math.sqrt(MU.square(100 * MU.cos(45)) + MU.square(100 * MU.sin(45))) - Math.sqrt(MU.square(100 * 2 * MU.cos(45)) + MU.square(100 * 2 * MU.sin(45)))) / Math.sqrt(2)), 90, 0, rotatey - 90, zoom);
             y_ = (int) (zAxis[zi].getPts()[0].getY());
         }
         for (int xi = 0; xi < side - 1; xi++) {
@@ -230,5 +225,9 @@ public class Grid {
 
     public int getY() {
         return y;
+    }
+
+    public int getOppositePoints(int location) {
+        return 0b1000 - location;
     }
 }

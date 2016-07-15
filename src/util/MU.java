@@ -63,10 +63,12 @@ public class MU {
         return Math.acos(theta);
     }
 
+    @SuppressWarnings("unused")
     public static double sec(double degree) {
         return 1 / cos(degree);
     }
 
+    @SuppressWarnings("unused")
     public static double cosec(double degree) {
         return 1 / sin(degree);
     }
@@ -113,6 +115,15 @@ public class MU {
     }
 
     @Contract(pure = true)
+    public static int inverseBit(int i) {
+        if (i == 0 || i == 1) {
+            return Math.abs(i - 1);
+        } else {
+            return 0;
+        }
+    }
+
+    @Contract(pure = true)
     public static double square(double val) {
         return val * val;
     }
@@ -150,8 +161,6 @@ public class MU {
                 return true;
             }
         }
-
-
         return false;
     }
 
@@ -203,8 +212,14 @@ public class MU {
         return val1 / val2;
     }
 
+    @Contract(pure = true)
     public static double min(double val1, double val2) {
         return val1 <= val2 ? val1 : val2;
+    }
+
+    @Contract(pure = true)
+    public static int extractDigit(int index, int binNumber) {
+        return (binNumber & (0b1 << (index))) >> (index);
     }
 
 }

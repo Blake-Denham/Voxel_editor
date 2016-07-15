@@ -3,6 +3,7 @@ package screen;
 
 import backend.Cube;
 import backend.Grid;
+import backend.Settings;
 import guiTools.GuiComponent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,9 @@ public class Canvas extends GuiComponent {
     private final PaintEvent paintX;
     @NotNull
     private final PaintEvent paintY;
+    @NotNull
+    private Settings canvasSettings;
+
 
     @SuppressWarnings("SameParameterValue")
     public Canvas(int side, int height) {
@@ -41,6 +45,8 @@ public class Canvas extends GuiComponent {
         shiftSquare = MU.makeSquareB(true, (int) grid.getRotate(), 360);
         half = MU.makeHalvesB(true, (int) grid.getRotate(), 360);
         maxNoCubes = (int) MU.square(side - 1) * (height - 1);
+        int x_ = MU.makeSquareI(false, (int) grid.getRotate(), 360);
+        int y_ = MU.makeSquareI(true, (int) grid.getRotate(), 360);
         paintY = (PaintEvent e, int z, int y, Graphics2D g2d) -> {
             if (!square) {
                 for (int yi = 0; yi < grid.getSide() - 1; yi++) {
@@ -68,7 +74,7 @@ public class Canvas extends GuiComponent {
             }
         };
         //cuboid(0, 0, 0, side - 1, side - 1, height - 1);
-        //sphere((int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0));
+        sphere((int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0));
         //cuboid(12,12,12,1,1,1);
     }
 
@@ -120,10 +126,11 @@ public class Canvas extends GuiComponent {
     public boolean checkIfInBounds(int x, int y, int z) {
         return (!(x < 0) && !(x >= grid.getSide() - 1) && !(y < 0) && !(y >= grid.getSide() - 1) && !(z < 0) && !(z >= grid.getHeight() - 1));
     }
+
     @Contract(pure = true)
     @SuppressWarnings("unused")
     public static boolean checkForCube(@NotNull Canvas c, int x, int y, int z) {
-        return c.cubes[z][x][y] != null;
+        return c.checkIfInBounds(x, y, z) && c.cubes[z][x][y] != null;
     }
 
     private void paintZ(@NotNull PaintEvent e, Graphics2D g2d) {
@@ -131,42 +138,15 @@ public class Canvas extends GuiComponent {
             for (int zi = grid.getHeight() - 2; zi > -1; zi--) {
                 e.event(paintX, zi, 0, g2d);
             }
+            if (ComponentManager.settings.isShowGrid())
             grid.paint(g2d);
         } else {
+            if (ComponentManager.settings.isShowGrid())
             grid.paint(g2d);
             for (int zi = 0; zi < grid.getHeight() - 1; zi++) {
                 e.event(paintX, zi, 0, g2d);
             }
         }
-    }
-
-    double i = -(22);
-    double c = 0.2;
-
-    @Override
-    protected void paintGuiComponent(@NotNull Graphics2D g2d) {
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
-        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-        g2d.setColor(Color.black);
-
-        if (half) {
-            paintZ(paintY, g2d);
-            grid.paintAxis(g2d);
-        } else {
-            grid.paintAxis(g2d);
-            paintZ(paintY, g2d);
-        }
-
-        g2d.setColor(Color.white);
-
-
-        clearCanvas();
-        rayCast(g2d);
-        if (i >= grid.getSide() - 1 || i <= -(grid.getSide() - 1)) {
-            c *= -1;
-        }
-        i += c;
     }
 
     @SuppressWarnings("unused")
@@ -184,21 +164,51 @@ public class Canvas extends GuiComponent {
         // TODO: 5/22/2016 make drawLine method.
     }
 
-    private void rayCast(Graphics2D g2d) {
-        // TODO: 5/22/2016 90 to 360 degrees needed, make dependant on mouse location.
-        int side = (grid.getSide());
-        double sidey = MU.min(Math.abs(side * MU.sec(grid.getRotateY())), Math.abs(side * MU.cosec(grid.getRotateY())));
-        double r = MU.min(Math.abs(sidey * MU.sec(grid.getRotate())), Math.abs(sidey * MU.cosec(grid.getRotate())));
-        double x_;
-        double y_;
-        double z_;
-        for (int i = 0; i < (int) r * 360; i++) {
-            x_ = (i / 360.0) * MU.cos(grid.getRotateY()) * MU.sin(grid.getRotate());
-            y_ = (i / 360.0) * MU.cos(grid.getRotateY()) * MU.cos(grid.getRotate());
-            z_ = (i / 360.0) * MU.sin(grid.getRotateY());
-            setCube((int) x_, (int) y_, (int) z_, 0xff, 0xff, 0xff);
+    private void showCoords(Graphics2D g2d) {
+        int x_ = grid.getSide() - 1;
+        int y_ = grid.getSide() - 1;
+        int z_ = grid.getHeight() - 1;
+        int side = grid.getSide() - 1;
+        int height = grid.getHeight() - 2;
+        g2d.setColor(Color.white);
+        g2d.setFont(EditorScreen.font.deriveFont(11f));
+        g2d.drawString("(z,x,y)", (int) grid.getPts()[0][0][0].getVecs().getX(), (int) grid.getPts()[0][0][0].getVecs().getY() - 14);
+        g2d.drawString("(0,0,0)", (int) grid.getPts()[0][0][0].getVecs().getX(), (int) grid.getPts()[0][0][0].getVecs().getY());
+        g2d.drawString("(0," + side + ",0)", (int) grid.getPts()[0][x_][0].getVecs().getX(), (int) grid.getPts()[0][x_][0].getVecs().getY());
+        g2d.drawString("(0,0," + side + ")", (int) grid.getPts()[0][0][y_].getVecs().getX(), (int) grid.getPts()[0][0][y_].getVecs().getY());
+        g2d.drawString("(0," + side + "," + side + ")", (int) grid.getPts()[0][x_][y_].getVecs().getX(), (int) grid.getPts()[0][x_][y_].getVecs().getY());
+        g2d.drawString("(" + height + ",0,0)", (int) grid.getPts()[z_][0][0].getVecs().getX(), (int) grid.getPts()[z_][0][0].getVecs().getY());
+        g2d.drawString("(" + height + "," + side + ",0)", (int) grid.getPts()[z_][x_][0].getVecs().getX(), (int) grid.getPts()[z_][x_][0].getVecs().getY());
+        g2d.drawString("(" + height + ",0," + side + ")", (int) grid.getPts()[z_][0][y_].getVecs().getX(), (int) grid.getPts()[z_][0][y_].getVecs().getY());
+        g2d.drawString("(" + height + "," + side + "," + side + ")", (int) grid.getPts()[z_][x_][y_].getVecs().getX(), (int) grid.getPts()[z_][x_][y_].getVecs().getY());
+    }
+
+    @Override
+    protected void paintGuiComponent(@NotNull Graphics2D g2d) {
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+        g2d.setColor(Color.black);
+
+        if (half) {
+            paintZ(paintY, g2d);
+            if (ComponentManager.settings.isShowAxis()) {
+                grid.paintAxis(g2d);
+            }
+        } else {
+            if (ComponentManager.settings.isShowAxis()) {
+                grid.paintAxis(g2d);
+            }
+            paintZ(paintY, g2d);
         }
 
+        g2d.setColor(Color.white);
+        g2d.setColor(Color.white);
+        g2d.setColor(new Color(1f, 1f, 1f, 0.4f));
+
+        if (ComponentManager.settings.isShowCoords()) {
+            showCoords(g2d);
+        }
     }
 
     @Override
@@ -217,6 +227,8 @@ public class Canvas extends GuiComponent {
                 }
             }
         }
+
+
     }
 
     @Override
@@ -323,4 +335,5 @@ public class Canvas extends GuiComponent {
     public void setSelectedTool(int tool) {
         selectedTool = tool;
     }
+
 }

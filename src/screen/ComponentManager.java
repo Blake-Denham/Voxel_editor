@@ -1,5 +1,6 @@
 package screen;
 
+import backend.Settings;
 import guiTools.GuiComponent;
 import org.jetbrains.annotations.NotNull;
 import util.MU;
@@ -17,20 +18,29 @@ class ComponentManager extends JComponent {
     private final ArrayList<GuiComponent> guiComponents;
     private static ColorWheel colorWheel;
     private static Canvas canvas;
-    private static CameraControl ci;
+    private static CameraControl cc;
     private static CanvasManipulator cm;
+    private static CubeInfo ci;
+    private static CanvasDataManager cdm;
+    private static Color bgColor = new Color(55, 55, 55);
+    public static Settings settings;
 
     public ComponentManager() {
-
+        settings = new Settings();
         guiComponents = new ArrayList<>();
-        canvas = new Canvas(24, 24);
-        colorWheel = new ColorWheel(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * MU.getPercent(300, 1920), new Color(55, 55, 55));
-        ci = new CameraControl(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxHeight * MU.getPercent(EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4 - 1080 - 8, 1080), EditorScreen.s_maxWidth * MU.getPercent(250, 1920), new Color(55, 55, 55));
-        cm = new CanvasManipulator(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, new Color(55, 55, 55));
+        canvas = new Canvas(17, 17 + 1);
+        colorWheel = new ColorWheel(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * MU.getPercent(300, 1920), bgColor);
+        cc = new CameraControl(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxHeight * MU.getPercent(EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4 - 1080 - 8, 1080), EditorScreen.s_maxWidth * MU.getPercent(250, 1920), bgColor);
+        cm = new CanvasManipulator(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
+        ci = new CubeInfo(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxHeight * MU.getPercent(EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4 - 1080 - 8, 1080), EditorScreen.s_maxWidth * MU.getPercent(250, 1920), bgColor);
+        cdm = new CanvasDataManager(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
+        addComponent(cdm);
         addComponent(canvas);
         addComponent(colorWheel);
-        addComponent(ci);
+        addComponent(cc);
         addComponent(cm);
+        addComponent(ci);
+
 
     }
 
@@ -75,7 +85,6 @@ class ComponentManager extends JComponent {
         for (GuiComponent guiComponent : guiComponents) {
             guiComponent.paintAll(g2d);
         }
-
     }
 
     public static Canvas getCanvas() {
@@ -86,9 +95,13 @@ class ComponentManager extends JComponent {
         return colorWheel;
     }
 
+    public static CameraControl getCameraControl() {
+        return cc;
+    }
+
     @SuppressWarnings("unused")
     public static CameraControl getCanvasInfo() {
-        return ci;
+        return cc;
     }
 
     public static void setRotateCamera(int direction) {
@@ -114,5 +127,13 @@ class ComponentManager extends JComponent {
 
     public static void setTool(int tool) {
         canvas.setSelectedTool(tool);
+    }
+
+    public static void clearCanvas() {
+        int clear = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the canvas", "Clear dialogue", JOptionPane.YES_NO_OPTION);
+        if (clear == 0) {
+            System.out.println("clearing canvas");
+            canvas.clearCanvas();
+        }
     }
 }

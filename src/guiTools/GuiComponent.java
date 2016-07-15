@@ -25,7 +25,6 @@ public abstract class GuiComponent {
     protected Color bgColor;
     @NotNull
     protected final ArrayList<GuiComponent> subComponents;
-
     private int minimized = 1;
     private double p = 0.98;
     private final boolean drawBackground;
@@ -34,12 +33,14 @@ public abstract class GuiComponent {
     private Rectangle toolBar;
     private Button minimize;
     private String toolBarTitle = "";
+    private String minimizeToolTip = "minimize";
     // TODO: 5/22/2016 make disabling components possible. 
     private boolean disabled = false;
 
     protected GuiComponent(double x, double y, double width, double height, Color bgColor, int shadowSize, boolean minimizable) {
         this.minimizable = minimizable;
         subComponents = new ArrayList<>();
+
         if (minimizable) {
             bounds = new Rectangle((int) x, (int) y + 30, (int) width, (int) height);
             setLocation(x, y + 30);
@@ -53,12 +54,14 @@ public abstract class GuiComponent {
             try {
                 final Image buttonSprite1 = ImageIO.read(Main.getResource("Images/minimize.png"));
                 final Image buttonSprite2 = ImageIO.read(Main.getResource("Images/maximize.png"));
-                minimize = new Button(PU.getXInBounds(toolBar, 25, 0.98), PU.getYInBounds(toolBar, 25, 0.5), 25, 25, buttonSprite1, () -> {
+                minimize = new Button(PU.getXInBounds(toolBar, 25, 0.98), PU.getYInBounds(toolBar, 25, 0.5), 25, 25, buttonSprite1, minimizeToolTip, () -> {
                     minimized *= -1;
                     if (minimized > 0) {
                         minimize.setButtonImage(buttonSprite1);
+                        minimizeToolTip = "minimize";
                     } else {
                         minimize.setButtonImage(buttonSprite2);
+                        minimizeToolTip = "maximize";
                     }
                 });
             } catch (IOException e) {

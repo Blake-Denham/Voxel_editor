@@ -14,7 +14,7 @@ public class EditorScreen extends JPanel {
     private final JFrame jf;
     @NotNull
     private final ComponentManager cm;
-
+    public static int mouseX, mouseY;
     public EditorScreen() {
         super();
         try {
@@ -28,7 +28,7 @@ public class EditorScreen extends JPanel {
         s_maxWidth = ss.width;
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         jf.setLocation(0, 0);
-        jf.setSize((int)(s_maxWidth*0.9), (int)(s_maxHeight*0.9));
+        jf.setSize((int) (s_maxWidth * 0.9), (int) ((s_maxWidth * 0.9) * 9.0 / 16));
 
         s_maxWidth = jf.getWidth();
         s_maxHeight = jf.getHeight();
@@ -42,6 +42,8 @@ public class EditorScreen extends JPanel {
             @Override
             public void mouseMoved(MouseEvent e) {
                 cm.hover(e);
+                mouseX = e.getX();
+                mouseY = e.getY();
             }
         });
         addMouseListener(new MouseListener() {
