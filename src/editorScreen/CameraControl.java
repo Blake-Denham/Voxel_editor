@@ -1,4 +1,4 @@
-package screen;
+package editorScreen;
 
 import guiTools.Button;
 import guiTools.GuiComponent;

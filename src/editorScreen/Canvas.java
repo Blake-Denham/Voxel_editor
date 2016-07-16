@@ -1,9 +1,9 @@
-package screen;
+package editorScreen;
 
 
 import backend.Cube;
 import backend.Grid;
-import backend.Settings;
+import backend.Project;
 import guiTools.GuiComponent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -20,10 +20,12 @@ public class Canvas extends GuiComponent {
     private static int mx, my, mb, selectedTool;
     private int noCubes = 0;
     private int maxNoCubes = 0;
+    private int side, height;
+    private static boolean inPos = false;
     @NotNull
     private final Grid grid;
     @NotNull
-    private final Cube[][][] cubes;
+    private Cube[][][] cubes;
     @NotNull
     private final Rectangle pnt;
     private boolean square, shiftSquare, half;
@@ -31,9 +33,7 @@ public class Canvas extends GuiComponent {
     private final PaintEvent paintX;
     @NotNull
     private final PaintEvent paintY;
-    @NotNull
-    private Settings canvasSettings;
-
+    private Rectangle displayPicture;
 
     @SuppressWarnings("SameParameterValue")
     public Canvas(int side, int height) {
@@ -47,6 +47,8 @@ public class Canvas extends GuiComponent {
         maxNoCubes = (int) MU.square(side - 1) * (height - 1);
         int x_ = MU.makeSquareI(false, (int) grid.getRotate(), 360);
         int y_ = MU.makeSquareI(true, (int) grid.getRotate(), 360);
+        this.side = side;
+        this.height = height;
         paintY = (PaintEvent e, int z, int y, Graphics2D g2d) -> {
             if (!square) {
                 for (int yi = 0; yi < grid.getSide() - 1; yi++) {
@@ -76,6 +78,16 @@ public class Canvas extends GuiComponent {
         //cuboid(0, 0, 0, side - 1, side - 1, height - 1);
         sphere((int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0));
         //cuboid(12,12,12,1,1,1);
+
+
+    }
+
+    public static boolean isInPos() {
+        return inPos;
+    }
+
+    public static void setPos(boolean pos) {
+        Canvas.inPos = pos;
     }
 
     @SuppressWarnings({"ConstantConditions", "SameParameterValue", "unused"})
@@ -139,10 +151,10 @@ public class Canvas extends GuiComponent {
                 e.event(paintX, zi, 0, g2d);
             }
             if (ComponentManager.settings.isShowGrid())
-            grid.paint(g2d);
+                grid.paint(g2d);
         } else {
             if (ComponentManager.settings.isShowGrid())
-            grid.paint(g2d);
+                grid.paint(g2d);
             for (int zi = 0; zi < grid.getHeight() - 1; zi++) {
                 e.event(paintX, zi, 0, g2d);
             }
@@ -202,13 +214,13 @@ public class Canvas extends GuiComponent {
             paintZ(paintY, g2d);
         }
 
-        g2d.setColor(Color.white);
-        g2d.setColor(Color.white);
+
         g2d.setColor(new Color(1f, 1f, 1f, 0.4f));
 
         if (ComponentManager.settings.isShowCoords()) {
             showCoords(g2d);
         }
+
     }
 
     @Override
@@ -320,6 +332,14 @@ public class Canvas extends GuiComponent {
         return maxNoCubes;
     }
 
+    public int getSide() {
+        return side;
+    }
+
+    public int getCanvasHeight() {
+        return height;
+    }
+
     public void setRotate(int direction) {
         grid.setRotate(direction);
     }
@@ -336,4 +356,29 @@ public class Canvas extends GuiComponent {
         selectedTool = tool;
     }
 
+    public void setCubeData(Project p) {
+        cubes = p.getCubeData();
+    }
+
+    public void setDisplayPicture() {
+        displayPicture = new Rectangle();
+        setRotate(45);
+        setRotatey(37);
+        setZoom(15);
+
+        displayPicture.setBounds(
+                (int) (grid.getPts()[0][0][side - 1].getVecs().getX()),
+                (int) (grid.getPts()[height - 1][0][0].getVecs().getY() + 26),
+                (int) (grid.getPts()[height - 1][side - 1][0].getVecs().getX() - grid.getPts()[0][0][side - 1].getVecs().getX()),
+                (int) (grid.getPts()[0][side - 1][side - 1].getVecs().getY() - grid.getPts()[height - 1][0][0].getVecs().getY()));
+        grid.setLocation(EditorScreen.s_maxWidth / 2, EditorScreen.s_maxHeight / 2 + 100);
+        ComponentManager.settings.setShowAxis(false);
+        ComponentManager.settings.setShowCoords(false);
+        ComponentManager.settings.setShowGrid(false);
+        inPos = true;
+    }
+
+    public Rectangle getDisplayImage() {
+        return displayPicture;
+    }
 }

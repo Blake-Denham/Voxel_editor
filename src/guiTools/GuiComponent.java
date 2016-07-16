@@ -1,8 +1,8 @@
 package guiTools;
 
+import editorScreen.EditorScreen;
+import editorScreen.Main;
 import org.jetbrains.annotations.NotNull;
-import screen.EditorScreen;
-import screen.Main;
 import util.PU;
 
 import javax.imageio.ImageIO;

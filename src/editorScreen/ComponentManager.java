@@ -1,5 +1,6 @@
-package screen;
+package editorScreen;
 
+import backend.Project;
 import backend.Settings;
 import guiTools.GuiComponent;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
 
-class ComponentManager extends JComponent {
+public class ComponentManager extends JComponent {
     @NotNull
     private final ArrayList<GuiComponent> guiComponents;
     private static ColorWheel colorWheel;
@@ -135,5 +136,13 @@ class ComponentManager extends JComponent {
             System.out.println("clearing canvas");
             canvas.clearCanvas();
         }
+    }
+
+    public static void setDisplayImage() {
+        canvas.setDisplayPicture();
+    }
+
+    public static void loadProjectIntoCanvas(Project p) {
+        canvas = new Canvas(p.getSide(), p.getCanvasHeight());
     }
 }

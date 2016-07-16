@@ -1,7 +1,7 @@
 package guiTools;
 
+import editorScreen.EditorScreen;
 import org.jetbrains.annotations.NotNull;
-import screen.EditorScreen;
 import util.MU;
 import util.PU;
 

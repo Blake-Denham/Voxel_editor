@@ -1,13 +1,11 @@
-package screen;
+package editorScreen;
 
-import backend.Project;
 import guiTools.Button;
 import guiTools.GuiComponent;
 import util.MU;
 import util.PU;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -16,6 +14,8 @@ import java.io.IOException;
 
 public class CanvasDataManager extends GuiComponent {
     private guiTools.Button save, load, newProject;
+    private boolean isSaving = false;
+    private String saveName;
 
     protected CanvasDataManager(double x, double y, double width, double height, Color bgColor) {
         super(x, y, width, height, bgColor, 14, true);
@@ -26,15 +26,13 @@ public class CanvasDataManager extends GuiComponent {
             Image np = ImageIO.read(Main.getResource("Images/new.png"));
 
             save = new Button(0, 0, 0, 0, s, "save", () -> {
-                Main.serialize(new Project(ComponentManager.getCanvas().getCubes()), "assets\\Data\\projects\\" + JOptionPane.showInputDialog("Enter file name"));
+
             });
             add(save);
-            load = new Button(0, 0, 0, 0, l, "load", () -> {
-
-            });
+            load = new Button(0, 0, 0, 0, l, "load", Main::openLoadScreen);
             add(load);
             newProject = new Button(0, 0, 0, 0, np, "new Project", () -> {
-
+                ComponentManager.loadProjectIntoCanvas(Main.loadProject(""));
             });
             add(newProject);
 
@@ -45,7 +43,6 @@ public class CanvasDataManager extends GuiComponent {
 
     @Override
     protected void paintGuiComponent(Graphics2D g2d) {
-
     }
 
     @Override
@@ -54,6 +51,7 @@ public class CanvasDataManager extends GuiComponent {
         save.setBounds(PU.getXInBounds(bounds, width * 0.25, 0.1), PU.getYInBounds(bounds, width * 0.25, 0.15), width * 0.25, width * 0.25);
         load.setBounds(PU.getXInBounds(bounds, width * 0.25, 0.5), PU.getYInBounds(bounds, width * 0.25, 0.15), width * 0.25, width * 0.25);
         newProject.setBounds(PU.getXInBounds(bounds, width * 0.25, 0.9), PU.getYInBounds(bounds, width * 0.25, 0.15), width * 0.25, width * 0.25);
+
     }
 
     @Override

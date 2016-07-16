@@ -1,4 +1,4 @@
-package screen;
+package editorScreen;
 
 import guiTools.GuiComponent;
 import util.MU;

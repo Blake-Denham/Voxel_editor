@@ -1,7 +1,7 @@
 package backend;
 
+import editorScreen.Canvas;
 import org.jetbrains.annotations.NotNull;
-import screen.Canvas;
 import util.MU;
 
 import java.awt.*;

@@ -1,4 +1,4 @@
-package screen;
+package editorScreen;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -10,6 +10,7 @@ import java.io.IOException;
 public class EditorScreen extends JPanel {
     public static int s_maxWidth, s_maxHeight;
     public static Font font;
+    public static int locX, locY;
     @NotNull
     private final JFrame jf;
     @NotNull
@@ -108,7 +109,8 @@ public class EditorScreen extends JPanel {
         super.paint(g);
         s_maxWidth = jf.getWidth();
         s_maxHeight = jf.getHeight();
-
+        locX = jf.getX();
+        locY = jf.getY();
         Graphics2D g2d = (Graphics2D) g;
         g2d.setFont(font);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
