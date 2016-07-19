@@ -27,12 +27,12 @@ public class CubeInfo extends GuiComponent {
     @Override
     protected void update() {
         double y_;
-        if (ComponentManager.getCameraControl().getMinimized() < 0) {
-            y_ = ComponentManager.getCameraControl().getY() + 15 + 30;
+        if (ComponentManager.getCanvasDataManger().getMinimized() < 0) {
+            y_ = ComponentManager.getCanvasDataManger().getY() + 15 + 30;
         } else {
-            y_ = ComponentManager.getCameraControl().getY() + ComponentManager.getCameraControl().getHeight() + 15 + 30;
+            y_ = ComponentManager.getCanvasDataManger().getY() + ComponentManager.getCanvasDataManger().getHeight() + 15 + 30;
         }
-        setBounds(EditorScreen.s_maxWidth * (1 - MU.getPercent(305, 1920)) - 16, y_, EditorScreen.s_maxWidth * MU.getPercent(300, 1920), EditorScreen.s_maxWidth * MU.getPercent(250, 1920) * 0.8);
+        setBounds((EditorScreen.s_maxWidth * (MU.getPercent(5 + 25, 1920)) - 16), y_, EditorScreen.s_maxWidth * MU.getPercent(310, 1920), EditorScreen.s_maxWidth * MU.getPercent(250, 1920) * 0.8);
     }
 
     @Override

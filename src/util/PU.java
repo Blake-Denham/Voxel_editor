@@ -107,4 +107,10 @@ public class PU {
         double bh = bounds.getHeight();
         return y + (bh - height) * (percentY);
     }
+
+    public Color getColorRGB(int rgb) {
+        System.out.println(Integer.toHexString((rgb << 8) | 0xff));
+        return new Color((rgb << 8) | 0xff);
+    }
+
 }

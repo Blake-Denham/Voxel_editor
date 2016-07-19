@@ -3,10 +3,10 @@ package editorScreen;
 import backend.Project;
 import loadScreen.LoadScreen;
 
-import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
+
 
 
 public class Main {
@@ -14,6 +14,8 @@ public class Main {
     public static Robot programRobot;
     private static final int tickRate = 10;
     private static LoadScreen ls;
+    private static EditorScreen editor;
+    public static String appPath;
 
     public static void openLoadScreen() {
         ls = new LoadScreen();
@@ -23,9 +25,17 @@ public class Main {
         ls = null;
     }
 
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static EditorScreen getEditor() {
+        return editor;
+    }
 
-        EditorScreen editor = new EditorScreen();
+    public static LoadScreen getLoadScreen() {
+        return ls;
+    }
+
+    public static void main(String[] args) throws InterruptedException, IOException {
+        appPath = System.getProperty("user.dir");
+        editor = new EditorScreen();
         try {
             programRobot = new Robot();
         } catch (AWTException e) {
@@ -52,9 +62,10 @@ public class Main {
     }
 
     public static void serialize(Project p, String newFileName) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File("assets\\data\\project\\" + newFileName + ".vem")))) {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(appPath + "\\data\\project\\" + newFileName + ".vem")))) {
             out.writeObject(p);
         } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
             System.err.println("serialization has failed");
             System.out.println(e.getMessage());
         }
@@ -62,9 +73,8 @@ public class Main {
 
     public static Project loadProject(String fileName) {
         Project canvas = null;
-
         try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("data\\project\\" + fileName + ".vem"));
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(appPath + "\\data\\project\\" + fileName + ".vem"));
             canvas = (Project) (objectInputStream.readObject());
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -76,29 +86,5 @@ public class Main {
 
         return canvas;
     }
-
-    public static void cropImage(Image src, Rectangle crop, String pathName) {
-        int x = (int) crop.getX(), y = (int) crop.getY(), w = (int) crop.getWidth(), h = (int) crop.getHeight();
-
-        BufferedImage dst = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-        dst.getGraphics().drawImage(src, 0, 0, w, h, x, y, x + w, y + h, null);
-        try {
-            ImageIO.write(dst, "png", new File(pathName + ".png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static BufferedImage screenShot() {
-        BufferedImage src;
-        src = Main.programRobot.createScreenCapture(new Rectangle(EditorScreen.locX, EditorScreen.locY, EditorScreen.s_maxWidth, EditorScreen.s_maxHeight));
-        try {
-            ImageIO.write(src, "png", new File("temp" + ".png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return src;
-    }
-
 
 }

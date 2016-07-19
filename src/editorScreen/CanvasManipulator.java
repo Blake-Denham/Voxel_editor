@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created by Blake on 5/16/2016.
@@ -21,6 +22,16 @@ public class CanvasManipulator extends GuiComponent {
     public static final int SELECT = 1;
     public static final int ADD = 2;
     public static final int REMOVE = 3;
+
+    private static HashMap<Integer, String> tools;
+
+    static {
+        tools = new HashMap<>();
+        tools.put(PAINT, "PAINT");
+        tools.put(SELECT, "SELECT");
+        tools.put(ADD, "ADD");
+        tools.put(REMOVE, "REMOVE");
+    }
 
     private guiTools.Button hideGrid, hideCoords, hideAxis, clearCanvas;
 
@@ -108,6 +119,7 @@ public class CanvasManipulator extends GuiComponent {
         hideAxis.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.52), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
         hideCoords.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.62), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
         clearCanvas.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.72), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+        setToolBarTitle("TOOLS: " + tools.get(ComponentManager.getCanvas().getSelectedTool()));
 
     }
 

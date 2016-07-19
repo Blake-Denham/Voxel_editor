@@ -32,6 +32,7 @@ public class ColorWheel extends GuiComponent {
     @NotNull
     private final Rectangle selected;
 
+
     @SuppressWarnings("SameParameterValue")
     public ColorWheel(double x_, double y_, double width, Color bgColor) {
         super(x_, y_, width, width*1.5, bgColor, 14, true);
@@ -181,5 +182,21 @@ public class ColorWheel extends GuiComponent {
     @Override
     public String toString() {
         return "---------------------------\nColor Wheel:\n\tx: " + (int)x+"\n\ty: " + (int)y + "\n\twidth: " + (int)width + "\n\theight: " + (int)height+ "\n\t# of subComponents: " + subComponents.size()+ " \n---------------------------";
+    }
+
+    public int getRed() {
+        return selectedC.getRed();
+    }
+
+    public int getGreen() {
+        return selectedC.getGreen();
+    }
+
+    public int getBlue() {
+        return selectedC.getBlue();
+    }
+
+    public Color getColor() {
+        return selectedC;
     }
 }

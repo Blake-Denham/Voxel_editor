@@ -2,20 +2,28 @@ package backend;
 
 import java.io.Serializable;
 
-/**
- * Created by Blake on 7/15/2016.
- */
 public class Project implements Serializable {
-    private Cube[][][] cubeData;
+    private int[][][] cubeData;
     private int side, height;
 
     public Project(Cube[][][] cubes, int side, int height) {
-        cubeData = cubes;
-        this.side = side;
-        this.height = height;
+        cubeData = new int[height - 1][side - 1][side - 1];
+        for (int x = 0; x < side - 1; x++) {
+            for (int y = 0; y < side - 1; y++) {
+                for (int z = 0; z < height - 1; z++) {
+                    if (cubes[z][x][y] != null) {
+                        cubeData[z][x][y] = cubes[z][x][y].getColorHex();
+                    } else {
+                        cubeData[z][x][y] = -1;
+                    }
+                }
+            }
+        }
+        this.side = side - 1;
+        this.height = height - 1;
     }
 
-    public Cube[][][] getCubeData() {
+    public int[][][] getCubeData() {
         return cubeData;
     }
 

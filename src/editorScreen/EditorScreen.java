@@ -2,20 +2,25 @@ package editorScreen;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 public class EditorScreen extends JPanel {
     public static int s_maxWidth, s_maxHeight;
     public static Font font;
     public static int locX, locY;
+
     @NotNull
     private final JFrame jf;
     @NotNull
     private final ComponentManager cm;
     public static int mouseX, mouseY;
+
     public EditorScreen() {
         super();
         try {
@@ -28,9 +33,7 @@ public class EditorScreen extends JPanel {
         s_maxHeight = ss.height;
         s_maxWidth = ss.width;
         jf.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        jf.setLocation(0, 0);
-        jf.setSize((int) (s_maxWidth * 0.9), (int) ((s_maxWidth * 0.9) * 9.0 / 16));
-
+        jf.setSize(1280, 720);
         s_maxWidth = jf.getWidth();
         s_maxHeight = jf.getHeight();
         cm = new ComponentManager();
@@ -102,6 +105,26 @@ public class EditorScreen extends JPanel {
 
     }
 
+    public void getModelImage(String name) {
+        BufferedImage image = new BufferedImage(s_maxWidth, s_maxHeight, BufferedImage.TYPE_INT_ARGB);
+        ComponentManager.setDisplayImage();
+        Rectangle temp = ComponentManager.getCanvas().getDisplayImage();
+        int w = (int) temp.getWidth();
+        int h = (int) temp.getHeight() - 50;
+        int x = (int) temp.getX();
+        int y = (int) temp.getY() + 100;
+        paint(image.createGraphics());
+        image.getGraphics().drawImage(image, 0, 0, w, h, x, y, x + w, y + h, null);
+        BufferedImage croppedImage = image.getSubimage(0, 0, w, h);
+
+        File imageFile = new File(Main.appPath + "\\data\\projectImages\\" + name + ".png");
+        try {
+            ImageIO.write(croppedImage, "png", imageFile);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 
     @Override
@@ -125,7 +148,7 @@ public class EditorScreen extends JPanel {
         System.out.println("\ty: " + jf.getY());
         System.out.println("\twidth: " + s_maxWidth);
         System.out.println("\theight: " + s_maxHeight);
-        System.out.println("\tcolor model: " +jf.getColorModel().toString());
+        System.out.println("\tcolor model: " + jf.getColorModel().toString());
         System.out.println("---------------------------");
     }
 }

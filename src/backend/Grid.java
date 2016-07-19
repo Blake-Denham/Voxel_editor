@@ -1,14 +1,17 @@
 package backend;
 
+import editorScreen.Canvas;
 import org.jetbrains.annotations.NotNull;
 import util.MU;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class Grid {
 
     /**
      * class is used for creating 3-Dimensional space which can my rotated and scaled
+     *
      * @see GridPoint is combined
      * @see CirclePoint
      */
@@ -16,6 +19,7 @@ public class Grid {
     private int y;
     private final int height;
     private final int side;
+    private static Polygon empty = new Polygon();
     @NotNull
     private final int[][][] xp;
     @NotNull
@@ -29,11 +33,11 @@ public class Grid {
     private final CirclePoint[] zAxis;
     @NotNull
     private final CirclePoint cent;
-
     private static final Color colorGridp = new Color(1f, 1f, 1f, 0.6f);
     private static final Color colorGridn = new Color(1f, 1f, 1f, 0.3f);
+    private Polygon selected, wholeGrid;
+    private int selectedx, selectedy;
 
-    @SuppressWarnings("SameParameterValue")
     public Grid(int side, int height, int x, int y) {
         /**
          * creates the 3D space with specified location, dimensions, rotations and scale
@@ -43,6 +47,7 @@ public class Grid {
          * p = (180*arctan(yPoint/xPoint))/PI.
          * a circle,with a radius of root(200)*n,n increments until it is equal to height, and side^2 crosses are made at every rotatey of each one of the circles which were created
          */
+        selected = new Polygon();
         this.y = y;
         this.x = x;
         this.rotate = (double) 45;
@@ -77,6 +82,10 @@ public class Grid {
                 p[xi][yi] = new Polygon(xp[xi][yi], yp[xi][yi], 4);
             }
         }
+
+        int[] a = {xp[0][0][0], xp[0][side - 1][1], xp[side - 1][side - 1][2], xp[side - 1][0][3]};
+        int[] b = {yp[0][0][0], yp[0][side - 1][1], yp[side - 1][side - 1][2], yp[side - 1][0][3]};
+        wholeGrid = new Polygon(a, b, 4);
     }
 
     public void update() {
@@ -130,6 +139,9 @@ public class Grid {
                 }
             }
         }
+        g2d.setColor(Color.green);
+        g2d.fill(selected);
+        g2d.fill(wholeGrid);
     }
 
     public void paintAxis(@NotNull Graphics2D g2d) {
@@ -227,7 +239,42 @@ public class Grid {
         return y;
     }
 
-    public int getOppositePoints(int location) {
-        return 0b1000 - location;
+    public void gridInterfaceHover(MouseEvent e) {
+        int count = 0;
+        for (int x = 0; x < side - 1; x++) {
+            for (int y = 0; y < side - 1; y++) {
+                count++;
+                if (p[x][y].contains(e.getX(), e.getY())) {
+                    selected = p[x][y];
+                    selectedx = x;
+                    selectedy = y;
+                    count = 0;
+                    Canvas.setGridSelect(true);
+                }
+
+            }
+        }
+        if (count == MU.square(side - 1)) {
+
+            selected = empty;
+            Canvas.setGridSelect(false);
+        }
+
+    }
+
+    public Polygon getHovered() {
+        return selected;
+    }
+
+    public int getSelectedX() {
+        return selectedx;
+    }
+
+    public int getSelectedY() {
+        return selectedy;
+    }
+
+    public void setSelected(Polygon selected) {
+        this.selected = selected;
     }
 }

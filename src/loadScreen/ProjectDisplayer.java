@@ -27,7 +27,7 @@ public class ProjectDisplayer extends GuiComponent {
         projectButtons = new ArrayList<>();
         projectNames = new ArrayList<>();
         projectImages = new ArrayList<>();
-        File f = new File("assets\\data\\projects");
+        File f = new File("assets\\data\\project");
         int noProjects;
         //noinspection ConstantConditions
         noProjects = f.listFiles().length;

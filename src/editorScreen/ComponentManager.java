@@ -35,14 +35,22 @@ public class ComponentManager extends JComponent {
         cm = new CanvasManipulator(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
         ci = new CubeInfo(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxHeight * MU.getPercent(EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4 - 1080 - 8, 1080), EditorScreen.s_maxWidth * MU.getPercent(250, 1920), bgColor);
         cdm = new CanvasDataManager(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
-        addComponent(cdm);
         addComponent(canvas);
+        addComponent(cdm);
         addComponent(colorWheel);
         addComponent(cc);
         addComponent(cm);
         addComponent(ci);
 
 
+    }
+
+    public static CanvasManipulator getCanvasManipulator() {
+        return cm;
+    }
+
+    public static CanvasDataManager getCanvasDataManger() {
+        return cdm;
     }
 
     private void addComponent(GuiComponent component) {
@@ -142,7 +150,40 @@ public class ComponentManager extends JComponent {
         canvas.setDisplayPicture();
     }
 
+    public static void turnOnSettings() {
+        settings.setShowAxis(true);
+        settings.setShowGrid(true);
+        settings.setShowCoords(true);
+    }
+
     public static void loadProjectIntoCanvas(Project p) {
-        canvas = new Canvas(p.getSide(), p.getCanvasHeight());
+        canvas = new Canvas(p.getSide() + 1, p.getCanvasHeight() + 1);
+        int r;
+        int g;
+        int b;
+        for (int x = 0; x < p.getSide(); x++) {
+            for (int y = 0; y < p.getSide(); y++) {
+                for (int z = 0; z < p.getCanvasHeight(); z++) {
+                    if (p.getCubeData()[z][x][y] >= 0) {
+                        r = (p.getCubeData()[z][x][y] & 0xff0000) >> 16;
+                        g = (p.getCubeData()[z][x][y] & 0xff00) >> 8;
+                        b = (p.getCubeData()[z][x][y] & 0xff);
+                        canvas.setCube(x, y, z, r, g, b);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void removeCubeAt(int x, int y, int z) {
+        canvas.removeCubeAt(x, y, z);
+    }
+
+    public static void newCanvas(int side, int height) {
+        canvas = new Canvas(side, height);
+    }
+
+    public static void setVoxel(int x, int y, int z, int red, int green, int blue) {
+        canvas.setCube(x, y, z, red, green, blue);
     }
 }
