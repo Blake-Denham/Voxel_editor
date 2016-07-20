@@ -18,7 +18,7 @@ public class EditorScreen extends JPanel {
     @NotNull
     private final JFrame jf;
     @NotNull
-    private final ComponentManager cm;
+    private static ComponentManager cm;
     public static int mouseX, mouseY;
 
     public EditorScreen() {
@@ -103,6 +103,10 @@ public class EditorScreen extends JPanel {
         jf.setLocationRelativeTo(null);
         displayScreenInfo();
 
+    }
+
+    public static ComponentManager getComponentManager() {
+        return cm;
     }
 
     public void getModelImage(String name) {

@@ -14,6 +14,7 @@ public class Slider extends GuiComponent {
     private static final int VERTICAL = 0;
     public static final int HORIZONTAL = 1;
 
+    private GuiEvent onDrag;
     private final Color sliderColor;
     private final Color bgColor;
     private float percent;
@@ -130,6 +131,9 @@ public class Slider extends GuiComponent {
                     if (my < y) {
                         percent = 0f;
                     }
+                    if (onDrag != null) {
+                        onDrag.event();
+                    }
                     break;
                 case HORIZONTAL:
                     if (mx > x && mx < x + width) {
@@ -140,6 +144,9 @@ public class Slider extends GuiComponent {
                     }
                     if (mx < x) {
                         percent = 0f;
+                    }
+                    if (onDrag != null) {
+                        onDrag.event();
                     }
                     break;
             }
@@ -183,5 +190,9 @@ public class Slider extends GuiComponent {
 
     public void setPercent(float percent) {
         this.percent = percent;
+    }
+
+    public void setOnDrag(GuiEvent ge) {
+        onDrag = ge;
     }
 }

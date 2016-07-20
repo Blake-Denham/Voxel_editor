@@ -38,7 +38,7 @@ public class Canvas extends GuiComponent {
 
     public Canvas(int side, int height) {  //constructor
         super(0, 0, EditorScreen.s_maxWidth, EditorScreen.s_maxHeight); // the canvas counts as a gui component
-        grid = new Grid(side, height, EditorScreen.s_maxWidth / 2, EditorScreen.s_maxHeight / 2);//instantiates the grid in the centre of the screen
+        grid = new Grid(side, height, EditorScreen.s_maxWidth / 2, EditorScreen.s_maxHeight / 2 + 150);//instantiates the grid in the centre of the screen
         cubes = new Cube[height - 1][side - 1][side - 1];//instantiates the cube array according the grid
         pnt = new Rectangle(0, 0, 1, 1);// instantiates the rectangle used for user input
         square = MU.makeSquareB(false, (int) grid.getRotate(), 360);//see the MU(math utilities) class for information
@@ -373,11 +373,11 @@ public class Canvas extends GuiComponent {
         return height;// returns the height of the canvas
     }
 
-    public void setRotate(int rotate) {
+    public void setRotate(double rotate) {
         grid.setRotate(rotate);// sets the degree at which the canvas is horizontally rotated
     }
 
-    public void setRotatey(int rotate) {
+    public void setRotatey(double rotate) {
         grid.setRotatey(rotate);// sets the degree at which the canvas is vertically rotated
     }
 
@@ -422,7 +422,7 @@ public class Canvas extends GuiComponent {
 
     public void removeCubeAt(int x, int y, int z) {
         if (checkForCube(this, x, y, z)) {
-            cubes[x][y][z] = null;
+            cubes[z][x][y] = null;
         }
     }
 }

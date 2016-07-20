@@ -12,7 +12,7 @@ import java.io.*;
 public class Main {
 
     public static Robot programRobot;
-    private static final int tickRate = 10;
+    private static final int tickRate = 16;
     private static LoadScreen ls;
     private static EditorScreen editor;
     public static String appPath;
@@ -62,7 +62,8 @@ public class Main {
     }
 
     public static void serialize(Project p, String newFileName) {
-        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(appPath + "\\data\\project\\" + newFileName + ".vem")))) {
+        File f = new File(appPath + "\\data\\project\\" + newFileName + ".vem");
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f))) {
             out.writeObject(p);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());

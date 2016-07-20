@@ -38,9 +38,7 @@ public class CameraControl extends GuiComponent {
     private final guiTools.Button rotatorY;
     @NotNull
     private final guiTools.Button isometricView;
-    @NotNull
     private guiTools.Button lockY;
-    @NotNull
     private guiTools.Button lockX;
 
     private int rotationx = -1, rotationy = -1;
@@ -125,6 +123,7 @@ public class CameraControl extends GuiComponent {
     @Override
     protected void paintGuiComponent(@NotNull Graphics2D g2d) {
         g2d.setColor(Color.white);
+        g2d.setFont(EditorScreen.font.deriveFont(11f));
         g2d.drawString("Rotate x:", (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Rotate x:"), 0.24 + 0.07), (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.05) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6));
         g2d.drawString("Rotate y:", (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Rotate y:"), 0.24 + 0.07), (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6));
         g2d.drawString("Scale:", (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Scale:"), 0.24 + 0.06), (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.69) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6 + 1));
@@ -138,7 +137,7 @@ public class CameraControl extends GuiComponent {
         } else {
             y_ = ComponentManager.getColorWheel().getY() + ComponentManager.getColorWheel().getHeight() + 15 + 30;
         }
-        setBounds(EditorScreen.s_maxWidth * (1 - MU.getPercent(305, 1920)) - 16, y_, EditorScreen.s_maxWidth * MU.getPercent(300, 1920), EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 0.8);
+        setBounds(EditorScreen.s_maxWidth * (1 - MU.getPercent(305 + 58, 1920)) - 16, y_, EditorScreen.s_maxWidth * MU.getPercent(300 + 58, 1920), EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 0.8);
         rotate.setDisplay((int) (ComponentManager.getCanvas().getGrid().getRotate()) + "");
         rotate.setBounds(PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.05), width * 0.15, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
         rotateSlider.setBounds(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.2), width * 0.5, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));

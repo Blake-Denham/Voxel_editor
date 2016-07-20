@@ -23,8 +23,11 @@ public class ComponentManager extends JComponent {
     private static CanvasManipulator cm;
     private static CubeInfo ci;
     private static CanvasDataManager cdm;
-    private static Color bgColor = new Color(55, 55, 55);
+    public static Color bgColor = new Color(55, 55, 55);
     public static Settings settings;
+    private boolean show = true;
+    private Rectangle[][] colorButtons;
+    private Color[][] colors;
 
     public ComponentManager() {
         settings = new Settings();
@@ -113,14 +116,14 @@ public class ComponentManager extends JComponent {
         return cc;
     }
 
-    public static void setRotateCamera(int direction) {
+    public static void setRotateCamera(double direction) {
         if (direction > 360) {
             direction = 0;
         }
         canvas.setRotate(direction);
     }
 
-    public static void setRotateyCamera(int direction) {
+    public static void setRotateyCamera(double direction) {
         if (direction > 90) {
             direction = 90;
         }
@@ -179,11 +182,54 @@ public class ComponentManager extends JComponent {
         canvas.removeCubeAt(x, y, z);
     }
 
-    public static void newCanvas(int side, int height) {
+    public static void newCanvas(ComponentManager cm, int side, int height) {
         canvas = new Canvas(side, height);
+        cm.guiComponents.set(0, canvas);
     }
 
     public static void setVoxel(int x, int y, int z, int red, int green, int blue) {
         canvas.setCube(x, y, z, red, green, blue);
+    }
+
+    public static void addLayer() {
+        int zc = 0;
+        for (int z = 0; z < canvas.getCanvasHeight() - 1; z++) {
+            for (int x = 0; x < canvas.getSide() - 1; x++) {
+                for (int y = 0; y < canvas.getSide() - 1; y++) {
+                    if (Canvas.checkForCube(canvas, x, y, zc)) {
+                        zc++;
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        for (int x = 0; x < canvas.getSide() - 1; x++) {
+            for (int y = 0; y < canvas.getSide() - 1; y++) {
+                canvas.setCube(x, y, zc, colorWheel.getRed(), colorWheel.getGreen(), colorWheel.getBlue());
+            }
+        }
+    }
+
+    public static void removeLayer() {
+        int zc = canvas.getCanvasHeight() - 1;
+        for (int z = canvas.getCanvasHeight() - 2; z >= 0; z--) {
+            for (int x = 0; x < canvas.getSide() - 1; x++) {
+                for (int y = 0; y < canvas.getSide() - 1; y++) {
+                    if (!Canvas.checkForCube(canvas, x, y, zc)) {
+                        zc--;
+                        break;
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+        for (int x = 0; x < canvas.getSide() - 1; x++) {
+            for (int y = 0; y < canvas.getSide() - 1; y++) {
+                canvas.removeCubeAt(x, y, zc);
+            }
+        }
     }
 }

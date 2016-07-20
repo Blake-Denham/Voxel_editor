@@ -219,11 +219,11 @@ public class Grid {
         return zoom;
     }
 
-    public void setRotate(int rotate) {
+    public void setRotate(double rotate) {
         this.rotate = rotate;
     }
 
-    public void setRotatey(int rotatey) {
+    public void setRotatey(double rotatey) {
         this.rotatey = rotatey;
     }
 
