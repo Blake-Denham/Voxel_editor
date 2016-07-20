@@ -18,7 +18,7 @@ public class EditorScreen extends JPanel {
     @NotNull
     private final JFrame jf;
     @NotNull
-    private final ComponentManager cm;
+    private static ComponentManager cm;
     public static int mouseX, mouseY;
 
     public EditorScreen() {
@@ -105,6 +105,7 @@ public class EditorScreen extends JPanel {
 
     }
 
+
     public void getModelImage(String name) {
         BufferedImage image = new BufferedImage(s_maxWidth, s_maxHeight, BufferedImage.TYPE_INT_ARGB);
         ComponentManager.setDisplayImage();
@@ -151,4 +152,9 @@ public class EditorScreen extends JPanel {
         System.out.println("\tcolor model: " + jf.getColorModel().toString());
         System.out.println("---------------------------");
     }
+
+    public static ComponentManager getComponentManager() {
+        return cm;
+    }
+
 }

@@ -179,11 +179,16 @@ public class ComponentManager extends JComponent {
         canvas.removeCubeAt(x, y, z);
     }
 
-    public static void newCanvas(int side, int height) {
+    public static void newCanvas(ComponentManager cm, int side, int height) {
         canvas = new Canvas(side, height);
+        cm.guiComponents.set(0,canvas);
     }
 
     public static void setVoxel(int x, int y, int z, int red, int green, int blue) {
         canvas.setCube(x, y, z, red, green, blue);
+    }
+
+    public static void fillNextLayer() {
+        canvas.fillNextLayer();
     }
 }

@@ -1,6 +1,7 @@
 package editorScreen;
 
-import guiTools.GuiComponent;
+import guiTools.*;
+import guiTools.Button;
 import util.MU;
 import util.PU;
 
@@ -33,7 +34,7 @@ public class CanvasManipulator extends GuiComponent {
         tools.put(REMOVE, "REMOVE");
     }
 
-    private guiTools.Button hideGrid, hideCoords, hideAxis, clearCanvas;
+    private guiTools.Button hideGrid, hideCoords, hideAxis, clearCanvas, fillBottomZLayer;
 
     public CanvasManipulator(double x, double y, double width, double height, Color bgColor) {
         super(x, y, width, height, bgColor, 14, true);
@@ -41,7 +42,7 @@ public class CanvasManipulator extends GuiComponent {
 
 
         try {
-            final Image b1, b2, b3, b4, b5, b5a, b6, b6a, b7, b7a, b8;
+            final Image b1, b2, b3, b4, b5, b5a, b6, b6a, b7, b7a, b8, b9;
             b1 = ImageIO.read(Main.getResource("Images/paintBrush.png"));
             b2 = ImageIO.read(Main.getResource("Images/select.png"));
             b3 = ImageIO.read(Main.getResource("Images/add.png"));
@@ -53,6 +54,7 @@ public class CanvasManipulator extends GuiComponent {
             b7 = ImageIO.read(Main.getResource("Images/hideCoords.png"));
             b7a = ImageIO.read(Main.getResource("Images/showCoords.png"));
             b8 = ImageIO.read(Main.getResource("Images/clear.png"));
+            b9 = ImageIO.read(Main.getResource("Images/layerIncrease.png"));
             paint = new guiTools.Button(0, 0, 0, 0, b1, "paint brush", () -> ComponentManager.setTool(PAINT));
             add(paint);
             select = new guiTools.Button(0, 0, 0, 0, b2, "select cube", () -> ComponentManager.setTool(SELECT));
@@ -94,6 +96,8 @@ public class CanvasManipulator extends GuiComponent {
             add(hideCoords);
             clearCanvas = new guiTools.Button(0, 0, 0, 0, b8, "clear canvas", ComponentManager::clearCanvas);
             add(clearCanvas);
+            fillBottomZLayer = new Button(0,0,0,0,b9,"fill next bottom layer",ComponentManager::fillNextLayer);
+            add(fillBottomZLayer);
         } catch (IOException e) {
 
             e.printStackTrace();
@@ -119,6 +123,7 @@ public class CanvasManipulator extends GuiComponent {
         hideAxis.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.52), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
         hideCoords.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.62), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
         clearCanvas.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.72), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+        fillBottomZLayer.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.82), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
         setToolBarTitle("TOOLS: " + tools.get(ComponentManager.getCanvas().getSelectedTool()));
 
     }

@@ -425,4 +425,29 @@ public class Canvas extends GuiComponent {
             cubes[x][y][z] = null;
         }
     }
+
+    public void fillNextLayer() {
+
+        int zc = 0;
+        boolean stillSearching = true;
+         while(stillSearching )
+            for (int x = 0; x < side - 1; x++) {
+                for (int y = 0; y < side - 1; y++) {
+                    if (checkForCube(this, x, y, zc)) {
+
+                    } else {
+                        stillSearching = false;
+                        break;
+                    }
+                    zc++;
+                }
+            }
+
+        for (int x = 0; x < side - 1; x++) {
+            for (int y = 0; y < side - 1; y++) {
+                setCube(x,y,zc,ComponentManager.getColorWheel().getRed(),ComponentManager.getColorWheel().getGreen(),ComponentManager.getColorWheel().getBlue());
+            }
+        }
+
+    }
 }
