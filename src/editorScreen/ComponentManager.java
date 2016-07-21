@@ -25,9 +25,6 @@ public class ComponentManager extends JComponent {
     private static CanvasDataManager cdm;
     public static Color bgColor = new Color(55, 55, 55);
     public static Settings settings;
-    private boolean show = true;
-    private Rectangle[][] colorButtons;
-    private Color[][] colors;
 
     public ComponentManager() {
         settings = new Settings();
@@ -185,10 +182,6 @@ public class ComponentManager extends JComponent {
     public static void newCanvas(ComponentManager cm, int side, int height) {
         canvas = new Canvas(side, height);
         cm.guiComponents.set(0, canvas);
-    }
-
-    public static void setVoxel(int x, int y, int z, int red, int green, int blue) {
-        canvas.setCube(x, y, z, red, green, blue);
     }
 
     public static void addLayer() {

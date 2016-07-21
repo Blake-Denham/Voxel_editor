@@ -116,7 +116,6 @@ public class CameraControl extends GuiComponent {
         }
 
 
-
         setToolBarTitle("CAMERA CONTROL");
     }
 
@@ -138,25 +137,84 @@ public class CameraControl extends GuiComponent {
             y_ = ComponentManager.getColorWheel().getY() + ComponentManager.getColorWheel().getHeight() + 15 + 30;
         }
         setBounds(EditorScreen.s_maxWidth * (1 - MU.getPercent(305 + 58, 1920)) - 16, y_, EditorScreen.s_maxWidth * MU.getPercent(300 + 58, 1920), EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 0.8);
+
+
         rotate.setDisplay((int) (ComponentManager.getCanvas().getGrid().getRotate()) + "");
-        rotate.setBounds(PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.05), width * 0.15, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
-        rotateSlider.setBounds(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.2), width * 0.5, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
-        if (rotateSlider.getChanging()) ComponentManager.setRotateCamera((int) ((rotateSlider.getPercent()) * 360));
+        rotate.setBounds(
+                PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07),
+                PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.05),
+                width * 0.15,
+                EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
+
+        rotateSlider.setBounds(
+                PU.getXInBounds(bounds, width * 0.5, 0.5),
+                PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.2),
+                width * 0.5,
+                EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
+
+        if (rotateSlider.getChanging()) {
+            ComponentManager.setRotateCamera((int) ((rotateSlider.getPercent()) * 360));
+        }
+
         rotateSlider.setPercent((float) (ComponentManager.getCanvas().getGrid().getRotate() / 360));
-        rotator.setBounds(PU.getXInBounds(bounds, width * 0.1, 0. + 0.14), PU.getYInBounds(bounds, width * 0.1, 0.12), width * 0.1, width * 0.1);
-        isometricView.setBounds(PU.getXInBounds(bounds, width * 0.1, 0.72), PU.getYInBounds(bounds, width * 0.1, 0.03), width * 0.1, width * 0.1);
+        rotator.setBounds(
+                PU.getXInBounds(bounds, width * 0.1, 0. + 0.14),
+                PU.getYInBounds(bounds, width * 0.1, 0.12),
+                width * 0.1,
+                width * 0.1);
+
+
+        isometricView.setBounds(
+                PU.getXInBounds(bounds, width * 0.1, 0.72),
+                PU.getYInBounds(bounds, width * 0.1, 0.03),
+                width * 0.1,
+                width * 0.1);
+
+
         rotatey.setDisplay((int) (ComponentManager.getCanvas().getGrid().getRotateY()) + "");
-        rotatey.setBounds(PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37), width * 0.15, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
-        rotateySlider.setBounds(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.53), width * 0.5, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
-        if (rotateySlider.getChanging())
+        rotatey.setBounds(
+                PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07),
+                PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37),
+                width * 0.15,
+                EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
+
+        rotateySlider.setBounds(
+                PU.getXInBounds(bounds, width * 0.5, 0.5),
+                PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.53),
+                width * 0.5,
+                EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
+
+        if (rotateySlider.getChanging()) {
             ComponentManager.setRotateyCamera((int) (((rotateySlider.getPercent()) * 180) - 90));
+        }
         rotateySlider.setPercent((float) ((ComponentManager.getCanvas().getGrid().getRotateY() + 90) / 180));
-        rotatorY.setBounds(PU.getXInBounds(bounds, width * 0.1, 0. + 0.14), PU.getYInBounds(bounds, width * 0.1, 0.43), width * 0.1, width * 0.1);
+
+        rotatorY.setBounds(
+                PU.getXInBounds(bounds, width * 0.1, 0. + 0.14),
+                PU.getYInBounds(bounds, width * 0.1, 0.43),
+                width * 0.1,
+                width * 0.1);
+
+
         zoom.setDisplay((int) (MU.sin(ComponentManager.getCanvas().getGrid().getZoom()) * 100) + "");
-        zoom.setBounds(PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37 + 0.32), width * 0.15, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
-        zoomSlider.setBounds(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.53 + 0.33), width * 0.5, EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
-        if (zoomSlider.getChanging()) ComponentManager.setZoomCamera((int) (zoomSlider.getPercent() * 90));
+        zoom.setBounds(
+                PU.getXInBounds(bounds, width * 0.15, 0.5 + 0.07),
+                PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37 + 0.32),
+                width * 0.15,
+                EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
+
+        zoomSlider.setBounds(
+                PU.getXInBounds(bounds, width * 0.5, 0.5),
+                PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.53 + 0.33),
+                width * 0.5,
+                EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
+
+        if (zoomSlider.getChanging()) {
+            ComponentManager.setZoomCamera((int) (zoomSlider.getPercent() * 90));
+        }
+
         zoomSlider.setPercent((float) ((ComponentManager.getCanvas().getGrid().getZoom()) / 90));
+
         if (rotationx > 0) {
             ComponentManager.setRotateCamera((int) (ComponentManager.getCanvas().getGrid().getRotate() + 1));
         }
@@ -199,10 +257,12 @@ public class CameraControl extends GuiComponent {
 
     }
 
+    @SuppressWarnings("unused")
     public boolean isLockedY() {
         return lockedY;
     }
 
+    @SuppressWarnings("unused")
     public boolean isLockedX() {
         return lockedX;
     }

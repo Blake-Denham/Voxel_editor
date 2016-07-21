@@ -1,7 +1,6 @@
 package backend;
 
 import editorScreen.Canvas;
-import editorScreen.CanvasManipulator;
 import editorScreen.ComponentManager;
 import org.jetbrains.annotations.NotNull;
 import util.MU;
@@ -21,14 +20,13 @@ public class Cube {
     private Color top, bot, back, front, left, right;
     private Grid grid;
     private static Polygon selected, empty;
-    private static int sx, sy, sz, face;
+    private static int face;
     private Canvas can;
 
     static {
         selected = new Polygon();
         empty = new Polygon();
     }
-
 
     public Cube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue) {
         initCube(can, x, y, z, red, green, blue);
@@ -194,46 +192,42 @@ public class Cube {
         if (tb) {
             g2d.setColor(color[0]);
             g2d.fill(cube[0]);
-            g2d.setColor(Color.green);
-            g2d.fill(selected);
         }
         if (bf) {
             g2d.setColor(color[1]);
             g2d.fill(cube[1]);
-            g2d.setColor(Color.green);
-            g2d.fill(selected);
         }
         if (lr) {
             g2d.setColor(color[2]);
             g2d.fill(cube[2]);
-            g2d.setColor(Color.green);
-            g2d.fill(selected);
         }
+        g2d.setColor(Color.BLACK);
+        g2d.draw(selected);
 
 
     }
 
-    private boolean cubeAbove() {
+    private boolean cubeAbove() {// checks for a cube above its self
         return z + 1 < grid.getHeight() - 1 && can.getCubes()[z + 1][x][y] != null;
     }
 
-    private boolean cubeBelow() {
+    private boolean cubeBelow() {// checks for a cube below its self
         return z - 1 >= 0 && can.getCubes()[z - 1][x][y] != null;
     }
 
-    private boolean cubeLeft() {
+    private boolean cubeLeft() {// checks for a cube to the left of its self
         return x + 1 < grid.getSide() - 1 && can.getCubes()[z][x + 1][y] != null;
     }
 
-    private boolean cubeRight() {
+    private boolean cubeRight() {// checks for a cube to the right of its self
         return x - 1 >= 0 && can.getCubes()[z][x - 1][y] != null;
     }
 
-    private boolean cubeFront() {
+    private boolean cubeFront() {// checks for a cube in front of its self
         return y + 1 < grid.getSide() - 1 && can.getCubes()[z][x][y + 1] != null;
     }
 
-    private boolean cubeBack() {
+    private boolean cubeBack() {// checks for a cube behind its self
         return y - 1 >= 0 && can.getCubes()[z][x][y - 1] != null;
     }
 
@@ -254,52 +248,32 @@ public class Cube {
         return temp;
     }
 
-    public void click(int mx, int my) {
-        int r = ComponentManager.getColorWheel().getRed();
-        int g = ComponentManager.getColorWheel().getGreen();
-        int b = ComponentManager.getColorWheel().getBlue();
-        if (ComponentManager.getCanvas().getSelectedTool() == CanvasManipulator.ADD && selected.contains(mx, my)) {
-            if (face == 0) {
-                ComponentManager.setVoxel(x, y, z + 1, r, g, b);
-            } else if (face == 1) {
-                ComponentManager.setVoxel(x, y + 1, z, r, g, b);
-            } else if (face == 2) {
-                ComponentManager.setVoxel(x + 1, y, z, r, g, b);
-            }
-        } else {
-            for (int i = 0; i < 3; i++) {
-                if (cube[i].contains(mx, my)) {
-                    System.out.println("TB: " + tb);
-                    System.out.println("LR: " + lr);
-                    System.out.println("BF: " + bf);
-                    System.out.println("----------");
-
-                    switch (ComponentManager.getCanvas().getSelectedTool()) {
-                        case CanvasManipulator.PAINT:
-                            colorHex = ComponentManager.getColorWheel().getColor().getRGB() & 0xffffff;
-                            int red = (colorHex & 0xff0000) >> 16;
-                            int green = (colorHex & 0xff00) >> 8;
-                            int blue = colorHex & 0xff;
-                            back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
-                            bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
-                            left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
-                            right = new Color((int) (red * 0.8), (int) (green * 0.8), (int) (blue * 0.8));
-                            top = new Color((int) (red * 0.9), (int) (green * 0.9), (int) (blue * 0.9));
-                            front = new Color(red, green, blue);
-                            this.color[0] = top;
-                            this.color[1] = front;
-                            this.color[2] = right;
-                            break;
-                        case CanvasManipulator.SELECT:
-                            break;
-                    }
-                }
-            }
-        }
-    }
-
     public int getColorHex() {
         return colorHex;
     }
 
+    public static int getFace() {
+        return face;
+    }
+
+    public void paint() {
+        colorHex = ComponentManager.getColorWheel().getColor().getRGB() & 0xffffff;
+        int red = (colorHex & 0xff0000) >> 16;//extracts the red byte of the colour wheel's current colour
+        int green = (colorHex & 0xff00) >> 8;//extracts the green byte of the colour wheel's current colour
+        int blue = colorHex & 0xff;//extracts the blue byte of the colour wheel's current colour
+
+        back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
+        bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
+        left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
+        right = new Color((int) (red * 0.8), (int) (green * 0.8), (int) (blue * 0.8));
+        top = new Color((int) (red * 0.9), (int) (green * 0.9), (int) (blue * 0.9));
+        front = new Color(red, green, blue);
+        this.color[0] = top;
+        this.color[1] = front;
+        this.color[2] = right;
+    }
+
+    public Polygon[] getFaces() {
+        return cube;
+    }
 }

@@ -36,7 +36,6 @@ public class ColorWheel extends GuiComponent {
     private Color[][] colors;
     private Rectangle hover, section;
 
-    @SuppressWarnings("SameParameterValue")
     public ColorWheel(double x_, double y_, double width, Color bgColor) {
         super(x_, y_, width, width * 1.5, bgColor, 14, true);
         hover = new Rectangle(0, 0, 16, 16);

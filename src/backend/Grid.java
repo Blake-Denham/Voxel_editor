@@ -36,7 +36,7 @@ public class Grid {
     private static final Color colorGridp = new Color(1f, 1f, 1f, 0.6f);
     private static final Color colorGridn = new Color(1f, 1f, 1f, 0.3f);
     private Polygon selected, wholeGrid;
-    private int selectedx, selectedy;
+    private int selectedX, selectedY;
 
     public Grid(int side, int height, int x, int y) {
         /**
@@ -246,8 +246,8 @@ public class Grid {
                 count++;
                 if (p[x][y].contains(e.getX(), e.getY())) {
                     selected = p[x][y];
-                    selectedx = x;
-                    selectedy = y;
+                    selectedX = x;
+                    selectedY = y;
                     count = 0;
                     Canvas.setGridSelect(true);
                 }
@@ -267,11 +267,11 @@ public class Grid {
     }
 
     public int getSelectedX() {
-        return selectedx;
+        return selectedX;
     }
 
     public int getSelectedY() {
-        return selectedy;
+        return selectedY;
     }
 
     public void setSelected(Polygon selected) {
