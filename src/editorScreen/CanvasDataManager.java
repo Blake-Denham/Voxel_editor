@@ -39,7 +39,7 @@ public class CanvasDataManager extends GuiComponent {
             load = new Button(0, 0, 0, 0, l, "load", Main::openLoadScreen);
             add(load);
             newProject = new Button(0, 0, 0, 0, np, "new Project", () -> {
-                ComponentManager.newCanvas(EditorScreen.getComponentManager(), Integer.parseInt(JOptionPane.showInputDialog("enter the length dimension")) + 1, Integer.parseInt(JOptionPane.showInputDialog("enter the height dimension")) + 2);
+                ComponentManager.newCanvas(EditorScreen.getComponentManager(), Integer.parseInt(JOptionPane.showInputDialog("enter the length dimension")) + 1, Integer.parseInt(JOptionPane.showInputDialog("enter the height dimension")) + 1);
             });
             add(newProject);
 

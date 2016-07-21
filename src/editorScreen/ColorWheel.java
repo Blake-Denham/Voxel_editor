@@ -199,7 +199,7 @@ public class ColorWheel extends GuiComponent {
 
     @Override
     public void paintGuiComponent(@NotNull Graphics2D g2d) {
-
+        PU.castShadow(g2d,new Rectangle((int)colorButtons[0][0].getX(),(int)colorButtons[0][0].getY(),16*2,16*16),8,ComponentManager.bgColor);
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 2; j++) {
                 g2d.setColor(colors[i][j]);

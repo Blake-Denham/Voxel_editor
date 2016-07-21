@@ -158,7 +158,7 @@ public class Canvas extends GuiComponent {
         int y_ = grid.getSide() - 1;
         int z_ = grid.getHeight() - 1;
         int side = grid.getSide() - 1;
-        int height = grid.getHeight() - 2;
+        int height = grid.getHeight() - 1;
         g2d.setColor(Color.white);
         g2d.setFont(EditorScreen.font.deriveFont(11f));
         g2d.drawString("(z,x,y)", (int) grid.getPts()[0][0][0].getVecs().getX(), (int) grid.getPts()[0][0][0].getVecs().getY() - 14);
