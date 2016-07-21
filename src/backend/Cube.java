@@ -285,6 +285,7 @@ public class Cube {
                             left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
                             right = new Color((int) (red * 0.8), (int) (green * 0.8), (int) (blue * 0.8));
                             top = new Color((int) (red * 0.9), (int) (green * 0.9), (int) (blue * 0.9));
+                            front = new Color(red, green, blue);
                             this.color[0] = top;
                             this.color[1] = front;
                             this.color[2] = right;

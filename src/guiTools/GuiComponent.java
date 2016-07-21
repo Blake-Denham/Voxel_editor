@@ -251,7 +251,7 @@ public abstract class GuiComponent {
         bounds.setBounds((int) x, (int) y, (int) width, (int) height);
     }
 
-    protected void setBounds(@NotNull Rectangle newBounds) {
+    public void setBounds(@NotNull Rectangle newBounds) {
         x = newBounds.getX();
         y = newBounds.getY();
         width = newBounds.getWidth();

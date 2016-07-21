@@ -105,6 +105,9 @@ public class EditorScreen extends JPanel {
 
     }
 
+    public static ComponentManager getComponentManager() {
+        return cm;
+    }
 
     public void getModelImage(String name) {
         BufferedImage image = new BufferedImage(s_maxWidth, s_maxHeight, BufferedImage.TYPE_INT_ARGB);
@@ -152,9 +155,4 @@ public class EditorScreen extends JPanel {
         System.out.println("\tcolor model: " + jf.getColorModel().toString());
         System.out.println("---------------------------");
     }
-
-    public static ComponentManager getComponentManager() {
-        return cm;
-    }
-
 }
