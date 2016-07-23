@@ -34,7 +34,17 @@ public class CanvasManipulator extends GuiComponent {
         tools.put(REMOVE, "REMOVE");
     }
 
-    private guiTools.Button hideGrid, hideCoords, hideAxis, clearCanvas, addLayer, removeLayer;
+    //add sub components
+    private Button addSphere, addCuboid, addCuboidFrame;
+
+    //remove sub buttons
+    private Button removeSphere, removeCuboid;
+
+    //paint sub buttons
+    private Button paintSelected, inverseSelected, contourDefaultToggle;
+
+    //select sub buttons
+    private Button selectAll;
 
     public CanvasManipulator(double x, double y, double width, double height, Color bgColor) {
         super(x, y, width, height, bgColor, 14, true);
@@ -42,65 +52,61 @@ public class CanvasManipulator extends GuiComponent {
 
 
         try {
-            final Image b1, b2, b3, b4, b5, b5a, b6, b6a, b7, b7a, b8, b9, b10;
+            final Image b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13;
             b1 = ImageIO.read(Main.getResource("Images/paintBrush.png"));
             b2 = ImageIO.read(Main.getResource("Images/select.png"));
             b3 = ImageIO.read(Main.getResource("Images/add.png"));
             b4 = ImageIO.read(Main.getResource("Images/remove.png"));
-            b5 = ImageIO.read(Main.getResource("Images/hideGrid.png"));
-            b5a = ImageIO.read(Main.getResource("Images/showGrid.png"));
-            b6 = ImageIO.read(Main.getResource("Images/hideAxis.png"));
-            b6a = ImageIO.read(Main.getResource("Images/showAxis.png"));
-            b7 = ImageIO.read(Main.getResource("Images/hideCoords.png"));
-            b7a = ImageIO.read(Main.getResource("Images/showCoords.png"));
-            b8 = ImageIO.read(Main.getResource("Images/clear.png"));
-            b9 = ImageIO.read(Main.getResource("Images/addLayer.png"));
-            b10 = ImageIO.read(Main.getResource("Images/removeLayer.png"));
+            b5 = ImageIO.read(Main.getResource("Images/addCuboid.png"));
+            b6 = ImageIO.read(Main.getResource("Images/addSphere.png"));
+            b7 = ImageIO.read(Main.getResource("Images/removeCuboid.png"));
+            b8 = ImageIO.read(Main.getResource("Images/removeSphere.png"));
+            b9 = ImageIO.read(Main.getResource("Images/addCuboidFrame.png"));
+            b10 = ImageIO.read(Main.getResource("Images/fill.png"));
+            b11 = ImageIO.read(Main.getResource("Images/inverse.png"));
+            b12 = ImageIO.read(Main.getResource("Images/contour.png"));
+            b13 = ImageIO.read(Main.getResource("Images/commonColors.png"));
+
             paint = new guiTools.Button(0, 0, 0, 0, b1, "paint brush", () -> ComponentManager.setTool(PAINT));
             add(paint);
-            select = new guiTools.Button(0, 0, 0, 0, b2, "select cube", () -> ComponentManager.setTool(SELECT));
+            select = new guiTools.Button(0, 0, 0, 0, b2, "select", () -> ComponentManager.setTool(SELECT));
             add(select);
-            addCube = new guiTools.Button(0, 0, 0, 0, b3, "add cube", () -> ComponentManager.setTool(ADD));
+            addCube = new guiTools.Button(0, 0, 0, 0, b3, "add", () -> ComponentManager.setTool(ADD));
             add(addCube);
-            removeCube = new guiTools.Button(0, 0, 0, 0, b4, "remove cube", () -> ComponentManager.setTool(REMOVE));
+            removeCube = new guiTools.Button(0, 0, 0, 0, b4, "remove", () -> ComponentManager.setTool(REMOVE));
             add(removeCube);
-            hideGrid = new guiTools.Button(0, 0, 0, 0, b5, "hide/show grid", () -> {
-                if (ComponentManager.settings.isShowGrid()) {
-                    ComponentManager.settings.setShowGrid(false);
-                    hideGrid.setButtonImage(b5a);
-                } else {
-                    ComponentManager.settings.setShowGrid(true);
-                    hideGrid.setButtonImage(b5);
-                }
-            });
-            add(hideGrid);
-            hideAxis = new guiTools.Button(0, 0, 0, 0, b6, "hide/show axis", () -> {
-                if (ComponentManager.settings.isShowAxis()) {
-                    ComponentManager.settings.setShowAxis(false);
-                    hideAxis.setButtonImage(b6a);
+            addSphere = new Button(0, 0, 0, 0, b6, "add sphere", () -> {
 
-                } else {
-                    ComponentManager.settings.setShowAxis(true);
-                    hideAxis.setButtonImage(b6);
-                }
             });
-            add(hideAxis);
-            hideCoords = new guiTools.Button(0, 0, 0, 0, b7, "hide/show co-ordinates", () -> {
-                if (ComponentManager.settings.isShowCoords()) {
-                    ComponentManager.settings.setShowCoords(false);
-                    hideCoords.setButtonImage(b7a);
-                } else {
-                    ComponentManager.settings.setShowCoords(true);
-                    hideCoords.setButtonImage(b7);
-                }
+            addCuboid = new Button(0, 0, 0, 0, b5, "add cuboid", () -> {
+
             });
-            add(hideCoords);
-            clearCanvas = new guiTools.Button(0, 0, 0, 0, b8, "clear canvas", ComponentManager::clearCanvas);
-            add(clearCanvas);
-            addLayer = new Button(0, 0, 0, 0, b9, "add layer", ComponentManager::addLayer);
-            add(addLayer);
-            removeLayer = new Button(0, 0, 0, 0, b10, "remove layer", ComponentManager::removeLayer);
-            add(removeLayer);
+            addCuboidFrame = new Button(0, 0, 0, 0, b9, "add cuboid frame", () -> {
+
+            });
+            paintSelected = new Button(0, 0, 0, 0, b10, "paint selected area", () -> {
+
+            });
+            inverseSelected = new Button(0, 0, 0, 0, b11, "inverse selected area", () -> {
+
+            });
+            contourDefaultToggle = new Button(0, 0, 0, 0, b12, "contour/original colours", () -> {
+
+            });
+            removeCuboid = new Button(0, 0, 0, 0, b7, "delete cuboid", () -> {
+
+            });
+            removeSphere = new Button(0, 0, 0, 0, b8, "delete sphere", () -> {
+
+            });
+            add(addSphere);
+            add(addCuboid);
+            add(addCuboidFrame);
+            add(paintSelected);
+            add(inverseSelected);
+            add(contourDefaultToggle);
+            add(removeSphere);
+            add(removeCuboid);
         } catch (IOException e) {
 
             e.printStackTrace();
@@ -122,12 +128,32 @@ public class CanvasManipulator extends GuiComponent {
         select.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.12), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
         addCube.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.22), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
         removeCube.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.32), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
-        hideGrid.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.42), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
-        hideAxis.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.52), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
-        hideCoords.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.62), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
-        clearCanvas.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.72), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
-        addLayer.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.82), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
-        removeLayer.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.92), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+        if (ComponentManager.getCanvas().getSelectedTool() == ADD) {
+            addSphere.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.43), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+            addCuboid.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.53), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+            addCuboidFrame.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.63), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+        } else {
+            addSphere.setBounds(0, 0, 0, 0);
+            addCuboid.setBounds(0, 0, 0, 0);
+            addCuboidFrame.setBounds(0, 0, 0, 0);
+        }
+
+        if (ComponentManager.getCanvas().getSelectedTool() == PAINT) {
+            paintSelected.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.43), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+            inverseSelected.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.53), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+            contourDefaultToggle.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.63), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+        } else {
+            paintSelected.setBounds(0, 0, 0, 0);
+            inverseSelected.setBounds(0, 0, 0, 0);
+            contourDefaultToggle.setBounds(0, 0, 0, 0);
+        }
+        if (ComponentManager.getCanvas().getSelectedTool() == REMOVE) {
+            removeSphere.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.43), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+            removeCuboid.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.53), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+        } else {
+            removeCuboid.setBounds(0, 0, 0, 0);
+            removeSphere.setBounds(0, 0, 0, 0);
+        }
         setToolBarTitle("TOOLS: " + tools.get(ComponentManager.getCanvas().getSelectedTool()));
 
     }

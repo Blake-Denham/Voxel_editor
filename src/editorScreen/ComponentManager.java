@@ -21,10 +21,10 @@ public class ComponentManager extends JComponent {
     private static Canvas canvas;
     private static CameraControl cc;
     private static CanvasManipulator cm;
-    private static CubeInfo ci;
     private static CanvasDataManager cdm;
     public static Color bgColor = new Color(55, 55, 55);
     public static Settings settings;
+    public static SettingsWindow sw;
 
     public ComponentManager() {
         settings = new Settings();
@@ -33,14 +33,14 @@ public class ComponentManager extends JComponent {
         colorWheel = new ColorWheel(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * MU.getPercent(300, 1920), bgColor);
         cc = new CameraControl(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxHeight * MU.getPercent(EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4 - 1080 - 8, 1080), EditorScreen.s_maxWidth * MU.getPercent(250, 1920), bgColor);
         cm = new CanvasManipulator(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
-        ci = new CubeInfo(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxHeight * MU.getPercent(EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4 - 1080 - 8, 1080), EditorScreen.s_maxWidth * MU.getPercent(250, 1920), bgColor);
         cdm = new CanvasDataManager(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
+        sw = new SettingsWindow(0, 0, 0, 0, bgColor);
         addComponent(canvas);
         addComponent(cdm);
         addComponent(colorWheel);
         addComponent(cc);
         addComponent(cm);
-        addComponent(ci);
+        addComponent(sw);
 
 
     }
@@ -108,11 +108,6 @@ public class ComponentManager extends JComponent {
         return cc;
     }
 
-    @SuppressWarnings("unused")
-    public static CameraControl getCanvasInfo() {
-        return cc;
-    }
-
     public static void setRotateCamera(double direction) {
         if (direction > 360) {
             direction = 0;
@@ -156,6 +151,13 @@ public class ComponentManager extends JComponent {
         settings.setShowCoords(true);
     }
 
+    public static void turnOffSettings() {
+        settings.setShowAxis(false);
+        settings.setShowGrid(false);
+        settings.setShowCoords(false);
+    }
+
+
     public static void loadProjectIntoCanvas(Project p) {
         canvas = new Canvas(p.getSide() + 1, p.getCanvasHeight() + 1);
         int r;
@@ -173,10 +175,6 @@ public class ComponentManager extends JComponent {
                 }
             }
         }
-    }
-
-    public static void removeCubeAt(int x, int y, int z) {
-        canvas.removeCubeAt(x, y, z);
     }
 
     public static void newCanvas(ComponentManager cm, int side, int height) {

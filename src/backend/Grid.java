@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import util.MU;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 
 public class Grid {
 
@@ -35,7 +34,7 @@ public class Grid {
     private final CirclePoint cent;
     private static final Color colorGridp = new Color(1f, 1f, 1f, 0.6f);
     private static final Color colorGridn = new Color(1f, 1f, 1f, 0.3f);
-    private Polygon selected, wholeGrid;
+    private Polygon selected;
     private int selectedX, selectedY;
 
     public Grid(int side, int height, int x, int y) {
@@ -56,14 +55,22 @@ public class Grid {
         this.side = side;
         this.height = height;
         zAxis = new CirclePoint[height];
-        cent = new CirclePoint(90, x, y, (int) (Math.sqrt(MU.square(100 * side * MU.cos(45)) + MU.square(100 * side * MU.sin(45)))), -(double) 0, 90, (double) 90, (double) 15);
+
+        cent = new CirclePoint(90, x, y,
+                (int) (Math.sqrt(MU.square(100 * side * MU.cos(45)) + MU.square(100 * side * MU.sin(45)))),
+                0, 90, (double) 90, (double) 15);
+
         pts = new GridPoint[height][side][side];
         int y_ = (int) cent.getPts()[0].getY();
         int x_ = (int) cent.getPts()[0].getX();
+
         for (int z = 0; z < height; z++) {
             for (int xi = 0; xi < side; xi++) {
                 for (int yi = 0; yi < side; yi++) {
-                    pts[z][xi][yi] = new GridPoint(x_, y_, (int) (Math.sqrt(MU.square(100 * (xi) * MU.cos(45)) + MU.square(100 * yi * MU.sin(45)))), (double) 0, Math.toDegrees(MU.arctan((double) yi / (double) xi)), (double) 90, (double) 15);
+                    pts[z][xi][yi] = new GridPoint(x_, y_,
+                            (int) (Math.sqrt(MU.square(100 * (xi) * MU.cos(45)) + MU.square(100 * yi * MU.sin(45)))),
+                            (double) 0,
+                            Math.toDegrees(MU.arctan((double) yi / (double) xi)), (double) 90, (double) 15);
                 }
             }
             pts[z][0][0].setVec(x_, y_);
@@ -83,24 +90,29 @@ public class Grid {
             }
         }
 
-        int[] a = {xp[0][0][0], xp[0][side - 1][1], xp[side - 1][side - 1][2], xp[side - 1][0][3]};
-        int[] b = {yp[0][0][0], yp[0][side - 1][1], yp[side - 1][side - 1][2], yp[side - 1][0][3]};
-        wholeGrid = new Polygon(a, b, 4);
     }
 
     public void update() {
 
-        cent.update(x, y, (int) (Math.sqrt(MU.square(100 * (side - 1) * MU.cos(45)) + MU.square(100 * (side - 1) * MU.sin(45))) / 2), rotate - 135, 90, rotatey, zoom);
+        cent.update(x, y,
+                (int) (Math.sqrt(MU.square(100 * (side - 1) * MU.cos(45)) + MU.square(100 * (side - 1) * MU.sin(45))) / 2),
+                rotate - 135, 90, rotatey, zoom);
+
         int x_ = (int) cent.getPts()[0].getX();
         int y_ = (int) cent.getPts()[0].getY();
         for (int zi = 0; zi < height; zi++) {
             for (int xi = 0; xi < side; xi++) {
                 for (int yi = 0; yi < side; yi++) {
-                    pts[zi][xi][yi].update(x_, y_, (int) (Math.sqrt(MU.square(100 * (xi) * MU.cos(45)) + MU.square(100 * yi * MU.sin(45)))), rotate, Math.toDegrees(MU.arctan((double) yi / (double) xi)), rotatey, zoom);
+                    pts[zi][xi][yi].update(x_, y_,
+                            (int) (Math.sqrt(MU.square(100 * (xi) * MU.cos(45)) + MU.square(100 * yi * MU.sin(45)))),
+                            rotate, Math.toDegrees(MU.arctan((double) yi / (double) xi)), rotatey, zoom);
                 }
             }
             pts[zi][0][0].setVec(x_, y_);
-            zAxis[zi].update(x_, (int) (y - (y - cent.getPts()[0].getY())), (int) ((zi + 1) * Math.abs(Math.sqrt(MU.square(100 * MU.cos(45)) + MU.square(100 * MU.sin(45))) - Math.sqrt(MU.square(100 * 2 * MU.cos(45)) + MU.square(100 * 2 * MU.sin(45)))) / Math.sqrt(2)), 90, 0, rotatey - 90, zoom);
+            zAxis[zi].update(x_, (int) (y - (y - cent.getPts()[0].getY())),
+                    (int) ((zi + 1) * Math.abs(Math.sqrt(MU.square(100 * MU.cos(45)) + MU.square(100 * MU.sin(45)))     //(z+1)*|squareRoot(((100*cos(45))^2)+(100*sin(45))^2) - squareRoot((200*cos(45))^2+(200*sin45)^2)|
+                            - Math.sqrt(MU.square(100 * 2 * MU.cos(45)) + MU.square(100 * 2 * MU.sin(45)))) / Math.sqrt(2)),
+                    90, 0, rotatey - 90, zoom);
             y_ = (int) (zAxis[zi].getPts()[0].getY());
         }
         for (int xi = 0; xi < side - 1; xi++) {
@@ -139,18 +151,29 @@ public class Grid {
                 }
             }
         }
-        g2d.setColor(Color.green);
+        g2d.setColor(Color.GREEN);
         g2d.fill(selected);
-        g2d.fill(wholeGrid);
     }
 
     public void paintAxis(@NotNull Graphics2D g2d) {
         g2d.setColor(Color.RED);
-        g2d.drawLine((int) pts[0][0][0].getVecs().getX(), (int) pts[0][0][0].getVecs().getY(), (int) pts[0][side - 1][0].getVecs().getX(), (int) pts[0][side - 1][0].getVecs().getY());
+        g2d.drawLine(
+                (int) pts[0][0][0].getVecs().getX(),
+                (int) pts[0][0][0].getVecs().getY(),
+                (int) pts[0][side - 1][0].getVecs().getX(),
+                (int) pts[0][side - 1][0].getVecs().getY());
         g2d.setColor(Color.GREEN);
-        g2d.drawLine((int) pts[0][0][0].getVecs().getX(), (int) pts[0][0][0].getVecs().getY(), (int) pts[0][0][side - 1].getVecs().getX(), (int) pts[0][0][side - 1].getVecs().getY());
+        g2d.drawLine(
+                (int) pts[0][0][0].getVecs().getX(),
+                (int) pts[0][0][0].getVecs().getY(),
+                (int) pts[0][0][side - 1].getVecs().getX(),
+                (int) pts[0][0][side - 1].getVecs().getY());
         g2d.setColor(Color.BLUE);
-        g2d.drawLine((int) pts[0][0][0].getVecs().getX(), (int) pts[0][0][0].getVecs().getY(), (int) pts[height - 1][0][0].getVecs().getX(), (int) pts[height - 1][0][0].getVecs().getY());
+        g2d.drawLine(
+                (int) pts[0][0][0].getVecs().getX(),
+                (int) pts[0][0][0].getVecs().getY(),
+                (int) pts[height - 1][0][0].getVecs().getX(),
+                (int) pts[height - 1][0][0].getVecs().getY());
     }
 
     public void rotate(double direction) {
@@ -239,25 +262,19 @@ public class Grid {
         return y;
     }
 
-    public void gridInterfaceHover(MouseEvent e) {
-        int count = 0;
-        for (int x = 0; x < side - 1; x++) {
-            for (int y = 0; y < side - 1; y++) {
-                count++;
-                if (p[x][y].contains(e.getX(), e.getY())) {
-                    selected = p[x][y];
-                    selectedX = x;
-                    selectedY = y;
-                    count = 0;
-                    Canvas.setGridSelect(true);
+    public void gridInterfaceHover(int mx, int my) {
+        if (!Canvas.isDetected()) {
+            for (int x = 0; x < side - 1; x++) {
+                for (int y = 0; y < side - 1; y++) {
+                    if (p[x][y].contains(mx, my)) {
+                        selected = p[x][y];
+                        selectedX = x;
+                        selectedY = y;
+                    }
                 }
-
             }
-        }
-        if (count == MU.square(side - 1)) {
-
-            selected = empty;
-            Canvas.setGridSelect(false);
+        } else {
+            selected = Cube.getEmpty();
         }
 
     }
@@ -272,6 +289,10 @@ public class Grid {
 
     public int getSelectedY() {
         return selectedY;
+    }
+
+    public Polygon getSelected() {
+        return selected;
     }
 
     public void setSelected(Polygon selected) {

@@ -10,7 +10,7 @@ import java.io.*;
 public class Main {
 
     public static Robot programRobot;
-    private static final int tickRate = 16;
+    private static final int tickRate = 10;
     private static LoadScreen ls;
     private static EditorScreen editor;
     public static String appPath;
@@ -39,7 +39,6 @@ public class Main {
         } catch (AWTException e) {
             e.printStackTrace();
         }
-
         //noinspection InfiniteLoopStatement
         while (true) {
             editor.repaint(tickRate);

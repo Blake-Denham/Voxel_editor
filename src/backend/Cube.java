@@ -4,6 +4,7 @@ import editorScreen.Canvas;
 import editorScreen.ComponentManager;
 import org.jetbrains.annotations.NotNull;
 import util.MU;
+import util.PU;
 
 import java.awt.*;
 
@@ -28,8 +29,8 @@ public class Cube {
         empty = new Polygon();
     }
 
-    public Cube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue) {
-        initCube(can, x, y, z, red, green, blue);
+    public Cube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue, int alpha) {
+        initCube(can, x, y, z, red, green, blue, alpha);
     }
 
     public static Polygon getEmpty() {
@@ -44,7 +45,7 @@ public class Cube {
         return selected;
     }
 
-    private void initCube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue) {
+    private void initCube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue, int alpha) {
         this.can = can;
         this.grid = can.getGrid();
         this.x = x;
@@ -52,12 +53,12 @@ public class Cube {
         this.z = z;
         this.color = new Color[3];
         colorHex = (red << 16) | (green << 8) | (blue);
-        back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
-        bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
-        left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
-        right = new Color((int) (red * 0.8), (int) (green * 0.8), (int) (blue * 0.8));
-        top = new Color((int) (red * 0.9), (int) (green * 0.9), (int) (blue * 0.9));
-        front = new Color(red, green, blue);
+        back = PU.saturateColor(new Color(colorHex), 0.5);
+        bot = PU.saturateColor(new Color(colorHex), 0.6);
+        left = PU.saturateColor(new Color(colorHex), 0.7);
+        right = PU.saturateColor(new Color(colorHex), 0.8);
+        top = PU.saturateColor(new Color(colorHex), 0.9);
+        front = new Color(colorHex);
         this.color[0] = top;
         this.color[1] = front;
         this.color[2] = right;
@@ -201,8 +202,8 @@ public class Cube {
             g2d.setColor(color[2]);
             g2d.fill(cube[2]);
         }
-        g2d.setColor(Color.BLACK);
-        g2d.draw(selected);
+        g2d.setColor(Color.green);
+        g2d.fill(selected);
 
 
     }
@@ -237,7 +238,7 @@ public class Cube {
         return x + " : " + y + " : " + z;
     }
 
-    public boolean intersect(int mx, int my) {
+    public boolean contains(int mx, int my) {
         boolean temp = false;
         for (int i = 0; i < 3; i++) {
             if (cube[i].contains(mx, my)) {
@@ -257,17 +258,16 @@ public class Cube {
     }
 
     public void paint() {
-        colorHex = ComponentManager.getColorWheel().getColor().getRGB() & 0xffffff;
-        int red = (colorHex & 0xff0000) >> 16;//extracts the red byte of the colour wheel's current colour
-        int green = (colorHex & 0xff00) >> 8;//extracts the green byte of the colour wheel's current colour
-        int blue = colorHex & 0xff;//extracts the blue byte of the colour wheel's current colour
-
+        int red = ComponentManager.getColorWheel().getRed();
+        int green = ComponentManager.getColorWheel().getGreen();
+        int blue = ComponentManager.getColorWheel().getBlue();
         back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
         bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
         left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
         right = new Color((int) (red * 0.8), (int) (green * 0.8), (int) (blue * 0.8));
         top = new Color((int) (red * 0.9), (int) (green * 0.9), (int) (blue * 0.9));
-        front = new Color(red, green, blue);
+        front = new Color((red), (green), (blue));
+        colorHex = (red << 16) | (green << 8) | blue;
         this.color[0] = top;
         this.color[1] = front;
         this.color[2] = right;

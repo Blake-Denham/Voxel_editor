@@ -15,24 +15,23 @@ import java.awt.event.MouseWheelEvent;
 
 
 public class Canvas extends GuiComponent {
-    private int noCubes = 0;    //to store the number of cubes on the canvas
-    private int maxNoCubes = 0; //to store the max number of the canvas
-    private int side, height;   // the sides length and height of the canvas
     @NotNull
     private final Grid grid;    //the 3D space and grid which is used to display cubes, see the Grid class
-    @NotNull
-    private Cube[][][] cubes;   //stores the cube data of the canvas
-    @NotNull
-    private final Rectangle pnt;//used for user input
-    private boolean square, shiftSquare, half, stop;//used for paint efficiency
-    private final @NotNull PaintEvent paintX;// an interface object, which is used for order of painting
-    private final @NotNull PaintEvent paintY;// an interface object, which is used for order of painting
-    private final @NotNull SortEvent searchX;//an interface object, which is used for order of searching;
-    private final @NotNull SortEvent searchY;//an interface object, which is used for order of searching;
+    private @NotNull Cube[][][] cubes;   //stores the cube data of the canvas
+    private final @NotNull Rectangle pnt;//used for user
+    private int side, height;   // the sides length and height of the canvas
+    private int hx, hy, hz;
     private Rectangle displayPicture;//used for capturing screenshots
+    private boolean square;
+    private boolean shiftSquare;
+    private boolean half;
+    private static boolean detected;//used for paint efficiency
+    private final @NotNull PaintEvent paintX;// an interface object, which is used for order of painting
+    private final @NotNull PaintEvent paintY;// an interface object, which is used for order of painting to ensure no
+    private final @NotNull SortEvent searchX;//an interface object, which is used for order of searching for which cube is being hovered on/clicked on;
+    private final @NotNull SortEvent searchY;//an interface object, which is used for order of searching for which cube is being hovered on/clicked on;
     private static int mx, my, mb;//mouse location and which button on the mouse is clicked
     private static int selectedTool = CanvasManipulator.ADD;// the currently selected tool
-    private static boolean gridSelect;
 
 
     public Canvas(int side, int height) {  //constructor
@@ -43,7 +42,6 @@ public class Canvas extends GuiComponent {
         square = MU.makeSquareB(false, (int) grid.getRotate(), 360);//see the MU(math utilities) class for information
         shiftSquare = MU.makeSquareB(true, (int) grid.getRotate(), 360);//""    ""  ""  ""  ""  ""  ""  ""  ""
         half = MU.makeHalvesB(true, (int) grid.getRotate(), 360);//""   ""  ""  ""  ""  ""  ""  ""  ""  ""  ""
-        maxNoCubes = (int) MU.square(side - 1) * (height - 1);//""  ""  ""  ""  ""  ""  ""  ""  ""  ""  ""  ""
         this.side = side;
         this.height = height;
 
@@ -74,80 +72,48 @@ public class Canvas extends GuiComponent {
             }
         };
 
-        searchY = (SortEvent e, int z, int y, MouseEvent me) -> {
+        searchY = (SortEvent e, int z, int y) -> {
             if (square) {                                      // depending on the angle of the camera the order which the cubes of the cubes are painted changes
                 for (int yi = 0; yi < grid.getSide() - 1; yi++) {
-                    e.event(null, z, yi, me);
-                    if (stop) {
+                    e.event(null, z, yi);
+                    if (detected) {
                         break;
                     }
                 }
             } else {
                 for (int yi = grid.getSide() - 2; yi >= 0; yi--) {
-                    e.event(null, z, yi, me);
-                    if (stop) {
+                    e.event(null, z, yi);
+                    if (detected) {
                         break;
                     }
                 }
             }
         };
-        searchX = (SortEvent e, int z, int y, MouseEvent me) -> {
+        searchX = (SortEvent e, int z, int y) -> {
             if (shiftSquare) {                                 // depending on the angle of the camera the order which the cubes of the cubes are painted changes
-                loop1:
                 for (int xi = 0; xi < grid.getSide() - 1; xi++) {
                     if (!(cubes[z][xi][y] == null)) {
-                        if (cubes[z][xi][y].intersect(me.getX(), me.getY())) {
-                            switch (selectedTool) {
-                                case CanvasManipulator.ADD:
-                                    addTool(xi, y, z);
-                                    stop = true;
-                                    break loop1;
-                                case CanvasManipulator.PAINT:
-                                    cubes[z][xi][y].paint();
-                                    stop = true;
-                                    break loop1;
-                                case CanvasManipulator.REMOVE:
-                                    cubes[z][xi][y] = null;
-                                    stop = true;
-                                    break loop1;
-                                case CanvasManipulator.SELECT:
-                                    stop = true;
-                                    break loop1;
-
-                            }
+                        if (cubes[z][xi][y].contains(mx, my)) {
+                            detected = true;
+                            hx = xi;
+                            hy = y;
+                            hz = z;
                         }
                     }
                 }
             } else {
-                loop2:
                 for (int xi = grid.getSide() - 2; xi >= 0; xi--) {
                     if (!(cubes[z][xi][y] == null)) {
-                        if (cubes[z][xi][y].intersect(me.getX(), me.getY())) {
-                            switch (selectedTool) {
-                                case CanvasManipulator.ADD:
-                                    addTool(xi, y, z);
-                                    stop = true;
-                                    break loop2;
-                                case CanvasManipulator.PAINT:
-                                    cubes[z][xi][y].paint();
-                                    stop = true;
-                                    break loop2;
-                                case CanvasManipulator.REMOVE:
-                                    cubes[z][xi][y] = null;
-                                    stop = true;
-                                    break loop2;
-                                case CanvasManipulator.SELECT:
-                                    stop = true;
-                                    break loop2;
-                            }
+                        if (cubes[z][xi][y].contains(mx, my)) {
+                            detected = true;
+                            hx = xi;
+                            hy = y;
+                            hz = z;
                         }
                     }
                 }
             }
         };
-        //cuboid(0, 0, 0, side - 1, side - 1, height - 1);
-        //sphere((int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((side - 2) / 2.0), (int) ((height - 2) / 2.0));
-        //cuboid(12,12,12,1,1,1);
     }
 
     private void addTool(int x, int y, int z) {
@@ -192,25 +158,23 @@ public class Canvas extends GuiComponent {
         }
     }
 
-    private void searchZ(@NotNull SortEvent e, MouseEvent me) {
-        stop = false;
+    private void searchZ(@NotNull SortEvent e) {
+        detected = false;
         if (!(grid.getRotateY() < 0)) {
             for (int zi = grid.getHeight() - 2; zi > -1; zi--) {
-                e.event(searchX, zi, 0, me);
-                if (stop) {
+                e.event(searchX, zi, 0);
+                if (detected) {
                     break;
                 }
             }
         } else {
             for (int zi = 0; zi < grid.getHeight() - 1; zi++) {
-                e.event(searchX, zi, 0, me);
-                if (stop) {
+                e.event(searchX, zi, 0);
+                if (detected) {
                     break;
                 }
             }
         }
-        gridSelect = false;
-        grid.setSelected(Cube.getEmpty());
     }
 
     public int getSelectedTool() {
@@ -224,7 +188,7 @@ public class Canvas extends GuiComponent {
                 for (int zi = z; zi < z + height; zi += 1) {
                     if ((!(zi > grid.getHeight() - 2) && !(zi < 0)) && (!(xi > grid.getSide() - 1) && !(xi < 0)) && (!(yi > grid.getSide() - 1) && !(yi < 0))) {
                         //cubes[zi][xi][yi] = new Cube(this, xi, yi, zi, (int) (xi * 255.0 / width), (int) (yi * 255.0 / length), (int) (zi * 255.0 / height));
-                        cubes[zi][xi][yi] = new Cube(this, xi, yi, zi, 255, 255, 255);
+                        cubes[zi][xi][yi] = new Cube(this, xi, yi, zi, 255, 255, 255, 0xff);
                     }
                 }
             }
@@ -239,7 +203,7 @@ public class Canvas extends GuiComponent {
                 int yi = (int) (Math.round(y + (length * MU.sin(theta / 8.0) * MU.cos(pi / 8.0))));
                 int zi = (int) (Math.round(z + (height * MU.sin(pi / 8.0))));
 
-                cubes[zi][xi][yi] = new Cube(this, xi, yi, zi, 255, 255, 255);
+                cubes[zi][xi][yi] = new Cube(this, xi, yi, zi, 255, 255, 255, 0xff);
 
             }
         }
@@ -247,8 +211,7 @@ public class Canvas extends GuiComponent {
 
     public void setCube(int x, int y, int z, int red, int green, int blue) {// sets a single cube in the canvas with a specified colour
         if (checkIfInBounds(x, y, z)) {
-            cubes[z][x][y] = new Cube(this, x, y, z, red, green, blue);
-            System.out.println("Cube created at: " + x + " : " + y + " : " + z);
+            cubes[z][x][y] = new Cube(this, x, y, z, red, green, blue, 0xff);
         }
     }
 
@@ -325,7 +288,6 @@ public class Canvas extends GuiComponent {
         square = MU.makeSquareB(false, (int) grid.getRotate(), 360);
         shiftSquare = MU.makeSquareB(true, (int) grid.getRotate(), 360);
         half = MU.makeHalvesB(true, (int) grid.getRotate(), 360);
-        noCubes = 0;
         for (int zi = 0; zi < grid.getHeight() - 1; zi++) {
             for (int yi = 0; yi < grid.getSide() - 1; yi++) {
                 for (int xi = 0; xi < grid.getSide() - 1; xi++) {
@@ -334,7 +296,18 @@ public class Canvas extends GuiComponent {
                 }
             }
         }
-
+        searchZ(searchY);
+        if (detected) {
+            if (checkForCube(this, hx, hy, hz)) {
+                if (cubes[hz][hx][hy].contains(mx, my)) {
+                    Cube.setSelected(cubes[hz][hx][hy].getFaces()[Cube.getFace()]);
+                }
+            }
+            grid.setSelected(Cube.getEmpty());
+        } else {
+            Cube.setSelected(Cube.getEmpty());
+            grid.gridInterfaceHover(mx, my);
+        }
 
     }
 
@@ -342,36 +315,25 @@ public class Canvas extends GuiComponent {
     protected void hover(@NotNull MouseEvent e) {// is called every frame when the mouse is moving
         mx = e.getX();
         my = e.getY();
-        int count = 0;
-        for (int x = 0; x < side - 1; x++) {
-            for (int y = 0; y < side - 1; y++) {
-                for (int z = 0; z < height - 1; z++) {
-                    if (cubes[z][x][y] != null && cubes[z][x][y].intersect(mx, my)) {
-                        grid.setSelected(Cube.getEmpty());
-                        Cube.setSelected(cubes[z][x][y].getFaces()[Cube.getFace()]);
-                        count = 0;
-                    }
-                    count++;
+        searchZ(searchY);
+        if (detected) {
+            if (checkForCube(this, hx, hy, hz)) {
+                if (cubes[hz][hx][hy].contains(mx, my)) {
+                    Cube.setSelected(cubes[hz][hx][hy].getFaces()[Cube.getFace()]);
                 }
             }
-        }
-        gridSelect = count == (side - 1) * (side - 1) * (height - 1);
-        if (gridSelect) {
-            grid.gridInterfaceHover(e);
-            Cube.setSelected(Cube.getEmpty());
-        }
-        if (!Cube.getSelected().equals(Cube.getEmpty())) {
             grid.setSelected(Cube.getEmpty());
+        } else {
+            Cube.setSelected(Cube.getEmpty());
+            grid.gridInterfaceHover(mx, my);
         }
-
-
     }
 
     @Override
     protected void drag(@NotNull MouseEvent e) {// is called every frame every frame when the mouse is moving and a button is held doen
         int dx = mx - e.getX();
         int dy = my - e.getY();
-        int count = 0;
+
 
         if (mb == 2) {              //mouse wheel click
             grid.update();          // translates the canvas to the mouses location
@@ -382,27 +344,21 @@ public class Canvas extends GuiComponent {
         if (mb == 3) {              //right click
             grid.rotate(dx / 2);    // rotates the canvas vertically and horizontally
             grid.rotatey(-dy / 2);
-            for (int x = 0; x < side - 1; x++) {
-                for (int y = 0; y < side - 1; y++) {
-                    for (int z = 0; z < height - 1; z++) {
-                        if (cubes[z][x][y] != null && cubes[z][x][y].intersect(mx, my)) {
-                            count = 0;
-
+        }
+        if (mb == 1) {
+            if (detected) {
+                if (checkForCube(this, hx, hy, hz)) {
+                    if (cubes[hz][hx][hy].contains(mx, my))
+                        switch (selectedTool) {
+                            case CanvasManipulator.PAINT:
+                                cubes[hz][hx][hy].paint();
+                                break;
                         }
-                        count++;
-                    }
                 }
-            }
-            gridSelect = count == (side - 1) * (side - 1) * (height - 1);
-            if (gridSelect) {
-                grid.gridInterfaceHover(e);
-                Cube.setSelected(Cube.getEmpty());
-            }
-            if (!Cube.getSelected().equals(Cube.getEmpty())) {
-                grid.setSelected(Cube.getEmpty());
+            } else {
+                grid.gridInterfaceHover(mx, my);
             }
         }
-
     }
 
     @Override
@@ -411,14 +367,26 @@ public class Canvas extends GuiComponent {
         mx = e.getX();
         my = e.getY();
         if (mb == 1) {
-            if (gridSelect) {
-                if (grid.getHovered().contains(mx, my)) {
-                    if (selectedTool == CanvasManipulator.ADD && cubes[0][grid.getSelectedX()][grid.getSelectedY()] == null) {
-                        setCube(grid.getSelectedX(), grid.getSelectedY(), 0, ComponentManager.getColorWheel().getRed(), ComponentManager.getColorWheel().getGreen(), ComponentManager.getColorWheel().getBlue());
-                    }
+            if (detected) {
+                if (checkForCube(this, hx, hy, hz)) {
+                    if (cubes[hz][hx][hy].contains(mx, my))
+                        switch (selectedTool) {
+                            case CanvasManipulator.ADD:
+                                addTool(hx, hy, hz);
+                                break;
+                            case CanvasManipulator.PAINT:
+                                cubes[hz][hx][hy].paint();
+                                break;
+                            case CanvasManipulator.REMOVE:
+                                cubes[hz][hx][hy] = null;
+                                break;
+                            case CanvasManipulator.SELECT:
+                                break;
+                        }
                 }
             } else {
-                searchZ(searchY, e);
+                if (grid.getSelected().contains(mx, my) && selectedTool == CanvasManipulator.ADD)
+                    setCube(grid.getSelectedX(), grid.getSelectedY(), 0, ComponentManager.getColorWheel().getRed(), ComponentManager.getColorWheel().getGreen(), ComponentManager.getColorWheel().getBlue());
             }
         }
 
@@ -468,16 +436,6 @@ public class Canvas extends GuiComponent {
         return cubes; // returns the 3d array which holds the cube data
     }
 
-    @SuppressWarnings("unused")
-    public int getNoCubes() {
-        return noCubes; // returns how many cubes are in the canvas
-    }
-
-    @SuppressWarnings("unused")
-    public int getMaxNoCubes() {
-        return maxNoCubes;// returns the volume of the canvas
-    }
-
     public int getSide() {
         return side; //returns the length, which equal to the width of the canvas
     }
@@ -519,18 +477,9 @@ public class Canvas extends GuiComponent {
 
     }
 
-
     public Rectangle getDisplayImage() {
         return displayPicture;// returns the rectangle which will be used to capture the image
 
-    }
-
-    public static boolean isGridSelect() {
-        return gridSelect;
-    }
-
-    public static void setGridSelect(boolean gridSelect) {
-        Canvas.gridSelect = gridSelect;
     }
 
     public void removeCubeAt(int x, int y, int z) {
@@ -539,4 +488,7 @@ public class Canvas extends GuiComponent {
         }
     }
 
+    public static boolean isDetected() {
+        return detected;
+    }
 }

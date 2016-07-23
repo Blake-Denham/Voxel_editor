@@ -60,27 +60,27 @@ public class CameraControl extends GuiComponent {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        rotate = new Label(PU.getXInBounds(bounds, width * 0.15, 0.5), PU.getYInBounds(bounds, 25, 0.15), width * 0.15);
-        rotateSlider = new Slider(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, 30, 0.2), Slider.HORIZONTAL, width * 0.5, 20, new Color(130, 130, 130), new Color(20, 20, 20));
+        rotate = new Label(0, 0, 0);
+        rotateSlider = new Slider(0, 0, Slider.HORIZONTAL, 0, 0, new Color(130, 130, 130), new Color(20, 20, 20));
         assert rotateImage != null;
         assert isometricImg != null;
-        rotator = new Button(PU.getXInBounds(bounds, width * 0.1, 0.14), PU.getYInBounds(bounds, width * 0.1, 0.15), width * 0.1, width * 0.1, rotateImage, "rotate horizontally", () -> rotationx *= -1);
+        rotator = new Button(0, 0, 0, 0, rotateImage, "rotate horizontally", () -> rotationx *= -1);
         add(rotate);
         add(rotateSlider);
         add(rotator);
-        rotatey = new Label(PU.getXInBounds(bounds, width * 0.15, 0.5), PU.getYInBounds(bounds, 25, 0.42), width * 0.15);
-        rotateySlider = new Slider(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, 30, 0.53), Slider.HORIZONTAL, width * 0.5, 20, new Color(130, 130, 130), new Color(20, 20, 20));
-        rotatorY = new Button(PU.getXInBounds(bounds, width * 0.1, 0.14), PU.getYInBounds(bounds, width * 0.1, 0.37), width * 0.1, width * 0.1, rotateImage, "rotate vertically", () -> rotationy *= -1);
+        rotatey = new Label(0, 0, 0);
+        rotateySlider = new Slider(0, 0, Slider.HORIZONTAL, 0, 0, new Color(130, 130, 130), new Color(20, 20, 20));
+        rotatorY = new Button(0, 0, 0, 0, rotateImage, "rotate vertically", () -> rotationy *= -1);
         add(rotatey);
         add(rotateySlider);
         add(rotatorY);
-        zoom = new Label(PU.getXInBounds(bounds, width * 0.15, 0.5), PU.getYInBounds(bounds, 25, 0.42 + 0.27), width * 0.15);
-        zoomSlider = new Slider(PU.getXInBounds(bounds, width * 0.5, 0.5), PU.getYInBounds(bounds, 30, 0.53 + 0.33), Slider.HORIZONTAL, width * 0.5, 20, new Color(130, 130, 130), new Color(20, 20, 20));
+        zoom = new Label(0, 0, 0);
+        zoomSlider = new Slider(0, 0, Slider.HORIZONTAL, 0, 0, new Color(130, 130, 130), new Color(20, 20, 20));
         add(zoom);
         add(zoomSlider);
-        isometricView = new Button(PU.getXInBounds(bounds, width * 0.1, 0.6), PU.getYInBounds(bounds, width * 0.1, 0.37), width * 0.1, width * 0.1, isometricImg, "show isometric view", () -> {
+        isometricView = new Button(0, 0, 0, 0, isometricImg, "show isometric view", () -> {
             ComponentManager.setRotateCamera(45);
-            ComponentManager.setRotateyCamera(37);
+            ComponentManager.setRotateyCamera(35);
         });
         add(isometricView);
 
@@ -123,9 +123,19 @@ public class CameraControl extends GuiComponent {
     protected void paintGuiComponent(@NotNull Graphics2D g2d) {
         g2d.setColor(Color.white);
         g2d.setFont(EditorScreen.font.deriveFont(11f));
-        g2d.drawString("Rotate x:", (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Rotate x:"), 0.24 + 0.07), (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.05) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6));
-        g2d.drawString("Rotate y:", (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Rotate y:"), 0.24 + 0.07), (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6));
-        g2d.drawString("Scale:", (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Scale:"), 0.24 + 0.06), (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.69) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6 + 1));
+        g2d.drawString(
+                "Rotate x:",
+                (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Rotate x:"), 0.24 + 0.07),
+                (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.05) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6));
+
+        g2d.drawString(
+                "Rotate y:",
+                (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Rotate y:"), 0.24 + 0.07),
+                (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.37) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6));
+        g2d.drawString(
+                "Scale:",
+                (int) PU.getXInBounds(bounds, g2d.getFontMetrics().stringWidth("Scale:"), 0.24 + 0.06),
+                (int) (PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.69) + g2d.getFontMetrics().getHeight() - g2d.getFontMetrics().getHeight() / 6 + 1));
     }
 
     @Override
