@@ -25,11 +25,11 @@ public class ColorWheel extends GuiComponent {
     private final TextArea ta;
     @NotNull
     private final Ellipse2D colorWheel;
-    private Color selectedC;
+    private Color selectedC1, selectedC2;
     @NotNull
     private final Rectangle pt;
     @NotNull
-    private final Rectangle display;
+    private final Rectangle displayC1, displayC2;
     @NotNull
     private final Rectangle selected;
     private Rectangle[][] colorButtons;
@@ -88,8 +88,10 @@ public class ColorWheel extends GuiComponent {
 
         ta = new TextArea(PU.getXInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080) * MU.getPercent(120, 25), 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.81), EditorScreen.s_maxHeight * MU.getPercent(25, 1080) * MU.getPercent(120, 25));
         selected = new Rectangle((int) (xc - 1.5), (int) (yc - 1.5), 3, 3);
-        selectedC = new Color(255, 255, 255);
-        display = new Rectangle((int) PU.getXInBounds(bounds, width * 0.85, 0.5), (int) PU.getYInBounds(bounds, height * 0.1, 0.96), (int) (width * 0.85), (int) (height * 0.09));
+        selectedC1 = new Color(255, 255, 255);
+        selectedC2 = new Color(0, 0, 0);
+        displayC1 = new Rectangle((int) PU.getXInBounds(bounds, width * 0.85 / 2, 0.25), (int) PU.getYInBounds(bounds, height * 0.1, 0.96), (int) (width * 0.85 / 2), (int) (height * 0.09));
+        displayC2 = new Rectangle((int) PU.getXInBounds(bounds, width * 0.85 / 2, 0.25), (int) PU.getYInBounds(bounds, height * 0.1, 0.96), (int) (width * 0.85 / 2), (int) (height * 0.09));
         pt = new Rectangle(0, 0, 1, 1);
         add(ta);
         add(saturation);
@@ -104,7 +106,8 @@ public class ColorWheel extends GuiComponent {
         colorWheel.setFrame(PU.getXInBounds(section, r * 2, 0.5), PU.getYInBounds(section, r * 2, MU.getPercent(30, section.getHeight())), r * 2, r * 2);
         xc = colorWheel.getCenterX();
         yc = colorWheel.getCenterY();
-        display.setBounds((int) PU.getXInBounds(section, section.getWidth() * 0.85, 0.5), (int) PU.getYInBounds(section, section.getHeight() * 0.1, 0.96), (int) (section.getWidth() * 0.85), (int) (section.getHeight() * 0.09));
+        displayC1.setBounds((int) PU.getXInBounds(section, section.getWidth() * 0.85 / 3, 0.3), (int) PU.getYInBounds(section, section.getHeight() * 0.1, 0.96), (int) (section.getWidth() * 0.85 / 3), (int) (section.getHeight() * 0.09));
+        displayC2.setBounds((int) PU.getXInBounds(section, section.getWidth() * 0.85 / 3, 0.7), (int) PU.getYInBounds(section, section.getHeight() * 0.1, 0.96), (int) (section.getWidth() * 0.85 / 3), (int) (section.getHeight() * 0.09));
         ta.setBounds(PU.getXInBounds(section, EditorScreen.s_maxHeight * MU.getPercent(25, 1080) * MU.getPercent(120, 25), 0.5), PU.getYInBounds(section, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.81), EditorScreen.s_maxHeight * MU.getPercent(25, 1080) * MU.getPercent(120, 25), EditorScreen.s_maxHeight * MU.getPercent(25, 1080));
         saturation.setBounds(PU.getXInBounds(section, section.getWidth() * 0.7, 0.5), PU.getYInBounds(section, section.getHeight() * 0.07, 0.7), section.getWidth() * 0.7, section.getHeight() * 0.07);
         for (int i = 0; i < 16; i++) {
@@ -143,9 +146,15 @@ public class ColorWheel extends GuiComponent {
                 double sr = MU.getDistance(mx, my, xc, yc);
                 if (sr < r) {
                     selected.setLocation((int) (mx - 1.5), (int) (my - 1.5));
-                    if (selectedC.getRGB() != PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix)).getRGB())
-                        selectedC = Main.programRobot.getPixelColor((mx + dxpix), (my + dypix));
-                    else selectedC = PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix));
+                    if (!e.isShiftDown()) {
+                        if (selectedC1.getRGB() != PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix)).getRGB())
+                            selectedC1 = Main.programRobot.getPixelColor((mx + dxpix), (my + dypix));
+                        else selectedC1 = PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix));
+                    } else {
+                        if (selectedC1.getRGB() != PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix)).getRGB())
+                            selectedC2 = Main.programRobot.getPixelColor((mx + dxpix), (my + dypix));
+                        else selectedC2 = PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix));
+                    }
                 }
             }
         }
@@ -158,6 +167,7 @@ public class ColorWheel extends GuiComponent {
 
     @Override
     public void keyPress(KeyEvent e) {
+
 
     }
 
@@ -174,15 +184,25 @@ public class ColorWheel extends GuiComponent {
                 double sr = MU.getDistance(mx, my, xc, yc);
                 if (sr < r - 2) {
                     selected.setLocation((int) (mx - 1.5), (int) (my - 1.5));
-                    if (selectedC.getRGB() != PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix)).getRGB())
-                        selectedC = Main.programRobot.getPixelColor((mx + dxpix), (my + dypix));
-                    else selectedC = PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix));
+                    if (!e.isShiftDown()) {
+                        if (selectedC1.getRGB() != PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix)).getRGB())
+                            selectedC1 = Main.programRobot.getPixelColor((mx + dxpix), (my + dypix));
+                        else selectedC1 = PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix));
+                    } else {
+                        if (selectedC2.getRGB() != PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix)).getRGB())
+                            selectedC2 = Main.programRobot.getPixelColor((mx + dxpix), (my + dypix));
+                        else selectedC2 = PU.inverseColor(Main.programRobot.getPixelColor(mx + dxpix, my + dypix));
+                    }
                 }
             }
             for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 2; j++) {
                     if (colorButtons[i][j].contains(e.getX(), e.getY())) {
-                        ComponentManager.getColorWheel().setColor(colors[i][j]);
+                        if (!e.isShiftDown()) {
+                            selectedC1 = colors[i][j];
+                        } else {
+                            selectedC2 = colors[i][j];
+                        }
                     }
                 }
             }
@@ -198,7 +218,7 @@ public class ColorWheel extends GuiComponent {
 
     @Override
     public void paintGuiComponent(@NotNull Graphics2D g2d) {
-        PU.castShadow(g2d,new Rectangle((int)colorButtons[0][0].getX(),(int)colorButtons[0][0].getY(),16*2,16*16),8,ComponentManager.bgColor);
+        PU.castShadow(g2d, new Rectangle((int) colorButtons[0][0].getX(), (int) colorButtons[0][0].getY(), 16 * 2, 16 * 16), 8, ComponentManager.bgColor);
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 2; j++) {
                 g2d.setColor(colors[i][j]);
@@ -263,10 +283,11 @@ public class ColorWheel extends GuiComponent {
                 g2d.fillRect((int) x_, (int) y_, 3, 3);
             }
         }
-        g2d.setColor(PU.inverseColor(selectedC));
+        g2d.setColor(PU.inverseColor(selectedC1));
         g2d.draw(selected);
-        PU.castShadow(g2d, display, 8, selectedC);
-        ta.setDisplay("#" + Integer.toHexString(selectedC.getRGB()).substring(2));
+        PU.castShadow(g2d, displayC1, 8, selectedC1);
+        PU.castShadow(g2d, displayC2, 8, selectedC2);
+        ta.setDisplay("#" + Integer.toHexString(selectedC1.getRGB()).substring(2));
 
     }
 
@@ -277,22 +298,22 @@ public class ColorWheel extends GuiComponent {
     }
 
     public int getRed() {
-        return selectedC.getRed();
+        return selectedC1.getRed();
     }
 
     public int getGreen() {
-        return selectedC.getGreen();
+        return selectedC1.getGreen();
     }
 
     public int getBlue() {
-        return selectedC.getBlue();
+        return selectedC1.getBlue();
     }
 
     public Color getColor() {
-        return selectedC;
+        return selectedC1;
     }
 
     public void setColor(Color color) {
-        selectedC = color;
+        selectedC1 = color;
     }
 }

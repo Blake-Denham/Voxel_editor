@@ -21,8 +21,8 @@ public class CanvasDataManager extends GuiComponent {
         super(x, y, width, height, bgColor, 14, true);
         setToolBarTitle("SAVE, LOAD OR NEW");
         try {
-            Image s = ImageIO.read(Main.getResource("Images/save.png"));
-            Image l = ImageIO.read(Main.getResource("Images/load.png"));
+            Image s = ImageIO.read(Main.getResource("Images/save256.png"));
+            Image l = ImageIO.read(Main.getResource("Images/load256.png"));
             Image np = ImageIO.read(Main.getResource("Images/new.png"));
 
             save = new Button(0, 0, 0, 0, s, "save", () -> {

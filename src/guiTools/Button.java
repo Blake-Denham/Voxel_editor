@@ -59,8 +59,8 @@ public class Button extends GuiComponent {
         double ibr = (width) / buttonImage.getWidth(null);
         af.setTransform(ibr, 0, 0, ibr, PU.getXInBounds(bounds, width, 0.5), PU.getYInBounds(bounds, height, 0.5));
         defaultBounds.setLocation((int) x, (int) y);
-        hoverBounds.setLocation((int) (x - 3 / 2.0), (int) (y - 3 / 2.0));
-        clickBounds.setLocation((int) (x + 1), (int) (y + 1));
+        hoverBounds.setLocation((int) (x), (int) (y));
+        clickBounds.setLocation((int) (x), (int) (y));
     }
 
     @Override

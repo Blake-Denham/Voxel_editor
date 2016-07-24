@@ -6,6 +6,9 @@
       <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Contract" />
     </list>
   </component>
+  <component name="HudsonMonitorComponent">
+    <option name="timeOutTextField" value="30" />
+  </component>
   <component name="JavadocGenerationManager">
     <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Desktop/voxel editor docs" />
     <option name="OPTION_SCOPE" value="package" />

@@ -4,6 +4,7 @@ package backend;
  * Created by Blake on 7/14/2016.
  */
 public class Settings {
+
     private boolean showGrid = true;
     private boolean showAxis = true;
     private boolean showCoords = true;

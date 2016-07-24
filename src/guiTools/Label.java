@@ -28,6 +28,7 @@ public class Label extends GuiComponent {
 
     @Override
     protected void paintGuiComponent(@NotNull Graphics2D g2d) {
+        if (!(width == 0)) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         PU.castShadow(g2d, bounds, 6, bgColor);
         g2d.setColor(Color.black);
@@ -35,16 +36,19 @@ public class Label extends GuiComponent {
 
         double displayWidth =0;
         display = "";
-        for (char aDisplayChar : displayChar) {
-            displayWidth += g2d.getFontMetrics(EditorScreen.font.deriveFont(PU.getOptimalFontsize(g2d, EditorScreen.font, display, (float)( height-4.6), width))).stringWidth(aDisplayChar + "");
 
-            if ((displayWidth < width)) {
-                display += aDisplayChar + "";
+            for (char aDisplayChar : displayChar) {
 
+                displayWidth += g2d.getFontMetrics(EditorScreen.font.deriveFont(PU.getOptimalFontsize(g2d, EditorScreen.font, display, (float) (height - 4.6), width))).stringWidth(aDisplayChar + "");
+
+                if ((displayWidth < width)) {
+                    display += aDisplayChar + "";
+
+                }
             }
+            PU.setTextRenderingQuality(g2d);
+            g2d.drawString(display, (int) (x + 3), (int) (y + height - (height - 4.6) / 4.0));
         }
-        PU.setTextRenderingQuality(g2d);
-        g2d.drawString(display, (int) (x+3), (int) (y+height-(height-4.6)/4.0));
     }
 
     @Override

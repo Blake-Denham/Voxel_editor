@@ -23,13 +23,13 @@ public class SettingsWindow extends GuiComponent {
             final Image b5, b5a, b6, b6a, b7, b7a, b8, b9, b10;
             b5 = ImageIO.read(Main.getResource("Images/hideGrid.png"));
             b5a = ImageIO.read(Main.getResource("Images/showGrid.png"));
-            b6 = ImageIO.read(Main.getResource("Images/hideAxis.png"));
-            b6a = ImageIO.read(Main.getResource("Images/showAxis.png"));
+            b6 = ImageIO.read(Main.getResource("Images/hideAxis256.png"));
+            b6a = ImageIO.read(Main.getResource("Images/showAxis256.png"));
             b7 = ImageIO.read(Main.getResource("Images/hideCoords.png"));
             b7a = ImageIO.read(Main.getResource("Images/showCoords.png"));
-            b8 = ImageIO.read(Main.getResource("Images/clear.png"));
-            b9 = ImageIO.read(Main.getResource("Images/addLayer.png"));
-            b10 = ImageIO.read(Main.getResource("Images/removeLayer.png"));
+            b8 = ImageIO.read(Main.getResource("Images/clear256.png"));
+            b9 = ImageIO.read(Main.getResource("Images/addLayer256.png"));
+            b10 = ImageIO.read(Main.getResource("Images/removeLayer256.png"));
             hideGrid = new guiTools.Button(0, 0, 0, 0, b5, "hide/show grid", () -> {
                 if (ComponentManager.settings.isShowGrid()) {
                     ComponentManager.settings.setShowGrid(false);

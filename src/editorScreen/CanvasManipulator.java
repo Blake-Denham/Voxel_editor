@@ -2,6 +2,8 @@ package editorScreen;
 
 import guiTools.Button;
 import guiTools.GuiComponent;
+import guiTools.Label;
+import guiTools.Slider;
 import util.MU;
 import util.PU;
 
@@ -43,8 +45,10 @@ public class CanvasManipulator extends GuiComponent {
     //paint sub buttons
     private Button paintSelected, inverseSelected, contourDefaultToggle;
 
-    //select sub buttons
+    //select sub components
     private Button selectAll;
+    private Slider fillPercent;
+    private guiTools.Label fillPercentLabel;
 
     public CanvasManipulator(double x, double y, double width, double height, Color bgColor) {
         super(x, y, width, height, bgColor, 14, true);
@@ -52,20 +56,21 @@ public class CanvasManipulator extends GuiComponent {
 
 
         try {
-            final Image b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13;
-            b1 = ImageIO.read(Main.getResource("Images/paintBrush.png"));
-            b2 = ImageIO.read(Main.getResource("Images/select.png"));
-            b3 = ImageIO.read(Main.getResource("Images/add.png"));
-            b4 = ImageIO.read(Main.getResource("Images/remove.png"));
-            b5 = ImageIO.read(Main.getResource("Images/addCuboid.png"));
-            b6 = ImageIO.read(Main.getResource("Images/addSphere.png"));
-            b7 = ImageIO.read(Main.getResource("Images/removeCuboid.png"));
-            b8 = ImageIO.read(Main.getResource("Images/removeSphere.png"));
-            b9 = ImageIO.read(Main.getResource("Images/addCuboidFrame.png"));
-            b10 = ImageIO.read(Main.getResource("Images/fill.png"));
-            b11 = ImageIO.read(Main.getResource("Images/inverse.png"));
-            b12 = ImageIO.read(Main.getResource("Images/contour.png"));
-            b13 = ImageIO.read(Main.getResource("Images/commonColors.png"));
+            final Image b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14;
+            b1 = ImageIO.read(Main.getResource("Images/paintBrush256.png"));
+            b2 = ImageIO.read(Main.getResource("Images/select256.png"));
+            b3 = ImageIO.read(Main.getResource("Images/add256.png"));
+            b4 = ImageIO.read(Main.getResource("Images/remove256.png"));
+            b5 = ImageIO.read(Main.getResource("Images/addCuboid256.png"));
+            b6 = ImageIO.read(Main.getResource("Images/addSphere256.png"));
+            b7 = ImageIO.read(Main.getResource("Images/removeCuboid256.png"));
+            b8 = ImageIO.read(Main.getResource("Images/removeSphere256.png"));
+            b9 = ImageIO.read(Main.getResource("Images/addCuboidFrame256.png"));
+            b10 = ImageIO.read(Main.getResource("Images/fill256.png"));
+            b11 = ImageIO.read(Main.getResource("Images/inverse256.png"));
+            b12 = ImageIO.read(Main.getResource("Images/contour256.png"));
+            b13 = ImageIO.read(Main.getResource("Images/commonColors256.png"));
+            b14 = ImageIO.read(Main.getResource("Images/selectAll256.png"));
 
             paint = new guiTools.Button(0, 0, 0, 0, b1, "paint brush", () -> ComponentManager.setTool(PAINT));
             add(paint);
@@ -99,6 +104,11 @@ public class CanvasManipulator extends GuiComponent {
             removeSphere = new Button(0, 0, 0, 0, b8, "delete sphere", () -> {
 
             });
+            selectAll = new Button(0, 0, 0, 0, b14, "select all", () -> {
+
+            });
+            fillPercent = new Slider(0, 0, Slider.HORIZONTAL, 0, 0, new Color(130, 130, 130), new Color(20, 20, 20));
+            fillPercentLabel = new Label(0, 0, 0);
             add(addSphere);
             add(addCuboid);
             add(addCuboidFrame);
@@ -107,6 +117,9 @@ public class CanvasManipulator extends GuiComponent {
             add(contourDefaultToggle);
             add(removeSphere);
             add(removeCuboid);
+            add(selectAll);
+            add(fillPercent);
+            add(fillPercentLabel);
         } catch (IOException e) {
 
             e.printStackTrace();
@@ -147,12 +160,25 @@ public class CanvasManipulator extends GuiComponent {
             inverseSelected.setBounds(0, 0, 0, 0);
             contourDefaultToggle.setBounds(0, 0, 0, 0);
         }
+
         if (ComponentManager.getCanvas().getSelectedTool() == REMOVE) {
             removeSphere.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.43), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
             removeCuboid.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.53), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
         } else {
             removeCuboid.setBounds(0, 0, 0, 0);
             removeSphere.setBounds(0, 0, 0, 0);
+        }
+
+        if (ComponentManager.getCanvas().getSelectedTool() == SELECT) {
+            selectAll.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.43), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+            fillPercent.setBounds(PU.getXInBounds(bounds, 100, 0.558), PU.getYInBounds(bounds, 20, 0.75), 100, 20);
+            fillPercentLabel.setBounds(PU.getXInBounds(bounds, 100, 0.555), PU.getYInBounds(bounds, 20, 0.25), 105, 20);
+            fillPercentLabel.setDisplay("Opacity: " + (int) (fillPercent.getPercent() * 100) + "%");
+        } else {
+            selectAll.setBounds(0, 0, 0, 0);
+            fillPercent.setBounds(0, 0, 0, 0);
+            fillPercentLabel.setBounds(0, 0, 0, 0);
+
         }
         setToolBarTitle("TOOLS: " + tools.get(ComponentManager.getCanvas().getSelectedTool()));
 
