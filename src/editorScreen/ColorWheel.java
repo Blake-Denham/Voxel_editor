@@ -297,16 +297,28 @@ public class ColorWheel extends GuiComponent {
         return "---------------------------\nColor Wheel:\n\tx: " + (int) x + "\n\ty: " + (int) y + "\n\twidth: " + (int) width + "\n\theight: " + (int) height + "\n\t# of subComponents: " + subComponents.size() + " \n---------------------------";
     }
 
-    public int getRed() {
+    public int getC1Red() {
         return selectedC1.getRed();
     }
 
-    public int getGreen() {
+    public int getC1Green() {
         return selectedC1.getGreen();
     }
 
-    public int getBlue() {
+    public int getC1Blue() {
         return selectedC1.getBlue();
+    }
+
+    public int getC2Red() {
+        return selectedC2.getRed();
+    }
+
+    public int getC2Green() {
+        return selectedC2.getGreen();
+    }
+
+    public int getC2Blue() {
+        return selectedC2.getBlue();
     }
 
     public Color getColor() {

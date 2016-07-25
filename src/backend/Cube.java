@@ -7,6 +7,7 @@ import util.MU;
 import util.PU;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 
 public class Cube {
 
@@ -257,10 +258,19 @@ public class Cube {
         return face;
     }
 
-    public void paint() {
-        int red = ComponentManager.getColorWheel().getRed();
-        int green = ComponentManager.getColorWheel().getGreen();
-        int blue = ComponentManager.getColorWheel().getBlue();
+    public void paint(MouseEvent e) {
+        int red;
+        int green;
+        int blue;
+        if (e.isShiftDown()) {
+            red = ComponentManager.getColorWheel().getC2Red();
+            green = ComponentManager.getColorWheel().getC2Green();
+            blue = ComponentManager.getColorWheel().getC2Blue();
+        } else {
+            red = ComponentManager.getColorWheel().getC1Red();
+            green = ComponentManager.getColorWheel().getC1Green();
+            blue = ComponentManager.getColorWheel().getC1Blue();
+        }
         back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
         bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
         left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
@@ -275,5 +285,19 @@ public class Cube {
 
     public Polygon[] getFaces() {
         return cube;
+    }
+
+    public void setColor(int red, int green, int blue) {
+
+        back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
+        bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
+        left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
+        right = new Color((int) (red * 0.8), (int) (green * 0.8), (int) (blue * 0.8));
+        top = new Color((int) (red * 0.9), (int) (green * 0.9), (int) (blue * 0.9));
+        front = new Color((red), (green), (blue));
+        colorHex = (red << 16) | (green << 8) | blue;
+        this.color[0] = top;
+        this.color[1] = front;
+        this.color[2] = right;
     }
 }

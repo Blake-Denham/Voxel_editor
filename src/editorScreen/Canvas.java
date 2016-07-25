@@ -7,6 +7,7 @@ import guiTools.GuiComponent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import util.MU;
+import util.Vector3D;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -32,6 +33,7 @@ public class Canvas extends GuiComponent {
     private final @NotNull SortEvent searchY;//an interface object, which is used for order of searching for which cube is being hovered on/clicked on;
     private static int mx, my, mb;//mouse location and which button on the mouse is clicked
     private static int selectedTool = CanvasManipulator.ADD;// the currently selected tool
+    private Vector3D spt1, spt2;
 
 
     public Canvas(int side, int height) {  //constructor
@@ -44,6 +46,8 @@ public class Canvas extends GuiComponent {
         half = MU.makeHalvesB(true, (int) grid.getRotate(), 360);//""   ""  ""  ""  ""  ""  ""  ""  ""  ""  ""
         this.side = side;
         this.height = height;
+        spt1 = new Vector3D(0, 0, 0);
+        spt2 = new Vector3D(this.side - 1, this.side - 1, this.height - 1);
 
         paintY = (PaintEvent e, int z, int y, Graphics2D g2d) -> {
             if (!square) {                                      // depending on the angle of the camera the order which the cubes of the cubes are painted changes
@@ -117,9 +121,9 @@ public class Canvas extends GuiComponent {
     }
 
     private void addTool(int x, int y, int z) {
-        int r = ComponentManager.getColorWheel().getRed();
-        int g = ComponentManager.getColorWheel().getGreen();
-        int b = ComponentManager.getColorWheel().getBlue();
+        int r = ComponentManager.getColorWheel().getC1Red();
+        int g = ComponentManager.getColorWheel().getC1Green();
+        int b = ComponentManager.getColorWheel().getC1Blue();
         if (Cube.getFace() == 0) {
             if (grid.getRotateY() >= 0) {
                 setCube(x, y, z + 1, r, g, b);
@@ -181,30 +185,63 @@ public class Canvas extends GuiComponent {
         return selectedTool;
     }
 
-    @SuppressWarnings({"ConstantConditions", "SameParameterValue", "unused"})
-    private void cuboid(int x, int y, int z, int width, int length, int height) {   // creates a white cuboid in the canvas
-        for (int xi = x; xi < x + width; xi += 1) {
-            for (int yi = y; yi < y + length; yi += 1) {
-                for (int zi = z; zi < z + height; zi += 1) {
-                    if ((!(zi > grid.getHeight() - 2) && !(zi < 0)) && (!(xi > grid.getSide() - 1) && !(xi < 0)) && (!(yi > grid.getSide() - 1) && !(yi < 0))) {
-                        //cubes[zi][xi][yi] = new Cube(this, xi, yi, zi, (int) (xi * 255.0 / width), (int) (yi * 255.0 / length), (int) (zi * 255.0 / height));
-                        cubes[zi][xi][yi] = new Cube(this, xi, yi, zi, 255, 255, 255, 0xff);
+    public void fillSelected(int x, int y, int z, int width, int length, int height) {
+        double fillPercent = ComponentManager.getCanvasManipulator().getFillPercent();
+        for (double xi = x; xi < x + width; xi += (1.0 + fillPercent)) {
+            for (double yi = y; yi < y + length; yi += 1) {
+                for (double zi = z; zi < z + height; zi += 1) {
+                    if (checkIfInBounds(x, y, z)) {
+                        if (checkForCube(this, x, y, z)) {
+                            cubes[(int) zi][(int) xi][(int) yi].setColor(ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
+                        }
                     }
                 }
             }
         }
     }
 
-    @SuppressWarnings("unused")
-    private void sphere(int x, int y, int z, double width, double length, double height) { // creates a white sphere in the canvas
-        for (int theta = 0; theta < 2880; theta += 5) {
-            for (int pi = -1440; pi < 1440; pi += 5) {
-                int xi = (int) (Math.round(x + (width * MU.cos(theta / 8.0) * MU.cos(pi / 8.0))));
-                int yi = (int) (Math.round(y + (length * MU.sin(theta / 8.0) * MU.cos(pi / 8.0))));
-                int zi = (int) (Math.round(z + (height * MU.sin(pi / 8.0))));
+    public void addCuboid(int x, int y, int z, int width, int length, int height) {   // creates a white cuboid in the canvas
+        for (int xi = x; xi < x + width; xi += 1) {
+            for (int yi = y; yi < y + length; yi += 1) {
+                for (int zi = z; zi < z + height; zi += 1) {
+                    setCube(xi, yi, zi, ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
+                }
+            }
+        }
+    }
 
-                cubes[zi][xi][yi] = new Cube(this, xi, yi, zi, 255, 255, 255, 0xff);
+    public void addSphere(int x, int y, int z, double width, double length, double height) { // creates a white sphere in the canvas
+        for (int i = 1; i < 20; i++) {
+            for (int theta = 0; theta < 720; theta += 5) {
+                for (int pi = -360; pi < 360; pi += 5) {
+                    int xi = (int) (Math.round((x + width / 2) + ((width * i / 20.0) / 2 * MU.cos(theta / 2.0) * MU.cos(pi / 2.0))));
+                    int yi = (int) (Math.round((y + length / 2) + ((length * i / 20.0) / 2 * MU.sin(theta / 2.0) * MU.cos(pi / 2.0))));
+                    int zi = (int) (Math.round((z + height / 2) + ((height * i / 20.0) / 2 * MU.sin(pi / 2.0))));
+                    setCube(xi, yi, zi, ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
+                }
+            }
+        }
+    }
 
+    public void removeSphere(int x, int y, int z, double width, double length, double height) {
+        for (int i = 1; i < 20; i++) {
+            for (int theta = 0; theta < 720; theta += 5) {
+                for (int pi = -360; pi < 360; pi += 5) {
+                    int xi = (int) (Math.round((x + width / 2) + ((width * i / 20.0) / 2 * MU.cos(theta / 2.0) * MU.cos(pi / 2.0))));
+                    int yi = (int) (Math.round((y + length / 2) + ((length * i / 20.0) / 2 * MU.sin(theta / 2.0) * MU.cos(pi / 2.0))));
+                    int zi = (int) (Math.round((z + height / 2) + ((height * i / 20.0) / 2 * MU.sin(pi / 2.0))));
+                    removeCubeAt(xi, yi, zi);
+                }
+            }
+        }
+    }
+
+    public void removeCuboid(int x, int y, int z, int width, int length, int height) {
+        for (int xi = x; xi < x + width; xi += 1) {
+            for (int yi = y; yi < y + length; yi += 1) {
+                for (int zi = z; zi < z + height; zi += 1) {
+                    removeCubeAt(xi, yi, zi);
+                }
             }
         }
     }
@@ -230,11 +267,9 @@ public class Canvas extends GuiComponent {
     }
 
     @Contract(pure = true)
-    @SuppressWarnings("unused")
     public static boolean checkForCube(@NotNull Canvas c, int x, int y, int z) {// checks if there is a cube at given coordinates
         return c.checkIfInBounds(x, y, z) && c.cubes[z][x][y] != null;
     }
-
 
     private void showCoords(Graphics2D g2d) {// apart of a setting which shows the coordinates at each corner of the canvas
         int x_ = grid.getSide() - 1;
@@ -351,7 +386,7 @@ public class Canvas extends GuiComponent {
                     if (cubes[hz][hx][hy].contains(mx, my))
                         switch (selectedTool) {
                             case CanvasManipulator.PAINT:
-                                cubes[hz][hx][hy].paint();
+                                cubes[hz][hx][hy].paint(e);
                                 break;
                         }
                 }
@@ -375,7 +410,7 @@ public class Canvas extends GuiComponent {
                                 addTool(hx, hy, hz);
                                 break;
                             case CanvasManipulator.PAINT:
-                                cubes[hz][hx][hy].paint();
+                                cubes[hz][hx][hy].paint(e);
                                 break;
                             case CanvasManipulator.REMOVE:
                                 cubes[hz][hx][hy] = null;
@@ -386,7 +421,7 @@ public class Canvas extends GuiComponent {
                 }
             } else {
                 if (grid.getSelected().contains(mx, my) && selectedTool == CanvasManipulator.ADD)
-                    setCube(grid.getSelectedX(), grid.getSelectedY(), 0, ComponentManager.getColorWheel().getRed(), ComponentManager.getColorWheel().getGreen(), ComponentManager.getColorWheel().getBlue());
+                    setCube(grid.getSelectedX(), grid.getSelectedY(), 0, ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
             }
         }
 
@@ -484,11 +519,21 @@ public class Canvas extends GuiComponent {
 
     public void removeCubeAt(int x, int y, int z) {
         if (checkForCube(this, x, y, z)) {
-            cubes[z][x][y] = null;
+            if (checkIfInBounds(x, y, z)) {
+                cubes[z][x][y] = null;
+            }
         }
     }
 
     public static boolean isDetected() {
         return detected;
+    }
+
+    public Vector3D getSpt1() {
+        return spt1;
+    }
+
+    public Vector3D getSpt2() {
+        return spt2;
     }
 }

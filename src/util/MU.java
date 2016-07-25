@@ -207,6 +207,10 @@ public class MU {
         return Math.sqrt(square(x1 - x2) + square(y1 - y2));
     }
 
+    public static double getDistance(Vector3D v1, Vector3D v2) {
+        return Math.sqrt(square(v1.getX() - v2.getX()) + square(v1.getY() - v2.getY()) + square(v1.getZ() - v2.getZ()));
+    }
+
     @Contract(pure = true)
     public static double getPercent(double val1, double val2) {
         return val1 / val2;

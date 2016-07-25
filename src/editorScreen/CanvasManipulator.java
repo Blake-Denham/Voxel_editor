@@ -6,6 +6,7 @@ import guiTools.Label;
 import guiTools.Slider;
 import util.MU;
 import util.PU;
+import util.Vector3D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -81,16 +82,23 @@ public class CanvasManipulator extends GuiComponent {
             removeCube = new guiTools.Button(0, 0, 0, 0, b4, "remove", () -> ComponentManager.setTool(REMOVE));
             add(removeCube);
             addSphere = new Button(0, 0, 0, 0, b6, "add sphere", () -> {
-
+                Vector3D v1 = ComponentManager.getCanvas().getSpt1();
+                Vector3D v2 = ComponentManager.getCanvas().getSpt2();
+                ComponentManager.getCanvas().addSphere((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX() - 1), (int) (v2.getY() - v1.getY() - 1), (int) (v2.getZ() - v1.getZ()) - 1);
             });
             addCuboid = new Button(0, 0, 0, 0, b5, "add cuboid", () -> {
+                Vector3D v1 = ComponentManager.getCanvas().getSpt1();
+                Vector3D v2 = ComponentManager.getCanvas().getSpt2();
+                ComponentManager.getCanvas().addCuboid((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX()), (int) (v2.getY() - v1.getY()), (int) (v2.getZ() - v1.getZ()));
 
             });
             addCuboidFrame = new Button(0, 0, 0, 0, b9, "add cuboid frame", () -> {
 
             });
             paintSelected = new Button(0, 0, 0, 0, b10, "paint selected area", () -> {
-
+                Vector3D v1 = ComponentManager.getCanvas().getSpt1();
+                Vector3D v2 = ComponentManager.getCanvas().getSpt2();
+                ComponentManager.getCanvas().fillSelected((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX()), (int) (v2.getY() - v1.getY()), (int) (v2.getZ() - v1.getZ()));
             });
             inverseSelected = new Button(0, 0, 0, 0, b11, "inverse selected area", () -> {
 
@@ -98,11 +106,15 @@ public class CanvasManipulator extends GuiComponent {
             contourDefaultToggle = new Button(0, 0, 0, 0, b12, "contour/original colours", () -> {
 
             });
-            removeCuboid = new Button(0, 0, 0, 0, b7, "delete cuboid", () -> {
-
+            removeCuboid = new Button(0, 0, 0, 0, b7, "remove cuboid", () -> {
+                Vector3D v1 = ComponentManager.getCanvas().getSpt1();
+                Vector3D v2 = ComponentManager.getCanvas().getSpt2();
+                ComponentManager.getCanvas().removeCuboid((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX()), (int) (v2.getY() - v1.getY()), (int) (v2.getZ() - v1.getZ()));
             });
-            removeSphere = new Button(0, 0, 0, 0, b8, "delete sphere", () -> {
-
+            removeSphere = new Button(0, 0, 0, 0, b8, "remove sphere", () -> {
+                Vector3D v1 = ComponentManager.getCanvas().getSpt1();
+                Vector3D v2 = ComponentManager.getCanvas().getSpt2();
+                ComponentManager.getCanvas().removeSphere((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX() - 1), (int) (v2.getY() - v1.getY() - 1), (int) (v2.getZ() - v1.getZ()) - 1);
             });
             selectAll = new Button(0, 0, 0, 0, b14, "select all", () -> {
 
@@ -212,5 +224,9 @@ public class CanvasManipulator extends GuiComponent {
     @Override
     protected void mouseRelease(MouseEvent e) {
 
+    }
+
+    public double getFillPercent() {
+        return fillPercent.getPercent();
     }
 }

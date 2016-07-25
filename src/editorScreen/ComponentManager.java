@@ -198,7 +198,7 @@ public class ComponentManager extends JComponent {
         }
         for (int x = 0; x < canvas.getSide() - 1; x++) {
             for (int y = 0; y < canvas.getSide() - 1; y++) {
-                canvas.setCube(x, y, zc, colorWheel.getRed(), colorWheel.getGreen(), colorWheel.getBlue());
+                canvas.setCube(x, y, zc, colorWheel.getC1Red(), colorWheel.getC1Green(), colorWheel.getC1Blue());
             }
         }
     }

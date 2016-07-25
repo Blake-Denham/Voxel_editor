@@ -23,7 +23,7 @@ public class CanvasDataManager extends GuiComponent {
         try {
             Image s = ImageIO.read(Main.getResource("Images/save256.png"));
             Image l = ImageIO.read(Main.getResource("Images/load256.png"));
-            Image np = ImageIO.read(Main.getResource("Images/new.png"));
+            Image np = ImageIO.read(Main.getResource("Images/newProject256.png"));
 
             save = new Button(0, 0, 0, 0, s, "save", () -> {
                 String name = JOptionPane.showInputDialog("Enter project name");
