@@ -24,4 +24,9 @@ public class Vector3D {
         return z;
     }
 
+    public void set(int hx, int hy, int hz) {
+        this.x = hx;
+        this.y = hy;
+        this.z = hz;
+    }
 }

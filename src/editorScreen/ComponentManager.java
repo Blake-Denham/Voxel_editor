@@ -187,7 +187,7 @@ public class ComponentManager extends JComponent {
         for (int z = 0; z < canvas.getCanvasHeight() - 1; z++) {
             for (int x = 0; x < canvas.getSide() - 1; x++) {
                 for (int y = 0; y < canvas.getSide() - 1; y++) {
-                    if (Canvas.checkForCube(canvas, x, y, zc)) {
+                    if (ComponentManager.getCanvas().checkForCube(x, y, zc)) {
                         zc++;
                         break;
                     } else {
@@ -208,7 +208,7 @@ public class ComponentManager extends JComponent {
         for (int z = canvas.getCanvasHeight() - 2; z >= 0; z--) {
             for (int x = 0; x < canvas.getSide() - 1; x++) {
                 for (int y = 0; y < canvas.getSide() - 1; y++) {
-                    if (!Canvas.checkForCube(canvas, x, y, zc)) {
+                    if (!ComponentManager.getCanvas().checkForCube(x, y, zc)) {
                         zc--;
                         break;
                     } else {

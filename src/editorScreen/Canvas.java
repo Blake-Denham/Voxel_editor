@@ -18,7 +18,7 @@ import java.awt.event.MouseWheelEvent;
 public class Canvas extends GuiComponent {
     @NotNull
     private final Grid grid;    //the 3D space and grid which is used to display cubes, see the Grid class
-    private @NotNull Cube[][][] cubes;   //stores the cube data of the canvas
+    private Cube[][][] cubes;   //stores the cube data of the canvas
     private final @NotNull Rectangle pnt;//used for user
     private int side, height;   // the sides length and height of the canvas
     private int hx, hy, hz;
@@ -186,15 +186,14 @@ public class Canvas extends GuiComponent {
     }
 
     public void fillSelected(int x, int y, int z, int width, int length, int height) {
-        double fillPercent = ComponentManager.getCanvasManipulator().getFillPercent();
-        for (double xi = x; xi < x + width; xi += (1.0 + fillPercent)) {
+        for (double xi = x; xi < x + width; xi += 1) {
             for (double yi = y; yi < y + length; yi += 1) {
                 for (double zi = z; zi < z + height; zi += 1) {
-                    if (checkIfInBounds(x, y, z)) {
-                        if (checkForCube(this, x, y, z)) {
+
+                        if (checkForCube((int)xi, (int)yi, (int)zi)) {
                             cubes[(int) zi][(int) xi][(int) yi].setColor(ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
                         }
-                    }
+
                 }
             }
         }
@@ -266,9 +265,9 @@ public class Canvas extends GuiComponent {
         return (!(x < 0) && !(x >= grid.getSide() - 1) && !(y < 0) && !(y >= grid.getSide() - 1) && !(z < 0) && !(z >= grid.getHeight() - 1));
     }
 
-    @Contract(pure = true)
-    public static boolean checkForCube(@NotNull Canvas c, int x, int y, int z) {// checks if there is a cube at given coordinates
-        return c.checkIfInBounds(x, y, z) && c.cubes[z][x][y] != null;
+
+    public boolean checkForCube(int x, int y, int z) {// checks if there is a cube at given coordinates
+        return checkIfInBounds(x, y, z) && cubes[z][x][y] != null;
     }
 
     private void showCoords(Graphics2D g2d) {// apart of a setting which shows the coordinates at each corner of the canvas
@@ -333,7 +332,7 @@ public class Canvas extends GuiComponent {
         }
         searchZ(searchY);
         if (detected) {
-            if (checkForCube(this, hx, hy, hz)) {
+            if (checkForCube(hx, hy, hz)) {
                 if (cubes[hz][hx][hy].contains(mx, my)) {
                     Cube.setSelected(cubes[hz][hx][hy].getFaces()[Cube.getFace()]);
                 }
@@ -352,7 +351,7 @@ public class Canvas extends GuiComponent {
         my = e.getY();
         searchZ(searchY);
         if (detected) {
-            if (checkForCube(this, hx, hy, hz)) {
+            if (checkForCube(hx, hy, hz)) {
                 if (cubes[hz][hx][hy].contains(mx, my)) {
                     Cube.setSelected(cubes[hz][hx][hy].getFaces()[Cube.getFace()]);
                 }
@@ -382,7 +381,7 @@ public class Canvas extends GuiComponent {
         }
         if (mb == 1) {
             if (detected) {
-                if (checkForCube(this, hx, hy, hz)) {
+                if (checkForCube( hx, hy, hz)) {
                     if (cubes[hz][hx][hy].contains(mx, my))
                         switch (selectedTool) {
                             case CanvasManipulator.PAINT:
@@ -403,7 +402,7 @@ public class Canvas extends GuiComponent {
         my = e.getY();
         if (mb == 1) {
             if (detected) {
-                if (checkForCube(this, hx, hy, hz)) {
+                if (checkForCube(hx, hy, hz)) {
                     if (cubes[hz][hx][hy].contains(mx, my))
                         switch (selectedTool) {
                             case CanvasManipulator.ADD:
@@ -416,6 +415,35 @@ public class Canvas extends GuiComponent {
                                 cubes[hz][hx][hy] = null;
                                 break;
                             case CanvasManipulator.SELECT:
+                                if(e.isShiftDown()){
+                                    spt2.set(hx,hy,hz);
+                                }else{
+                                   spt1.set(hx,hy,hz);
+                                }
+                                double temp=0;
+                                double x1 = spt1.getX();
+                                double x2 = spt2.getX();
+                                if(x1 > x2){
+                                    temp =x2;
+                                    x2 = x1;
+                                    x1 = temp;
+                                }
+                                double y1 = spt1.getY();
+                                double y2 = spt2.getY();
+                                if(y1 > y2){
+                                    temp =y2;
+                                    y2 = y1;
+                                    y1 = temp;
+                                }
+                                double z1 = spt1.getZ();
+                                double z2 = spt2.getZ();
+                                if(z1 > z2){
+                                    temp =z2;
+                                    z2 = z1;
+                                    z1 = temp;
+                                }
+                                spt1.set((int)x1,(int)y1,(int)z1);
+                                spt2.set((int)x2,(int)y2,(int)z2);
                                 break;
                         }
                 }
@@ -435,23 +463,17 @@ public class Canvas extends GuiComponent {
     // keyboard input
     @Override
     protected void keyPress(@NotNull KeyEvent ke) {
-        if (ke.getKeyCode() == KeyEvent.VK_W) { //w key
-            grid.rotatey(1);                    // rotates canvas vertically up
+        if(ke.getKeyCode()==KeyEvent.VK_Q){
+            selectedTool = CanvasManipulator.PAINT;
         }
-        if (ke.getKeyCode() == KeyEvent.VK_S) { //s key
-            grid.rotatey(-1);                   //rotates canvas vertically down
+        if(ke.getKeyCode()==KeyEvent.VK_W){
+            selectedTool = CanvasManipulator.SELECT;
         }
-        if (ke.getKeyCode() == KeyEvent.VK_D) { //d key
-            grid.rotate(1);                     // rotates canvas horizontally right
+        if(ke.getKeyCode()==KeyEvent.VK_E){
+            selectedTool = CanvasManipulator.ADD;
         }
-        if (ke.getKeyCode() == KeyEvent.VK_A) { //a key
-            grid.rotate(-1);                    // rotates canvas horizontally left
-        }
-        if (ke.getKeyCode() == KeyEvent.VK_UP) { //up arrow key
-            grid.zoom(1);                        // zooms in
-        }
-        if (ke.getKeyCode() == KeyEvent.VK_DOWN) { //down arrow key
-            grid.zoom(-1);                         // zooms out
+        if(ke.getKeyCode()==KeyEvent.VK_R){
+            selectedTool = CanvasManipulator.REMOVE;
         }
     }
 
@@ -518,7 +540,7 @@ public class Canvas extends GuiComponent {
     }
 
     public void removeCubeAt(int x, int y, int z) {
-        if (checkForCube(this, x, y, z)) {
+        if (checkForCube(x, y, z)) {
             if (checkIfInBounds(x, y, z)) {
                 cubes[z][x][y] = null;
             }
