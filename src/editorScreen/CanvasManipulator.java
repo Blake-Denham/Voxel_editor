@@ -93,6 +93,9 @@ public class CanvasManipulator extends GuiComponent {
 
             });
             addCuboidFrame = new Button(0, 0, 0, 0, b9, "add cuboid frame", () -> {
+                Vector3D v1 = ComponentManager.getCanvas().getSpt1();
+                Vector3D v2 = ComponentManager.getCanvas().getSpt2();
+                ComponentManager.getCanvas().addCuboidFrame((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX()) - 1, (int) (v2.getY() - v1.getY()) - 1, (int) (v2.getZ() - v1.getZ() - 1));
 
             });
             paintSelected = new Button(0, 0, 0, 0, b10, "paint selected area", () -> {

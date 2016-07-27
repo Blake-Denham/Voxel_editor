@@ -226,4 +226,7 @@ public class MU {
         return (binNumber & (0b1 << (index))) >> (index);
     }
 
+    public static double max(double val1, double val2) {
+        return val1 >= val2 ? val1 : val2;
+    }
 }

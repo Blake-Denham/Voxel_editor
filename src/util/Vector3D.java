@@ -29,4 +29,10 @@ public class Vector3D {
         this.y = hy;
         this.z = hz;
     }
+
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ", " + z + ")";
+    }
 }
