@@ -6,6 +6,7 @@ import backend.Grid;
 import guiTools.GuiComponent;
 import org.jetbrains.annotations.NotNull;
 import util.MU;
+import util.PU;
 import util.Vector3D;
 
 import java.awt.*;
@@ -13,11 +14,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
-
 public class Canvas extends GuiComponent {
+
     @NotNull
     private final Grid grid;    //the 3D space and grid which is used to display cubes, see the Grid class
     private Cube[][][] cubes;   //stores the cube data of the canvas
+    private int[][][] normalBuffer;
     private final @NotNull Rectangle pnt;//used for user
     private int side, height;   // the sides length and height of the canvas
     private int hx, hy, hz;
@@ -32,12 +34,14 @@ public class Canvas extends GuiComponent {
     private final @NotNull SortEvent searchY;//an interface object, which is used for order of searching for which cube is being hovered on/clicked on;
     private static int mx, my, mb;//mouse location and which button on the mouse is clicked
     private static int selectedTool = CanvasManipulator.ADD;// the currently selected tool
-    private Vector3D spt1, spt2;
+    private Vector3D spt1, spt2;// two corners of a selected volume
+    private boolean isNormalColour = true;
 
     public Canvas(int side, int height) {  //constructor
         super(0, 0, EditorScreen.s_maxWidth, EditorScreen.s_maxHeight); // the canvas counts as a gui component
         grid = new Grid(side, height, EditorScreen.s_maxWidth / 2, EditorScreen.s_maxHeight / 2 + 150);//instantiates the grid in the centre of the screen
         cubes = new Cube[height - 1][side - 1][side - 1];//instantiates the cube array according the grid
+        normalBuffer = new int[height - 1][side - 1][side - 1];
         pnt = new Rectangle(0, 0, 1, 1);// instantiates the rectangle used for user input
         square = MU.makeSquareB(false, (int) grid.getRotate(), 360);//see the MU(math utilities) class for information
         shiftSquare = MU.makeSquareB(true, (int) grid.getRotate(), 360);//""    ""  ""  ""  ""  ""  ""  ""  ""
@@ -118,27 +122,47 @@ public class Canvas extends GuiComponent {
 
     }
 
-    private void addTool(int x, int y, int z) {
-        int r = ComponentManager.getColorWheel().getC1Red();
-        int g = ComponentManager.getColorWheel().getC1Green();
-        int b = ComponentManager.getColorWheel().getC1Blue();
+    private void addCubeFromClick(int x, int y, int z) {
+        int r, g, b;
+        if (isNormalColour) {
+            r = ComponentManager.getColorWheel().getC1Red();
+            g = ComponentManager.getColorWheel().getC1Green();
+            b = ComponentManager.getColorWheel().getC1Blue();
+        } else {
+            r = (int) (255.0 * z / (height - 1.0));
+            g = (int) (255.0 * z / (height - 1.0));
+            b = (int) (255.0 * z / (height - 1.0));
+        }
         if (Cube.getFace() == 0) {
             if (grid.getRotateY() >= 0) {
+
                 setCube(x, y, z + 1, r, g, b);
+                if (checkIfInBounds(x, y, z + 1))
+                    normalBuffer[z + 1][x][y] = cubes[z + 1][x][y].getColorHex();
             } else {
                 setCube(x, y, z - 1, r, g, b);
+                if (checkIfInBounds(x, y, z - 1))
+                    normalBuffer[z - 1][x][y] = cubes[z - 1][x][y].getColorHex();
             }
         } else if (Cube.getFace() == 1) {
             if (!square) {
                 setCube(x, y + 1, z, r, g, b);
+                if (checkIfInBounds(x, y + 1, z))
+                    normalBuffer[z][x][y + 1] = cubes[z][x][y + 1].getColorHex();
             } else {
                 setCube(x, y - 1, z, r, g, b);
+                if (checkIfInBounds(x, y - 1, z))
+                    normalBuffer[z][x][y - 1] = cubes[z][x][y - 1].getColorHex();
             }
         } else if (Cube.getFace() == 2) {
             if (!shiftSquare) {
                 setCube(x + 1, y, z, r, g, b);
+                if (checkIfInBounds(x + 1, y, z))
+                    normalBuffer[z][x + 1][y] = cubes[z][x + 1][y].getColorHex();
             } else {
                 setCube(x - 1, y, z, r, g, b);
+                if (checkIfInBounds(x - 1, y, z))
+                    normalBuffer[z][x - 1][y] = cubes[z][x - 1][y].getColorHex();
             }
 
         }
@@ -183,13 +207,68 @@ public class Canvas extends GuiComponent {
         return selectedTool;
     }
 
+    public void selectAll() {
+        spt1.set(0, 0, 0);
+        spt2.set(this.side - 1, this.side - 1, this.height - 1);
+    }
+
+    public void switchContourDefault() {
+        if (isNormalColour) {
+            for (int x = 0; x < side - 1; x++) {
+                for (int y = 0; y < side - 1; y++) {
+                    for (int z = 0; z < height - 1; z++) {
+
+                        if (checkForCube(x, y, z)) {
+                            normalBuffer[z][x][y] = cubes[z][x][y].getColorHex();
+                            cubes[z][x][y].setColor(PU.saturateColor(new Color(255, 255, 255), (z / (height - 1.0))));
+                        }
+                    }
+                }
+            }
+
+        } else {
+            for (int x = 0; x < side - 1; x++) {
+                for (int y = 0; y < side - 1; y++) {
+                    for (int z = 0; z < height - 1; z++) {
+                        if (checkForCube(x, y, z)) {
+                            cubes[z][x][y].setColor(new Color(normalBuffer[z][x][y]));
+                        }
+                    }
+                }
+            }
+        }
+        isNormalColour = !isNormalColour;
+    }
+
+    public void inverseColors(int x, int y, int z, int width, int length, int height) {
+        for (int xi = x; xi < x + width; xi++) {
+            for (int yi = y; yi < y + length; yi++) {
+                for (int zi = z; zi < z + height; zi++) {
+                    if (checkForCube(xi, yi, zi)) {
+                        if (isNormalColour) {
+                            cubes[zi][xi][yi].setColor(PU.inverseColor(new Color(cubes[zi][xi][yi].getColorHex())));
+                        } else {
+                            normalBuffer[zi][xi][yi] = PU.inverseColor(new Color(cubes[zi][xi][yi].getColorHex())).getRGB();
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
+
     public void fillSelected(int x, int y, int z, int width, int length, int height) {
         double fillPercent = ComponentManager.getCanvasManipulator().getFillPercent();
         for (double xi = x; xi < x + width; xi += 1.0 / Math.cbrt(fillPercent)) {
             for (double yi = y; yi < y + length; yi += 1.0 / Math.cbrt(fillPercent)) {
                 for (double zi = z; zi < z + height; zi += 1.0 / Math.cbrt(fillPercent)) {
                     if (checkForCube((int) Math.round(xi), (int) Math.round(yi), (int) Math.round(zi))) {
-                        cubes[(int) Math.round(zi)][(int) Math.round(xi)][(int) Math.round(yi)].setColor(ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
+                        if (isNormalColour) {
+                            cubes[(int) Math.round(zi)][(int) Math.round(xi)][(int) Math.round(yi)].setColor(ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
+                        } else {
+                            normalBuffer[(int) Math.round(zi)][(int) Math.round(xi)][(int) Math.round(yi)] = new Color(ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue()).getRGB();
+                        }
                     }
 
                 }
@@ -221,49 +300,40 @@ public class Canvas extends GuiComponent {
         }
     }
 
-    public void drawLine(int x, int y, int z, int x1, int y1, int z1) {
-
-
+    public void drawLine(int x, int y, int z, int x1, int y1, int z1) { // draws a line from one point to another
+        double h = MU.getDistance(new Vector3D(x, y, z), new Vector3D(x1, y1, z1));
         double dx, dy, dz;
-        double ry, rx;
-        if (!(x1 - x == 0)) {
-            rx = Math.toDegrees(MU.arctan((y1 - y) / (x1 - x)));
-        } else {
-            rx = 90;
-        }
-        ry = Math.toDegrees(MU.arctan((z1 - z) / MU.getDistance(x, y, x1, y1) * MU.cosec(rx)));
-
+        double ry = 0, rx = 0;
         if (x1 - x == 0) {
-            dx = 0;
+            rx = 90;
         } else {
-            dx = MU.cos(rx);
+            rx = Math.toDegrees(MU.arctan((y1 - y) / (x1 - x)));  // phi = atan(y/x)
         }
-        if (y1 - y == 0) {
-            dy = 0;
-        } else {
-            dy = MU.sin(rx);
-        }
-        if (z1 - z == 0) {
-            dz = 0;
-        } else {
-            dz = MU.sin(ry);
-        }
-        double length = MU.min(Math.abs((x1 - x) * MU.sec(rx)), Math.abs((y1 - y) * MU.cosec(rx)));
-        System.out.println(length);
-        for (double i = 0; i < length; i += 1) {
+        ry = Math.toDegrees(MU.arccos((z1 - z) / (h)));     // thetaz = acos(z/h)
+        dx = MU.cos(rx) * MU.sin(ry);                     // is the rate of change of the x dimension
+        dy = MU.sin(rx) * MU.sin(ry);                     // rate of change of y dimension
+        dz = MU.cos(ry);                                // rate of change of the z dimension
+        for (double i = 0; i < h; i += 1) {             // follows
             setCube((int) (x + i * dx), (int) (y + i * dy), (int) (z + i * dz), ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
         }
 
     }
 
     public void addCuboidFrame(int x, int y, int z, int width, int length, int height) {
-        drawLine(0, 0, 0, 10, 0, 0);
-        drawLine(0, 0, 0, 0, 10, 0);
-        drawLine(0, 0, 0, 0, 0, 10);
-        drawLine(0, 0, 0, 10, 10, 10);
-        drawLine(0, 0, 0, 10, 10, 0);
-        drawLine(0, 0, 0, 10, 0, 10);
-
+        drawLine(x, y, z, x + width, y, z);
+        drawLine(x, y, z, x, y + length, z);
+        drawLine(x, y, z, x, y, z + height);
+        drawLine(x + width, y + length, z, x + width, y + length, z + height + 1);
+        drawLine(x + width, y, z + height, x + width, y + length + 1, z + height);
+        drawLine(x + width, y, z, x + width, y, z + height);
+        drawLine(x + width, y, z, x + width, y + length, z);
+        drawLine(x + width, y, z + height, x + width, y + length, z + height);
+        drawLine(x, y + length, z + height, x + width + 1, y + length, z + height);
+        drawLine(x, y + length, z, x, y + length, z + height);
+        drawLine(x, y + length, z, x + width, y + length, z);
+        drawLine(x, y + length, z + height, x + width, y + length, z + height);
+        drawLine(x, y, z + height, x + width, y, z + height);
+        drawLine(x, y, z + height, x, y + length, z + height);
     }
 
     public void removeSphere(int x, int y, int z, double width, double length, double height) {
@@ -291,7 +361,18 @@ public class Canvas extends GuiComponent {
 
     public void setCube(int x, int y, int z, int red, int green, int blue) {// sets a single cube in the canvas with a specified colour
         if (checkIfInBounds(x, y, z)) {
-            cubes[z][x][y] = new Cube(this, x, y, z, red, green, blue, 0xff);
+            int r, g, b;
+            if (isNormalColour) {
+                r = red;
+                g = green;
+                b = blue;
+            } else {
+                r = (int) (255.0 * z / (height - 1));
+                g = (int) (255.0 * z / (height - 1));
+                b = (int) (255.0 * z / (height - 1));
+            }
+            cubes[z][x][y] = new Cube(this, x, y, z, r, g, b);
+            normalBuffer[z][x][y] = (red << 16) | (green << 8) | blue;
         }
     }
 
@@ -332,6 +413,32 @@ public class Canvas extends GuiComponent {
         g2d.drawString("(" + height + "," + side + "," + side + ")", (int) grid.getPts()[z_][x_][y_].getVecs().getX(), (int) grid.getPts()[z_][x_][y_].getVecs().getY());
     }
 
+    private void paintSelectedArea(Graphics2D g2d) {
+        g2d.setColor(new Color(200, 200, 200));
+        int z, z1, x, x1, y, y1;
+        z = (int) spt1.getZ();
+        z1 = (int) spt2.getZ();
+        x = (int) spt1.getX();
+        x1 = (int) spt2.getX();
+        y = (int) spt1.getY();
+        y1 = (int) spt2.getY();
+        g2d.drawLine((int) grid.getPts()[z][x][y].getVecs().getX(), (int) grid.getPts()[z][x][y].getVecs().getY(), (int) grid.getPts()[z1][x][y].getVecs().getX(), (int) grid.getPts()[z1][x][y].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z][x][y].getVecs().getX(), (int) grid.getPts()[z][x][y].getVecs().getY(), (int) grid.getPts()[z][x1][y].getVecs().getX(), (int) grid.getPts()[z][x1][y].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z][x][y].getVecs().getX(), (int) grid.getPts()[z][x][y].getVecs().getY(), (int) grid.getPts()[z][x][y1].getVecs().getX(), (int) grid.getPts()[z][x][y1].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z][x1][y].getVecs().getX(), (int) grid.getPts()[z][x1][y].getVecs().getY(), (int) grid.getPts()[z1][x1][y].getVecs().getX(), (int) grid.getPts()[z1][x1][y].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z][x][y1].getVecs().getX(), (int) grid.getPts()[z][x][y1].getVecs().getY(), (int) grid.getPts()[z1][x][y1].getVecs().getX(), (int) grid.getPts()[z1][x][y1].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z][x1][y].getVecs().getX(), (int) grid.getPts()[z][x1][y].getVecs().getY(), (int) grid.getPts()[z][x1][y1].getVecs().getX(), (int) grid.getPts()[z][x1][y1].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z][x1][y1].getVecs().getX(), (int) grid.getPts()[z][x1][y1].getVecs().getY(), (int) grid.getPts()[z][x][y1].getVecs().getX(), (int) grid.getPts()[z][x][y1].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z1][x1][y1].getVecs().getX(), (int) grid.getPts()[z1][x1][y1].getVecs().getY(), (int) grid.getPts()[z][x1][y1].getVecs().getX(), (int) grid.getPts()[z][x1][y1].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z1][x1][y1].getVecs().getX(), (int) grid.getPts()[z1][x1][y1].getVecs().getY(), (int) grid.getPts()[z1][x][y1].getVecs().getX(), (int) grid.getPts()[z1][x][y1].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z1][x1][y1].getVecs().getX(), (int) grid.getPts()[z1][x1][y1].getVecs().getY(), (int) grid.getPts()[z1][x1][y].getVecs().getX(), (int) grid.getPts()[z1][x1][y].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z1][x][y].getVecs().getX(), (int) grid.getPts()[z1][x][y].getVecs().getY(), (int) grid.getPts()[z1][x1][y].getVecs().getX(), (int) grid.getPts()[z1][x1][y].getVecs().getY());
+        g2d.drawLine((int) grid.getPts()[z1][x][y].getVecs().getX(), (int) grid.getPts()[z1][x][y].getVecs().getY(), (int) grid.getPts()[z1][x][y1].getVecs().getX(), (int) grid.getPts()[z1][x][y1].getVecs().getY());
+
+
+    }
+
+
     @Override
     protected void paintGuiComponent(@NotNull Graphics2D g2d) { //overridden from guicomponent which eventually gets fed into the screen painter in the EditorScreen class
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);                  //settings for optimization
@@ -340,10 +447,11 @@ public class Canvas extends GuiComponent {
         g2d.setColor(Color.black);
 
         if (half) {
-            paintZ(paintY, g2d);
             if (ComponentManager.settings.isShowAxis()) {
                 grid.paintAxis(g2d);
             }
+            paintZ(paintY, g2d);
+
         } else {
             if (ComponentManager.settings.isShowAxis()) {
                 grid.paintAxis(g2d);
@@ -354,6 +462,9 @@ public class Canvas extends GuiComponent {
 
         if (ComponentManager.settings.isShowCoords()) {
             showCoords(g2d);
+        }
+        if (ComponentManager.settings.isShowSelectedArea()) {
+            paintSelectedArea(g2d);
         }
 
     }
@@ -449,7 +560,7 @@ public class Canvas extends GuiComponent {
                     if (cubes[hz][hx][hy].contains(mx, my))
                         switch (selectedTool) {
                             case CanvasManipulator.ADD:
-                                addTool(hx, hy, hz);
+                                addCubeFromClick(hx, hy, hz);
                                 break;
                             case CanvasManipulator.PAINT:
                                 cubes[hz][hx][hy].paint(e);
@@ -459,7 +570,7 @@ public class Canvas extends GuiComponent {
                                 break;
                             case CanvasManipulator.SELECT:
                                 if (e.isShiftDown()) {
-                                    spt2.set(hx, hy, hz);
+                                    spt2.set(hx + 1, hy + 1, hz + 1); // know idea why I need to add one, but i do.
                                 } else {
                                     spt1.set(hx, hy, hz);
                                 }
@@ -486,7 +597,7 @@ public class Canvas extends GuiComponent {
                                     z1 = temp;
                                 }
                                 spt1.set((int) x1, (int) y1, (int) z1);
-                                spt2.set((int) x2 + 1, (int) y2 + 1, (int) z2 + 1);
+                                spt2.set((int) x2, (int) y2, (int) z2);
                                 System.out.println(spt1);
                                 System.out.println(spt2);
                                 break;
@@ -498,7 +609,7 @@ public class Canvas extends GuiComponent {
                 }
                 if (grid.getSelected().contains(mx, my) && selectedTool == CanvasManipulator.PAINT) {
                     if (e.isShiftDown()) {
-                        spt2.set(hx, hy, hz);
+                        spt2.set(hx + 1, hy + 1, hz + 1);
                     } else {
                         spt1.set(hx, hy, hz);
                     }
@@ -543,16 +654,16 @@ public class Canvas extends GuiComponent {
     @Override
     protected void keyPress(@NotNull KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_Q) {
-            selectedTool = CanvasManipulator.PAINT;
-        }
-        if (ke.getKeyCode() == KeyEvent.VK_W) {
-            selectedTool = CanvasManipulator.SELECT;
-        }
-        if (ke.getKeyCode() == KeyEvent.VK_E) {
             selectedTool = CanvasManipulator.ADD;
         }
-        if (ke.getKeyCode() == KeyEvent.VK_R) {
+        if (ke.getKeyCode() == KeyEvent.VK_W) {
             selectedTool = CanvasManipulator.REMOVE;
+        }
+        if (ke.getKeyCode() == KeyEvent.VK_E) {
+            selectedTool = CanvasManipulator.SELECT;
+        }
+        if (ke.getKeyCode() == KeyEvent.VK_R) {
+            selectedTool = CanvasManipulator.PAINT;
         }
     }
 
@@ -636,5 +747,13 @@ public class Canvas extends GuiComponent {
 
     public Vector3D getSpt2() {
         return spt2;
+    }
+
+    public boolean isNormalColours() {
+        return isNormalColour;
+    }
+
+    public void setNormalBufferAtPoint(int x, int y, int z, int colorHex) {
+        normalBuffer[z][x][y] = colorHex;
     }
 }

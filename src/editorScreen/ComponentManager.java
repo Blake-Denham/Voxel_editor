@@ -148,14 +148,15 @@ public class ComponentManager extends JComponent {
         settings.setShowAxis(true);
         settings.setShowGrid(true);
         settings.setShowCoords(true);
+        settings.setShowSelectedArea(true);
     }
 
     public static void turnOffSettings() {
         settings.setShowAxis(false);
         settings.setShowGrid(false);
         settings.setShowCoords(false);
+        settings.setShowSelectedArea(false);
     }
-
 
     public static void loadProjectIntoCanvas(Project p) {
         canvas = new Canvas(p.getSide() + 1, p.getCanvasHeight() + 1);
@@ -221,5 +222,9 @@ public class ComponentManager extends JComponent {
                 canvas.removeCubeAt(x, y, zc);
             }
         }
+    }
+
+    public static void switchContourDefault() {
+        canvas.switchContourDefault();
     }
 }

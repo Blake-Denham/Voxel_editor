@@ -14,22 +14,20 @@ import java.io.IOException;
  * Created by Blake on 7/22/2016.
  */
 public class SettingsWindow extends GuiComponent {
-    private guiTools.Button hideGrid, hideCoords, hideAxis, clearCanvas, addLayer, removeLayer;
+    private guiTools.Button hideGrid, hideCoords, hideAxis;
 
     public SettingsWindow(double x, double y, double width, double height, Color bgColor) {
 
         super(x, y, width, height, bgColor, 14, true);
         try {
             final Image b5, b5a, b6, b6a, b7, b7a, b8, b9, b10;
-            b5 = ImageIO.read(Main.getResource("Images/hideGrid.png"));
-            b5a = ImageIO.read(Main.getResource("Images/showGrid.png"));
+            b5 = ImageIO.read(Main.getResource("Images/hideGrid256.png"));
+            b5a = ImageIO.read(Main.getResource("Images/showGrid256.png"));
             b6 = ImageIO.read(Main.getResource("Images/hideAxis256.png"));
             b6a = ImageIO.read(Main.getResource("Images/showAxis256.png"));
-            b7 = ImageIO.read(Main.getResource("Images/hideCoords.png"));
-            b7a = ImageIO.read(Main.getResource("Images/showCoords.png"));
-            b8 = ImageIO.read(Main.getResource("Images/clear256.png"));
-            b9 = ImageIO.read(Main.getResource("Images/addLayer256.png"));
-            b10 = ImageIO.read(Main.getResource("Images/removeLayer256.png"));
+            b7 = ImageIO.read(Main.getResource("Images/hideCoords256.png"));
+            b7a = ImageIO.read(Main.getResource("Images/showCoords256.png"));
+
             hideGrid = new guiTools.Button(0, 0, 0, 0, b5, "hide/show grid", () -> {
                 if (ComponentManager.settings.isShowGrid()) {
                     ComponentManager.settings.setShowGrid(false);
@@ -60,14 +58,8 @@ public class SettingsWindow extends GuiComponent {
                     hideCoords.setButtonImage(b7);
                 }
             });
-
-            clearCanvas = new guiTools.Button(0, 0, 0, 0, b8, "clear canvas", ComponentManager::clearCanvas);
-            add(clearCanvas);
             add(hideCoords);
-            addLayer = new guiTools.Button(0, 0, 0, 0, b9, "add layer", ComponentManager::addLayer);
-            add(addLayer);
-            removeLayer = new guiTools.Button(0, 0, 0, 0, b10, "remove layer", ComponentManager::removeLayer);
-            add(removeLayer);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,9 +84,7 @@ public class SettingsWindow extends GuiComponent {
         hideGrid.setBounds(PU.getXInBounds(bounds, 72, 0.2), PU.getYInBounds(bounds, 72, 0.05), 72, 72);
         hideAxis.setBounds(PU.getXInBounds(bounds, 72, 0.8), PU.getYInBounds(bounds, 72, 0.05), 72, 72);
         hideCoords.setBounds(PU.getXInBounds(bounds, 72, 0.8), PU.getYInBounds(bounds, 72, 0.5), 72, 72);
-        clearCanvas.setBounds(PU.getXInBounds(bounds, 72, 0.2), PU.getYInBounds(bounds, 72, 0.5), 72, 72);
-        addLayer.setBounds(PU.getXInBounds(bounds, 72, 0.2), PU.getYInBounds(bounds, 72, 0.95), 72, 72);
-        removeLayer.setBounds(PU.getXInBounds(bounds, 72, 0.8), PU.getYInBounds(bounds, 72, 0.95), 72, 72);
+
     }
 
     @Override

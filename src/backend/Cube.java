@@ -30,8 +30,8 @@ public class Cube {
         empty = new Polygon();
     }
 
-    public Cube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue, int alpha) {
-        initCube(can, x, y, z, red, green, blue, alpha);
+    public Cube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue) {
+        initCube(can, x, y, z, red, green, blue);
     }
 
     public static Polygon getEmpty() {
@@ -46,7 +46,7 @@ public class Cube {
         return selected;
     }
 
-    private void initCube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue, int alpha) {
+    private void initCube(@NotNull Canvas can, int x, int y, int z, int red, int green, int blue) {
         this.can = can;
         this.grid = can.getGrid();
         this.x = x;
@@ -262,15 +262,51 @@ public class Cube {
         int red;
         int green;
         int blue;
-        if (e.isShiftDown()) {
-            red = ComponentManager.getColorWheel().getC2Red();
-            green = ComponentManager.getColorWheel().getC2Green();
-            blue = ComponentManager.getColorWheel().getC2Blue();
+        if (ComponentManager.getCanvas().isNormalColours()) {
+            if (e.isShiftDown()) {
+                red = ComponentManager.getColorWheel().getC2Red();
+                green = ComponentManager.getColorWheel().getC2Green();
+                blue = ComponentManager.getColorWheel().getC2Blue();
+            } else {
+                red = ComponentManager.getColorWheel().getC1Red();
+                green = ComponentManager.getColorWheel().getC1Green();
+                blue = ComponentManager.getColorWheel().getC1Blue();
+            }
         } else {
-            red = ComponentManager.getColorWheel().getC1Red();
-            green = ComponentManager.getColorWheel().getC1Green();
-            blue = ComponentManager.getColorWheel().getC1Blue();
+            if (e.isShiftDown()) {
+                red = ComponentManager.getColorWheel().getC2Red();
+                green = ComponentManager.getColorWheel().getC2Green();
+                blue = ComponentManager.getColorWheel().getC2Blue();
+            } else {
+                red = ComponentManager.getColorWheel().getC1Red();
+                green = ComponentManager.getColorWheel().getC1Green();
+                blue = ComponentManager.getColorWheel().getC1Blue();
+            }
+            ComponentManager.getCanvas().setNormalBufferAtPoint(x, y, z, (red << 16) | (green << 8) | blue);
+            red = (int) (255.0 * z / (ComponentManager.getCanvas().getCanvasHeight() - 1.0));
+            green = (int) (255.0 * z / (ComponentManager.getCanvas().getCanvasHeight() - 1.0));
+            blue = (int) (255.0 * z / (ComponentManager.getCanvas().getCanvasHeight() - 1.0));
+
         }
+        back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
+        bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
+        left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
+        right = new Color((int) (red * 0.8), (int) (green * 0.8), (int) (blue * 0.8));
+        top = new Color((int) (red * 0.9), (int) (green * 0.9), (int) (blue * 0.9));
+        front = new Color((red), (green), (blue));
+        colorHex = (red << 16) | (green << 8) | blue;
+        this.color[0] = top;
+        this.color[1] = front;
+        this.color[2] = right;
+
+    }
+
+    public Polygon[] getFaces() {
+        return cube;
+    }
+
+    public void setColor(int red, int green, int blue) {
+
         back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
         bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
         left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));
@@ -283,12 +319,10 @@ public class Cube {
         this.color[2] = right;
     }
 
-    public Polygon[] getFaces() {
-        return cube;
-    }
-
-    public void setColor(int red, int green, int blue) {
-
+    public void setColor(Color c) {
+        int red = c.getRed();
+        int blue = c.getBlue();
+        int green = c.getGreen();
         back = new Color((int) (red * 0.5), (int) (green * 0.5), (int) (blue * 0.5));
         bot = new Color((int) (red * 0.6), (int) (green * 0.6), (int) (blue * 0.6));
         left = new Color((int) (red * 0.7), (int) (green * 0.7), (int) (blue * 0.7));

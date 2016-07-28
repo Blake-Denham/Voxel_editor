@@ -322,4 +322,12 @@ public abstract class GuiComponent {
     public boolean getDisabled() {
         return disabled;
     }
+
+    public @NotNull Rectangle getBounds() {
+        return bounds;
+    }
+
+    public void hide() {
+        setBounds(0, 0, 0, 0);
+    }
 }

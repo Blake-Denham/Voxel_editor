@@ -8,6 +8,7 @@ public class Settings {
     private boolean showGrid = true;
     private boolean showAxis = true;
     private boolean showCoords = true;
+    private boolean showSelectedArea = false;
 
     public void setShowAxis(boolean showAxis) {
         this.showAxis = showAxis;
@@ -21,6 +22,10 @@ public class Settings {
         this.showGrid = showGrid;
     }
 
+    public void setShowSelectedArea(boolean showSelectedArea) {
+        this.showSelectedArea = showSelectedArea;
+    }
+
     public boolean isShowAxis() {
         return showAxis;
     }
@@ -31,5 +36,9 @@ public class Settings {
 
     public boolean isShowGrid() {
         return showGrid;
+    }
+
+    public boolean isShowSelectedArea() {
+        return showSelectedArea;
     }
 }

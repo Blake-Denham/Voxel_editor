@@ -81,8 +81,8 @@ public class ColorWheel extends GuiComponent {
         colors[15][1] = PU.saturateColor(new Color(0xff006e), 0.5);
 
         r = width * 0.4;
-        colorWheel = new Ellipse2D.Double(PU.getXInBounds(bounds, r * 2, 0.5), PU.getYInBounds(bounds, r * 2, MU.getPercent(30, height)), r * 2, r * 2);
-        xc = colorWheel.getCenterX();
+        colorWheel = new Ellipse2D.Double(PU.getXInBounds(section, r * 2, 0.5), PU.getYInBounds(section, r * 2, MU.getPercent(30, section.getHeight())), r * 2, r * 2);
+        xc = colorWheel.getCenterX() - 32 + 3;
         yc = colorWheel.getCenterY();
         saturation = new Slider(PU.getXInBounds(bounds, width * 0.7, 0.5), PU.getYInBounds(bounds, height * 0.07, 0.7), Slider.HORIZONTAL, width * 0.7, height * 0.07, new Color(130, 130, 130), new Color(20, 20, 20));
 
