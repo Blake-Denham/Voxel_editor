@@ -12,11 +12,13 @@ import java.util.ArrayList;
 /**
  * Created by Blake on 7/15/2016.
  */
-public class LoadScreenComponentManager extends JComponent {
+class LoadScreenComponentManager extends JComponent {
     private final ArrayList<GuiComponent> guiComponents;
 
     public LoadScreenComponentManager() {
         guiComponents = new ArrayList<>();
+        ProjectDisplayer p = new ProjectDisplayer();
+        addComponent(p);
     }
 
     private void addComponent(GuiComponent component) {

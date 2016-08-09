@@ -19,16 +19,12 @@ public class Main {
         ls = new LoadScreen();
     }
 
-    public static void closeLoadScrene() {
-        ls = null;
+    public static void closeLoadScreen() {
+        ls.close();
     }
 
     public static EditorScreen getEditor() {
         return editor;
-    }
-
-    public static LoadScreen getLoadScreen() {
-        return ls;
     }
 
     public static void main(String[] args) throws InterruptedException, IOException {
@@ -72,7 +68,7 @@ public class Main {
     public static Project loadProject(String fileName) {
         Project canvas = null;
         try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(appPath + "\\data\\project\\" + fileName + ".vem"));
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(appPath + "\\data\\project\\" + fileName));
             canvas = (Project) (objectInputStream.readObject());
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

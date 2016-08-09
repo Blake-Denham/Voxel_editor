@@ -22,7 +22,7 @@ public abstract class GuiComponent {
     private double shadowSize;
     @NotNull
     protected final Rectangle bounds;
-    protected Color bgColor;
+    Color bgColor;
     @NotNull
     protected final ArrayList<GuiComponent> subComponents;
     private int minimized = 1;
@@ -34,7 +34,6 @@ public abstract class GuiComponent {
     private Button minimize;
     private String toolBarTitle = "";
     private String minimizeToolTip = "minimize";
-    // TODO: 5/22/2016 make disabling components possible. 
     private boolean disabled = false;
 
     protected GuiComponent(double x, double y, double width, double height, Color bgColor, int shadowSize, boolean minimizable) {
@@ -59,9 +58,11 @@ public abstract class GuiComponent {
                     if (minimized > 0) {
                         minimize.setButtonImage(buttonSprite1);
                         minimizeToolTip = "minimize";
+                        minimize.setToolTip(minimizeToolTip);
                     } else {
                         minimize.setButtonImage(buttonSprite2);
                         minimizeToolTip = "maximize";
+                        minimize.setToolTip(minimizeToolTip);
                     }
                 });
             } catch (IOException e) {
@@ -148,7 +149,6 @@ public abstract class GuiComponent {
             }
         });
     }
-
 
     public void mouseDrag(MouseEvent e) {
         drag(e);
@@ -259,7 +259,7 @@ public abstract class GuiComponent {
         bounds.setBounds(newBounds);
     }
 
-    protected void setIgnoreMinimize() {
+    void setIgnoreMinimize() {
         this.ignoreMinimize = true;
     }
 
@@ -311,8 +311,8 @@ public abstract class GuiComponent {
 
     protected abstract void mouseRelease(MouseEvent e);
 
-    public void setP(double p) {
-        this.p = p;
+    protected void setP() {
+        this.p = 0.995;
     }
 
     public void setDisabled(boolean disabled) {
@@ -329,5 +329,13 @@ public abstract class GuiComponent {
 
     public void hide() {
         setBounds(0, 0, 0, 0);
+    }
+
+    public void minimize() {
+        minimized = -1;
+    }
+
+    public void maximize() {
+        minimized = 1;
     }
 }

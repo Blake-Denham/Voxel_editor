@@ -9,12 +9,12 @@ import java.awt.event.*;
  */
 public class LoadScreen extends JPanel {
     private JFrame window;
-    private static int width = 800, height = 600;
+    private static int width = 830, height = 600;
     private LoadScreenComponentManager lscm;
-    public boolean isOpen = false;
 
     public LoadScreen() {
         super();
+        setBackground(new Color(35, 35, 35));
         lscm = new LoadScreenComponentManager();
         addMouseMotionListener(new MouseMotionListener() {
             @Override
@@ -71,11 +71,13 @@ public class LoadScreen extends JPanel {
         setFocusable(true);
         add(lscm);
         window = new JFrame("Load project");
+        window.add(this);
         window.setSize(width, height);
         window.setResizable(false);
         window.setLocation(75, 75);
         window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         window.setVisible(true);
+
 
     }
 
@@ -91,6 +93,11 @@ public class LoadScreen extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
+        lscm.paintComponent(g2d);
+    }
+
+    public void close() {
+        window.dispose();
     }
 
 

@@ -48,6 +48,7 @@ public class PU {
         g2d.fill(r);
     }
 
+    @SuppressWarnings("SameParameterValue")
     public static void castShadow(@NotNull Graphics2D g2d, @NotNull Ellipse2D r, int size, @NotNull Color c) {
         double x = r.getX();
         double y = r.getY();

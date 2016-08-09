@@ -36,8 +36,8 @@ public class ColorWheel extends GuiComponent {
     private Color[][] colors;
     private Rectangle hover, section;
 
-    public ColorWheel(double x_, double y_, double width, Color bgColor) {
-        super(x_, y_, width, width * 1.5, bgColor, 14, true);
+    public ColorWheel(double x_, double width, Color bgColor) {
+        super(x_, (double) 5, width, width * 1.5, bgColor, 14, true);
         hover = new Rectangle(0, 0, 16, 16);
         colorButtons = new Rectangle[16][2];
         colors = new Color[16][2];

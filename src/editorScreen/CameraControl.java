@@ -38,13 +38,9 @@ public class CameraControl extends GuiComponent {
     private final guiTools.Button rotatorY;
     @NotNull
     private final guiTools.Button isometricView;
-    private guiTools.Button lockY;
-    private guiTools.Button lockX;
 
     private int rotationx = -1, rotationy = -1;
     private int direction = 1;
-    private boolean lockedY = false;
-    private boolean lockedX = false;
 
 
     public CameraControl(double x, double y, double width, Color bgColor) {
@@ -83,38 +79,6 @@ public class CameraControl extends GuiComponent {
             ComponentManager.setRotateyCamera(35);
         });
         add(isometricView);
-
-        try {
-            final Image lock = ImageIO.read(Main.getResource("Images/lock.png"));
-            final Image unlock = ImageIO.read(Main.getResource("Images/unlock.png"));
-            lockY = new Button(0, 0, 0, 0, unlock, "lock/unlock vertical rotation", () -> {
-                if (lockedY) {
-                    lockY.setButtonImage(unlock);
-                    lockedY = false;
-                    rotateSlider.setDisabled(true);
-                } else {
-                    lockY.setButtonImage(lock);
-                    lockedY = true;
-                    rotateSlider.setDisabled(false);
-                }
-            });
-            lockX = new Button(0, 0, 0, 0, unlock, "lock/unlock horizontal rotation", () -> {
-                if (lockedX) {
-                    lockX.setButtonImage(unlock);
-                    lockedX = false;
-                    rotateySlider.setDisabled(true);
-                } else {
-                    lockX.setButtonImage(lock);
-                    lockedX = true;
-                    rotateySlider.setDisabled(false);
-                }
-            });
-            add(lockX);
-            add(lockY);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
 
         setToolBarTitle("CAMERA CONTROL");
     }
@@ -233,8 +197,7 @@ public class CameraControl extends GuiComponent {
                 direction *= -1;
             ComponentManager.setRotateyCamera((int) (ComponentManager.getCanvas().getGrid().getRotateY() + direction));
         }
-        lockX.setBounds(PU.getXInBounds(bounds, width * 0.1, 0.85), PU.getYInBounds(bounds, width * 0.1, 0.12), width * 0.1, width * 0.1);
-        lockY.setBounds(PU.getXInBounds(bounds, width * 0.1, 0.85), PU.getYInBounds(bounds, width * 0.1, 0.43), width * 0.1, width * 0.1);
+
     }
 
     @Override
@@ -265,15 +228,5 @@ public class CameraControl extends GuiComponent {
     @Override
     protected void mouseRelease(MouseEvent e) {
 
-    }
-
-    @SuppressWarnings("unused")
-    public boolean isLockedY() {
-        return lockedY;
-    }
-
-    @SuppressWarnings("unused")
-    public boolean isLockedX() {
-        return lockedX;
     }
 }

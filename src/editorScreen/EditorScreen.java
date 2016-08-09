@@ -13,13 +13,14 @@ import java.io.IOException;
 public class EditorScreen extends JPanel {
     public static int s_maxWidth, s_maxHeight;
     public static Font font;
-    public static int locX, locY;
-
+    private static int locX;
+    private static int locY;
     @NotNull
     private final JFrame jf;
     @NotNull
     private static ComponentManager cm;
-    public static int mouseX, mouseY;
+    private static int mouseX;
+    private static int mouseY;
 
     public EditorScreen() {
         super();
@@ -102,7 +103,6 @@ public class EditorScreen extends JPanel {
         jf.setResizable(false);
         jf.setLocationRelativeTo(null);
         displayScreenInfo();
-
     }
 
     public static ComponentManager getComponentManager() {
@@ -110,26 +110,25 @@ public class EditorScreen extends JPanel {
     }
 
     public void getModelImage(String name) {
-        BufferedImage image = new BufferedImage(s_maxWidth, s_maxHeight, BufferedImage.TYPE_INT_ARGB);
-        ComponentManager.setDisplayImage();
+        ComponentManager.getCanvas().setDisplayPicture();
         Rectangle temp = ComponentManager.getCanvas().getDisplayImage();
-        int w = (int) temp.getWidth();
-        int h = (int) temp.getHeight() - 50;
         int x = (int) temp.getX();
-        int y = (int) temp.getY() + 100;
+        int y = (int) temp.getY();
+        int w = (int) temp.getWidth();
+        int h = (int) temp.getHeight();
+        BufferedImage image = new BufferedImage(s_maxWidth, s_maxHeight, BufferedImage.TYPE_INT_ARGB);
         paint(image.createGraphics());
-        image.getGraphics().drawImage(image, 0, 0, w, h, x, y, x + w, y + h, null);
-        BufferedImage croppedImage = image.getSubimage(0, 0, w, h);
-
         File imageFile = new File(Main.appPath + "\\data\\projectImages\\" + name + ".png");
+        BufferedImage newImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        newImage.getGraphics().drawImage(image, 0, 0, w, h, x, y, x + w, y + h, null);
         try {
-            ImageIO.write(croppedImage, "png", imageFile);
+            ImageIO.write(newImage, "png", imageFile);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
             e.printStackTrace();
         }
+        ComponentManager.maximizeAll(cm);
     }
-
 
     @Override
     public void paint(Graphics g) {

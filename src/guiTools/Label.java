@@ -13,7 +13,7 @@ import java.awt.event.MouseWheelEvent;
 /**
  * Created by Blake on 5/13/2016.
  */
-@SuppressWarnings("DefaultFileTemplate")
+@SuppressWarnings({"DefaultFileTemplate", "SameParameterValue"})
 public class Label extends GuiComponent {
     @NotNull
     private String display="";

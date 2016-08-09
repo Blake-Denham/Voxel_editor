@@ -1,6 +1,5 @@
 package editorScreen;
 
-
 import backend.Cube;
 import backend.Grid;
 import guiTools.GuiComponent;
@@ -15,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
 public class Canvas extends GuiComponent {
-
     @NotNull
     private final Grid grid;    //the 3D space and grid which is used to display cubes, see the Grid class
     private Cube[][][] cubes;   //stores the cube data of the canvas
@@ -36,6 +34,7 @@ public class Canvas extends GuiComponent {
     private static int selectedTool = CanvasManipulator.ADD;// the currently selected tool
     private Vector3D spt1, spt2;// two corners of a selected volume
     private boolean isNormalColour = true;
+    private boolean isSampling = false;
 
     public Canvas(int side, int height) {  //constructor
         super(0, 0, EditorScreen.s_maxWidth, EditorScreen.s_maxHeight); // the canvas counts as a gui component
@@ -119,6 +118,7 @@ public class Canvas extends GuiComponent {
                 }
             }
         };
+        displayPicture = new Rectangle();
 
     }
 
@@ -220,7 +220,7 @@ public class Canvas extends GuiComponent {
 
                         if (checkForCube(x, y, z)) {
                             normalBuffer[z][x][y] = cubes[z][x][y].getColorHex();
-                            cubes[z][x][y].setColor(PU.saturateColor(new Color(255, 255, 255), (z / (height - 1.0))));
+                            cubes[z][x][y].setColors(PU.saturateColor(new Color(255, 255, 255), (z / (height - 1.0))));
                         }
                     }
                 }
@@ -231,7 +231,7 @@ public class Canvas extends GuiComponent {
                 for (int y = 0; y < side - 1; y++) {
                     for (int z = 0; z < height - 1; z++) {
                         if (checkForCube(x, y, z)) {
-                            cubes[z][x][y].setColor(new Color(normalBuffer[z][x][y]));
+                            cubes[z][x][y].setColors(new Color(normalBuffer[z][x][y]));
                         }
                     }
                 }
@@ -246,7 +246,7 @@ public class Canvas extends GuiComponent {
                 for (int zi = z; zi < z + height; zi++) {
                     if (checkForCube(xi, yi, zi)) {
                         if (isNormalColour) {
-                            cubes[zi][xi][yi].setColor(PU.inverseColor(new Color(cubes[zi][xi][yi].getColorHex())));
+                            cubes[zi][xi][yi].setColors(PU.inverseColor(new Color(cubes[zi][xi][yi].getColorHex())));
                         } else {
                             normalBuffer[zi][xi][yi] = PU.inverseColor(new Color(cubes[zi][xi][yi].getColorHex())).getRGB();
                         }
@@ -300,10 +300,10 @@ public class Canvas extends GuiComponent {
         }
     }
 
-    public void drawLine(int x, int y, int z, int x1, int y1, int z1) { // draws a line from one point to another
+    private void drawLine(int x, int y, int z, int x1, int y1, int z1) { // draws a line from one point to another
         double h = MU.getDistance(new Vector3D(x, y, z), new Vector3D(x1, y1, z1));
         double dx, dy, dz;
-        double ry = 0, rx = 0;
+        double ry, rx;
         if (x1 - x == 0) {
             rx = 90;
         } else {
@@ -386,7 +386,7 @@ public class Canvas extends GuiComponent {
         }
     }
 
-    public boolean checkIfInBounds(int x, int y, int z) {// checks if the given coordinates falls in the canvas
+    private boolean checkIfInBounds(int x, int y, int z) {// checks if the given coordinates falls in the canvas
         return (!(x < 0) && !(x >= grid.getSide() - 1) && !(y < 0) && !(y >= grid.getSide() - 1) && !(z < 0) && !(z >= grid.getHeight() - 1));
     }
 
@@ -438,9 +438,8 @@ public class Canvas extends GuiComponent {
 
     }
 
-
     @Override
-    protected void paintGuiComponent(@NotNull Graphics2D g2d) { //overridden from guicomponent which eventually gets fed into the screen painter in the EditorScreen class
+    protected void paintGuiComponent(@NotNull Graphics2D g2d) { //overridden from guiComponent which eventually gets fed into the screen painter in the EditorScreen class
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);                  //settings for optimization
         g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
         g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
@@ -466,7 +465,6 @@ public class Canvas extends GuiComponent {
         if (ComponentManager.settings.isShowSelectedArea()) {
             paintSelectedArea(g2d);
         }
-
     }
 
     @Override
@@ -496,6 +494,9 @@ public class Canvas extends GuiComponent {
             Cube.setSelected(Cube.getEmpty());
             grid.gridInterfaceHover(mx, my);
         }
+        if (selectedTool == CanvasManipulator.SELECT) {
+            ComponentManager.settings.setShowSelectedArea(true);
+        }
 
     }
 
@@ -518,7 +519,7 @@ public class Canvas extends GuiComponent {
     }
 
     @Override
-    protected void drag(@NotNull MouseEvent e) {// is called every frame every frame when the mouse is moving and a button is held doen
+    protected void drag(@NotNull MouseEvent e) {// is called every frame every frame when the mouse is moving and a button is held down
         int dx = mx - e.getX();
         int dy = my - e.getY();
 
@@ -563,7 +564,12 @@ public class Canvas extends GuiComponent {
                                 addCubeFromClick(hx, hy, hz);
                                 break;
                             case CanvasManipulator.PAINT:
-                                cubes[hz][hx][hy].paint(e);
+                                if (!isSampling) {
+                                    cubes[hz][hx][hy].paint(e);
+                                } else {
+                                    ComponentManager.getColorWheel().setColor(new Color(cubes[hz][hx][hy].getColorHex()));
+                                    isSampling = false;
+                                }
                                 break;
                             case CanvasManipulator.REMOVE:
                                 cubes[hz][hx][hy] = null;
@@ -574,32 +580,7 @@ public class Canvas extends GuiComponent {
                                 } else {
                                     spt1.set(hx, hy, hz);
                                 }
-                                double temp;
-                                double x1 = spt1.getX();
-                                double x2 = spt2.getX();
-                                if (x1 > x2) {
-                                    temp = x2;
-                                    x2 = x1;
-                                    x1 = temp;
-                                }
-                                double y1 = spt1.getY();
-                                double y2 = spt2.getY();
-                                if (y1 > y2) {
-                                    temp = y2;
-                                    y2 = y1;
-                                    y1 = temp;
-                                }
-                                double z1 = spt1.getZ();
-                                double z2 = spt2.getZ();
-                                if (z1 > z2) {
-                                    temp = z2;
-                                    z2 = z1;
-                                    z1 = temp;
-                                }
-                                spt1.set((int) x1, (int) y1, (int) z1);
-                                spt2.set((int) x2, (int) y2, (int) z2);
-                                System.out.println(spt1);
-                                System.out.println(spt2);
+                                orderSelectPoints();
                                 break;
                         }
                 }
@@ -607,42 +588,65 @@ public class Canvas extends GuiComponent {
                 if (grid.getSelected().contains(mx, my) && selectedTool == CanvasManipulator.ADD) {
                     setCube(grid.getSelectedX(), grid.getSelectedY(), 0, ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
                 }
-                if (grid.getSelected().contains(mx, my) && selectedTool == CanvasManipulator.PAINT) {
+                if (grid.getSelected().contains(mx, my) && selectedTool == CanvasManipulator.SELECT) {
                     if (e.isShiftDown()) {
-                        spt2.set(hx + 1, hy + 1, hz + 1);
+                        spt2.set(grid.getSelectedX() + 1, grid.getSelectedY() + 1, 1);
                     } else {
-                        spt1.set(hx, hy, hz);
+                        spt1.set(grid.getSelectedX(), grid.getSelectedY(), 0);
                     }
-                    double temp;
-                    double x1 = spt1.getX();
-                    double x2 = spt2.getX();
-                    if (x1 > x2) {
-                        temp = x2;
-                        x2 = x1;
-                        x1 = temp;
-                    }
-                    double y1 = spt1.getY();
-                    double y2 = spt2.getY();
-                    if (y1 > y2) {
-                        temp = y2;
-                        y2 = y1;
-                        y1 = temp;
-                    }
-                    double z1 = spt1.getZ();
-                    double z2 = spt2.getZ();
-                    if (z1 > z2) {
-                        temp = z2;
-                        z2 = z1;
-                        z1 = temp;
-                    }
-                    spt1.set((int) x1, (int) y1, (int) z1);
-                    spt2.set((int) x2 + 1, (int) y2 + 1, (int) z2 + 1);
-                    System.out.println(spt1);
-                    System.out.println(spt2);
+                    orderSelectPoints();
+
                 }
             }
         }
+    }
 
+    private void orderSelectPoints() {
+        double temp;
+        double x1 = spt1.getX();
+        double x2 = spt2.getX();
+        if (x1 > x2) {
+            temp = x2;
+            x2 = x1 + 1;
+            x1 = temp - 1;
+        }
+        double y1 = spt1.getY();
+        double y2 = spt2.getY();
+        if (y1 > y2) {
+            temp = y2;
+            y2 = y1 + 1;
+            y1 = temp - 1;
+        }
+        double z1 = spt1.getZ();
+        double z2 = spt2.getZ();
+        if (z1 > z2) {
+            temp = z2;
+            z2 = z1 + 1;
+            z1 = temp - 1;
+        }
+        if (x2 - x1 == 0) {
+            if (checkIfInBounds((int) (x2 + 1), 0, 0)) {
+                x2++;
+            } else {
+                x1--;
+            }
+        }
+        if (y2 - y1 == 0) {
+            if (checkIfInBounds(0, (int) (y2 + 1), 0)) {
+                y2++;
+            } else {
+                y1--;
+            }
+        }
+        if (z2 - z1 == 0) {
+            if (checkIfInBounds(0, 0, (int) (z2 + 1))) {
+                z2++;
+            } else {
+                z1--;
+            }
+        }
+        spt1.set((int) x1, (int) y1, (int) z1);
+        spt2.set((int) x2, (int) y2, (int) z2);
     }
 
     @Override
@@ -661,6 +665,12 @@ public class Canvas extends GuiComponent {
         }
         if (ke.getKeyCode() == KeyEvent.VK_E) {
             selectedTool = CanvasManipulator.SELECT;
+
+            if (ComponentManager.settings.isShowSelectedArea()) {
+                ComponentManager.settings.setShowSelectedArea(false);
+            } else {
+                ComponentManager.settings.setShowSelectedArea(true);
+            }
         }
         if (ke.getKeyCode() == KeyEvent.VK_R) {
             selectedTool = CanvasManipulator.PAINT;
@@ -675,7 +685,7 @@ public class Canvas extends GuiComponent {
 
     @NotNull
     public Grid getGrid() {
-        return grid; // returns the 3d spcae points;
+        return grid; // returns the 3d space points;
     }
 
     @NotNull
@@ -708,19 +718,20 @@ public class Canvas extends GuiComponent {
     }
 
     public void setDisplayPicture() { // sets the canvas to an isometric view and creates a rectangle which is used to capture an image of the project to display later when loading another project
-        displayPicture = new Rectangle();
-        setRotate(45);  //sets the to isometric view
-        setRotatey(36); //""    ""   ""     ""  ""
-        setZoom(15);    //sets the canvas to nice zoom
+        grid.setRotate(45);  //sets the to isometric view
+        grid.setRotatey(35); //""    ""   ""     ""  ""
+        grid.setZoom((int) (40.0 / Math.sqrt(getCanvasHeight())));
+        grid.setLocation(EditorScreen.s_maxWidth / 2, EditorScreen.s_maxHeight / 2 + 200);// moves the canvas to the centre of the screen
+        if (isNormalColour)
+            ComponentManager.getCanvasManipulator().getContourDefaultToggle().getActionEvent();
+        update();
         displayPicture.setBounds(   //sets the rectangle
                 (int) (grid.getPts()[0][0][side - 1].getVecs().getX()),
-                (int) (grid.getPts()[height - 1][0][0].getVecs().getY() + 26),
+                (int) (grid.getPts()[height - 1][0][0].getVecs().getY()),
                 (int) (grid.getPts()[height - 1][side - 1][0].getVecs().getX() - grid.getPts()[0][0][side - 1].getVecs().getX()),
                 (int) (grid.getPts()[0][side - 1][side - 1].getVecs().getY() - grid.getPts()[height - 1][0][0].getVecs().getY()));
-        grid.setLocation(EditorScreen.s_maxWidth / 2, EditorScreen.s_maxHeight / 2 + 100);// moves the canvas to the centre of the screen
-        ComponentManager.settings.setShowAxis(false);// disables the settings
-        ComponentManager.settings.setShowCoords(false);//"" ""  ""  ""  ""
-        ComponentManager.settings.setShowGrid(false);// ""  ""  ""  ""  ""
+        ComponentManager.minimizeAll(EditorScreen.getComponentManager());
+        ComponentManager.turnOffSettings();
 
     }
 
@@ -755,5 +766,30 @@ public class Canvas extends GuiComponent {
 
     public void setNormalBufferAtPoint(int x, int y, int z, int colorHex) {
         normalBuffer[z][x][y] = colorHex;
+    }
+
+    public void setBuffer(int[][][] buffer) {
+        this.normalBuffer = buffer;
+        int r, g, b;
+        for (int x = 0; x < side - 1; x++) {
+            for (int y = 0; y < side - 1; y++) {
+                for (int z = 0; z < getCanvasHeight() - 1; z++) {
+                    if (buffer[z][x][y] >= 0) {
+                        r = (buffer[z][x][y] & 0xff0000) >> 16;
+                        g = (buffer[z][x][y] & 0xff00) >> 8;
+                        b = buffer[z][x][y] & 0xff;
+                        setCube(x, y, z, r, g, b);
+                    }
+                }
+            }
+        }
+    }
+
+    public void setSamplingColours(boolean a) {
+        isSampling = a;
+    }
+
+    public boolean isSampling() {
+        return isSampling;
     }
 }

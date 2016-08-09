@@ -17,8 +17,8 @@ import java.io.IOException;
 public class CanvasDataManager extends GuiComponent {
     private guiTools.Button save, load, newProject;
 
-    protected CanvasDataManager(double x, double y, double width, double height, Color bgColor) {
-        super(x, y, width, height, bgColor, 14, true);
+    CanvasDataManager(double x, double width, double height, Color bgColor) {
+        super(x, (double) 5, width, height, bgColor, 14, true);
         setToolBarTitle("SAVE, LOAD OR NEW");
         try {
             Image s = ImageIO.read(Main.getResource("Images/save256.png"));
@@ -26,10 +26,28 @@ public class CanvasDataManager extends GuiComponent {
             Image np = ImageIO.read(Main.getResource("Images/newProject256.png"));
 
             save = new Button(0, 0, 0, 0, s, "save", () -> {
-                String name = JOptionPane.showInputDialog("Enter project name");
-                if (!name.equals((""))) {
+                String name = "";
+                name = JOptionPane.showInputDialog("Enter project name");
+                System.out.println(name);
+                int[][][] temp = new int[ComponentManager.getCanvas().getCanvasHeight() - 1][ComponentManager.getCanvas().getSide() - 1][ComponentManager.getCanvas().getSide() - 1];
+                for (int xi = 0; xi < ComponentManager.getCanvas().getSide() - 1; xi++) {
+                    for (int yi = 0; yi < ComponentManager.getCanvas().getSide() - 1; yi++) {
+                        for (int zi = 0; zi < ComponentManager.getCanvas().getCanvasHeight() - 1; zi++) {
+                            if (ComponentManager.getCanvas().checkForCube(xi, yi, zi)) {
+                                temp[zi][xi][yi] = ComponentManager.getCanvas().getCubes()[zi][xi][yi].getColorHex();
+                            } else {
+                                temp[zi][xi][yi] = -1;
+                            }
+                            System.out.print((temp[zi][xi][yi]) + "\t");
+                        }
+                        System.out.println();
+                    }
+                    System.out.println("-----------------");
+                }
+                if (!name.equals(("")) || !name.equals("null")) {
+                    ComponentManager.getCanvas().setDisplayPicture();
                     Main.getEditor().getModelImage(name);
-                    Main.serialize(new Project(ComponentManager.getCanvas().getCubes(), ComponentManager.getCanvas().getSide(), ComponentManager.getCanvas().getCanvasHeight()), name);
+                    Main.serialize(new Project(temp, ComponentManager.getCanvas().getSide(), ComponentManager.getCanvas().getCanvasHeight()), name);
                     ComponentManager.turnOnSettings();
                 } else {
                     JOptionPane.showConfirmDialog(null, "no name was entered", "error", JOptionPane.DEFAULT_OPTION);
@@ -38,9 +56,7 @@ public class CanvasDataManager extends GuiComponent {
             add(save);
             load = new Button(0, 0, 0, 0, l, "load", Main::openLoadScreen);
             add(load);
-            newProject = new Button(0, 0, 0, 0, np, "new Project", () -> {
-                ComponentManager.newCanvas(EditorScreen.getComponentManager(), Integer.parseInt(JOptionPane.showInputDialog("enter the length dimension")) + 1, Integer.parseInt(JOptionPane.showInputDialog("enter the height dimension")) + 1);
-            });
+            newProject = new Button(0, 0, 0, 0, np, "new Project", () -> ComponentManager.newCanvas(EditorScreen.getComponentManager(), Integer.parseInt(JOptionPane.showInputDialog("enter the length dimension")) + 1, Integer.parseInt(JOptionPane.showInputDialog("enter the height dimension")) + 1));
             add(newProject);
 
         } catch (IOException e) {

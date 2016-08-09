@@ -8,6 +8,7 @@
       <w>circum</w>
       <w>coords</w>
       <w>cosec</w>
+      <w>displayer</w>
       <w>dxpix</w>
       <w>dypix</w>
       <w>fontsize</w>
@@ -16,6 +17,7 @@
       <w>inslider</w>
       <w>isize</w>
       <w>kotlinc</w>
+      <w>lscm</w>
       <w>mutators</w>
       <w>pnts</w>
       <w>rotatex</w>

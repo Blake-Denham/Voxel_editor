@@ -26,6 +26,7 @@ public class Button extends GuiComponent {
     private final Rectangle clickBounds;
     private String toolTip;
     private boolean isHovering;
+    private int mx, my;
 
     public Button(double x_, double y_, double width, double height, @NotNull Image buttonImage, String toolTip, @NotNull GuiEvent event) {
         super(x_, y_, width, height, new Color(0, 0, 0), 4, false);
@@ -45,11 +46,9 @@ public class Button extends GuiComponent {
         if (isHovering) {
             g2d.setColor(new Color(0xf6ff92));
             g2d.setFont(EditorScreen.font.deriveFont(12f));
-
-
-            g2d.fillRect(EditorScreen.mouseX - g2d.getFontMetrics().stringWidth(toolTip), EditorScreen.mouseY - g2d.getFontMetrics().getHeight(), g2d.getFontMetrics().stringWidth(toolTip), g2d.getFontMetrics().getHeight());
+            g2d.fillRect(mx - g2d.getFontMetrics().stringWidth(toolTip), my - g2d.getFontMetrics().getHeight(), g2d.getFontMetrics().stringWidth(toolTip), g2d.getFontMetrics().getHeight());
             g2d.setColor(Color.BLACK);
-            g2d.drawString(toolTip, EditorScreen.mouseX - g2d.getFontMetrics().stringWidth(toolTip), EditorScreen.mouseY - g2d.getFontMetrics().getHeight() / 3);
+            g2d.drawString(toolTip, mx - g2d.getFontMetrics().stringWidth(toolTip), my - g2d.getFontMetrics().getHeight() / 3);
 
         }
     }
@@ -57,26 +56,30 @@ public class Button extends GuiComponent {
     @Override
     protected void update() {
         double ibr = (width) / buttonImage.getWidth(null);
-        af.setTransform(ibr, 0, 0, ibr, PU.getXInBounds(bounds, width, 0.5), PU.getYInBounds(bounds, height, 0.5));
+        double ibr2 = (height) / buttonImage.getHeight(null);
+        af.setTransform(ibr, 0, 0, ibr2, PU.getXInBounds(bounds, width, 0.5), PU.getYInBounds(bounds, height, 0.5));
         defaultBounds.setLocation((int) x, (int) y);
         hoverBounds.setLocation((int) (x), (int) (y));
         clickBounds.setLocation((int) (x), (int) (y));
+
     }
 
     @Override
     protected void hover(@NotNull MouseEvent e) {
-        int mx = e.getX();
-        int my = e.getY();
+        mx = e.getX();
+        my = e.getY();
         if (bounds.contains(mx, my)) {
             setBounds(hoverBounds);
             double ibr = (width) / buttonImage.getWidth(null);
-            af.setTransform(ibr, 0, 0, ibr, PU.getXInBounds(bounds, width, 0.5), PU.getYInBounds(bounds, height, 0.5));
+            double ibr2 = (height) / buttonImage.getHeight(null);
+            af.setTransform(ibr, 0, 0, ibr2, PU.getXInBounds(bounds, width, 0.5), PU.getYInBounds(bounds, height, 0.5));
             setShadowSize(6);
             isHovering = true;
         } else {
             setBounds(defaultBounds);
             double ibr = (width) / buttonImage.getWidth(null);
-            af.setTransform(ibr, 0, 0, ibr, PU.getXInBounds(bounds, width, 0.5), PU.getYInBounds(bounds, height, 0.5));
+            double ibr2 = (height) / buttonImage.getHeight(null);
+            af.setTransform(ibr, 0, 0, ibr2, PU.getXInBounds(bounds, width, 0.5), PU.getYInBounds(bounds, height, 0.5));
             setShadowSize(4);
             isHovering = false;
         }
@@ -116,12 +119,18 @@ public class Button extends GuiComponent {
         af.setTransform(ibr, 0, 0, ibr, PU.getXInBounds(bounds, width, 0.5), PU.getYInBounds(bounds, height, 0.5));
         setBounds(defaultBounds);
         setShadowSize(4);
-
         hover(e);
+    }
+
+    public void setToolTip(String toolTip) {
+        this.toolTip = toolTip;
     }
 
     public void setButtonImage(Image img) {
         buttonImage = img;
     }
 
+    public GuiEvent getActionEvent() {
+        return event;
+    }
 }

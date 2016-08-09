@@ -26,7 +26,7 @@ public class CanvasManipulator extends GuiComponent {
     public static final int SELECT = 1;
     public static final int ADD = 2;
     public static final int REMOVE = 3;
-    private Rectangle tool;
+    private Rectangle tool, subTool;
     private static HashMap<Integer, String> tools;
 
     static {
@@ -38,24 +38,24 @@ public class CanvasManipulator extends GuiComponent {
     }
 
     //add sub components
-    private Button addSphere, addCuboid, addCuboidFrame, addLayer, drawLine;
+    private Button addSphere, addCuboid, addCuboidFrame, addLayer;
 
     //remove sub buttons
     private Button removeSphere, removeCuboid, removeLayer, clearCanvas;
 
     //paint sub buttons
-    private Button paintSelected, inverseSelected, contourDefaultToggle;
+    private Button paintSelected, inverseSelected, contourDefaultToggle, getCubeColor;
 
     //select sub components
     private Button selectAll;
     private Slider fillPercent;
     private guiTools.Label fillPercentLabel;
 
-    public CanvasManipulator(double x, double y, double width, double height, Color bgColor) {
-        super(x, y, width, height, bgColor, 14, true);
-        setP(0.995);
+    public CanvasManipulator(double x, double width, double height, Color bgColor) {
+        super(x, (double) 5, width, height, bgColor, 14, true);
+        setP();
         tool = new Rectangle();
-
+        subTool = new Rectangle();
         try {
             final Image b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, b18;
             b1 = ImageIO.read(Main.getResource("Images/paintBrush256.png"));
@@ -75,11 +75,17 @@ public class CanvasManipulator extends GuiComponent {
             b15 = ImageIO.read(Main.getResource("Images/clear256.png"));
             b16 = ImageIO.read(Main.getResource("Images/addLayer256.png"));
             b17 = ImageIO.read(Main.getResource("Images/removeLayer256.png"));
-            b18 = ImageIO.read(Main.getResource("Images/drawLine256.png"));
-
+            b18 = ImageIO.read(Main.getResource("Images/colorPicker256.png"));
             paint = new guiTools.Button(0, 0, 0, 0, b1, "paint brush", () -> ComponentManager.setTool(PAINT));
 
-            select = new guiTools.Button(0, 0, 0, 0, b2, "select", () -> ComponentManager.setTool(SELECT));
+            select = new guiTools.Button(0, 0, 0, 0, b2, "select", () -> {
+                ComponentManager.setTool(SELECT);
+                if (ComponentManager.settings.isShowSelectedArea()) {
+                    ComponentManager.settings.setShowSelectedArea(false);
+                } else {
+                    ComponentManager.settings.setShowSelectedArea(true);
+                }
+            });
 
             addCube = new guiTools.Button(0, 0, 0, 0, b3, "add", () -> ComponentManager.setTool(ADD));
 
@@ -136,11 +142,7 @@ public class CanvasManipulator extends GuiComponent {
             clearCanvas = new guiTools.Button(0, 0, 0, 0, b15, "clear canvas", ComponentManager::clearCanvas);
             addLayer = new guiTools.Button(0, 0, 0, 0, b16, "add layer", ComponentManager::addLayer);
             removeLayer = new guiTools.Button(0, 0, 0, 0, b17, "remove layer", ComponentManager::removeLayer);
-            drawLine = new Button(0, 0, 0, 0, b18, "draw line", () -> {
-                Vector3D v1 = ComponentManager.getCanvas().getSpt1();
-                Vector3D v2 = ComponentManager.getCanvas().getSpt2();
-                ComponentManager.getCanvas().drawLine((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX()), (int) (v2.getY()), (int) (v2.getZ()));
-            });
+            getCubeColor = new Button(0, 0, 0, 0, b18, "Colour sampler", () -> ComponentManager.setHoveredColor(!ComponentManager.getCanvas().isSampling()));
             add(addCube);
             add(removeCube);
             add(select);
@@ -159,8 +161,7 @@ public class CanvasManipulator extends GuiComponent {
             add(clearCanvas);
             add(addLayer);
             add(removeLayer);
-            add(drawLine);
-
+            add(getCubeColor);
 
         } catch (IOException e) {
 
@@ -175,6 +176,7 @@ public class CanvasManipulator extends GuiComponent {
         g2d.setColor(Color.GRAY);
         g2d.drawLine((int) (paint.getX() + paint.getWidth() + 10), (int) y, (int) (paint.getX() + paint.getWidth() + 10), (int) (y + height * 0.95));
         g2d.draw(tool);
+        g2d.draw(subTool);
     }
 
     @Override
@@ -189,25 +191,31 @@ public class CanvasManipulator extends GuiComponent {
             addCuboid.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.53), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
             addCuboidFrame.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.63), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
             addLayer.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.73), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
-            drawLine.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.83), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
             tool.setBounds((int) addCube.getX() - 2, (int) addCube.getY() - 2, (int) addCube.getWidth() + 4, (int) addCube.getHeight() + 4);
         } else {
             addSphere.hide();
             addCuboid.hide();
             addCuboidFrame.hide();
             addLayer.hide();
-            drawLine.hide();
         }
 
         if (ComponentManager.getCanvas().getSelectedTool() == PAINT) {
             paintSelected.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.43), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
             inverseSelected.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.53), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
             contourDefaultToggle.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.63), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
+            getCubeColor.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.73), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
             tool.setBounds((int) paint.getX() - 2, (int) paint.getY() - 2, (int) paint.getWidth() + 4, (int) paint.getHeight() + 4);
+            if (ComponentManager.getCanvas().isSampling()) {
+                subTool.setBounds((int) getCubeColor.getX() - 2, (int) getCubeColor.getY() - 2, (int) getCubeColor.getWidth() + 4, (int) getCubeColor.getHeight() + 4);
+            } else {
+                subTool.setBounds(0, 0, 0, 0);
+            }
         } else {
             paintSelected.hide();
             inverseSelected.hide();
             contourDefaultToggle.hide();
+            getCubeColor.hide();
+            subTool.setBounds(0, 0, 0, 0);
         }
 
         if (ComponentManager.getCanvas().getSelectedTool() == REMOVE) {
@@ -274,5 +282,7 @@ public class CanvasManipulator extends GuiComponent {
         return fillPercent.getPercent();
     }
 
-
+    public Button getContourDefaultToggle() {
+        return contourDefaultToggle;
+    }
 }

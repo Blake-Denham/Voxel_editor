@@ -24,16 +24,16 @@ public class ComponentManager extends JComponent {
     private static CanvasDataManager cdm;
     public static Color bgColor = new Color(55, 55, 55);
     public static Settings settings;
-    public static SettingsWindow sw;
+    private static SettingsWindow sw;
 
     public ComponentManager() {
         settings = new Settings();
         guiComponents = new ArrayList<>();
         canvas = new Canvas(17, 17);
-        colorWheel = new ColorWheel(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * MU.getPercent(300, 1920), bgColor);
+        colorWheel = new ColorWheel(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(300, 1920), bgColor);
         cc = new CameraControl(EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxHeight * MU.getPercent(EditorScreen.s_maxWidth * MU.getPercent(300, 1920) * 1.4 - 1080 - 8, 1080), EditorScreen.s_maxWidth * MU.getPercent(250, 1920), bgColor);
-        cm = new CanvasManipulator(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
-        cdm = new CanvasDataManager(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), 5, EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
+        cm = new CanvasManipulator(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
+        cdm = new CanvasDataManager(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
         sw = new SettingsWindow(0, 0, 0, 0, bgColor);
         addComponent(canvas);
         addComponent(cdm);
@@ -41,7 +41,6 @@ public class ComponentManager extends JComponent {
         addComponent(cc);
         addComponent(cm);
         addComponent(sw);
-
     }
 
     public static CanvasManipulator getCanvasManipulator() {
@@ -52,13 +51,16 @@ public class ComponentManager extends JComponent {
         return cdm;
     }
 
+    public static SettingsWindow getSettingsWindow() {
+        return sw;
+    }
+
     private void addComponent(GuiComponent component) {
         guiComponents.add(component);
     }
 
     private void update() {
         guiComponents.forEach(GuiComponent::updateAll);
-
     }
 
     public void hover(MouseEvent e) {
@@ -140,10 +142,6 @@ public class ComponentManager extends JComponent {
         }
     }
 
-    public static void setDisplayImage() {
-        canvas.setDisplayPicture();
-    }
-
     public static void turnOnSettings() {
         settings.setShowAxis(true);
         settings.setShowGrid(true);
@@ -151,38 +149,42 @@ public class ComponentManager extends JComponent {
         settings.setShowSelectedArea(true);
     }
 
-    public static void turnOffSettings() {
+    static void turnOffSettings() {
         settings.setShowAxis(false);
         settings.setShowGrid(false);
         settings.setShowCoords(false);
         settings.setShowSelectedArea(false);
     }
 
-    public static void loadProjectIntoCanvas(Project p) {
-        canvas = new Canvas(p.getSide() + 1, p.getCanvasHeight() + 1);
-        int r;
-        int g;
-        int b;
-        for (int x = 0; x < p.getSide(); x++) {
-            for (int y = 0; y < p.getSide(); y++) {
-                for (int z = 0; z < p.getCanvasHeight(); z++) {
+    public static void loadProjectIntoCanvas(ComponentManager cm, Project p) {
+        Canvas c = new Canvas(p.getSide(), p.getCanvasHeight());
+        int r, g, b;
+        for (int x = 0; x < p.getSide() - 1; x++) {
+            for (int y = 0; y < p.getSide() - 1; y++) {
+                for (int z = 0; z < p.getCanvasHeight() - 1; z++) {
+                    System.out.print(Integer.toHexString(p.getCubeData()[z][x][y]) + "\t");
                     if (p.getCubeData()[z][x][y] >= 0) {
                         r = (p.getCubeData()[z][x][y] & 0xff0000) >> 16;
                         g = (p.getCubeData()[z][x][y] & 0xff00) >> 8;
                         b = (p.getCubeData()[z][x][y] & 0xff);
-                        canvas.setCube(x, y, z, r, g, b);
+                        c.setCube(x, y, z, r, g, b);
                     }
                 }
+                System.out.println();
             }
+            System.out.println("---------------------------------------------------------------------");
         }
+        c.setBuffer(p.getCubeData());
+        canvas = c;
+        cm.guiComponents.set(0, canvas);
     }
 
-    public static void newCanvas(ComponentManager cm, int side, int height) {
+    static void newCanvas(ComponentManager cm, int side, int height) {
         canvas = new Canvas(side, height);
         cm.guiComponents.set(0, canvas);
     }
 
-    public static void addLayer() {
+    static void addLayer() {
         int zc = 0;
 
         for (int z = 0; z < canvas.getCanvasHeight() - 1; z++) {
@@ -203,15 +205,13 @@ public class ComponentManager extends JComponent {
         }
     }
 
-    public static void removeLayer() {
+    static void removeLayer() {
         int zc = canvas.getCanvasHeight() - 1;
         for (int z = canvas.getCanvasHeight() - 2; z >= 0; z--) {
             for (int x = 0; x < canvas.getSide() - 1; x++) {
                 for (int y = 0; y < canvas.getSide() - 1; y++) {
                     if (!ComponentManager.getCanvas().checkForCube(x, y, zc)) {
                         zc--;
-                        break;
-                    } else {
                         break;
                     }
                 }
@@ -224,7 +224,23 @@ public class ComponentManager extends JComponent {
         }
     }
 
-    public static void switchContourDefault() {
+    static void switchContourDefault() {
         canvas.switchContourDefault();
+    }
+
+    public static void setHoveredColor(boolean a) {
+        canvas.setSamplingColours(a);
+    }
+
+    public static void minimizeAll(ComponentManager cm) {
+        for (int i = 1; i < cm.guiComponents.size(); i++) {
+            cm.guiComponents.get(i).minimize();
+        }
+    }
+
+    public static void maximizeAll(ComponentManager cm) {
+        for (int i = 1; i < cm.guiComponents.size(); i++) {
+            cm.guiComponents.get(i).maximize();
+        }
     }
 }
