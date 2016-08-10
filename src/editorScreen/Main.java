@@ -1,6 +1,7 @@
 package editorScreen;
 
 import backend.Project;
+import helpScreen.HelpScreen;
 import loadScreen.LoadScreen;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ public class Main {
     public static Robot programRobot;
     private static final int tickRate = 10;
     private static LoadScreen ls;
+    private static HelpScreen hs;
     private static EditorScreen editor;
     public static String appPath;
 
@@ -19,8 +21,16 @@ public class Main {
         ls = new LoadScreen();
     }
 
+    public static void openHelpWindow() {
+        hs = new HelpScreen();
+    }
+
     public static void closeLoadScreen() {
         ls.close();
+    }
+
+    public static void closeHelpScreen() {
+        hs.close();
     }
 
     public static EditorScreen getEditor() {
@@ -41,6 +51,9 @@ public class Main {
             if (ls != null) {
                 ls.repaint(tickRate);
             }
+            if (hs != null) {
+                hs.repaint(tickRate);
+            }
         }
     }
 
@@ -55,7 +68,8 @@ public class Main {
     }
 
     public static void serialize(Project p, String newFileName) {
-        File f = new File(appPath + "\\data\\project\\" + newFileName + ".vem");
+        new File(appPath + "/data/project/").mkdirs();
+        File f = new File(appPath + "/data/project/" + newFileName + ".vem");
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f))) {
             out.writeObject(p);
         } catch (IOException e) {
@@ -68,7 +82,7 @@ public class Main {
     public static Project loadProject(String fileName) {
         Project canvas = null;
         try {
-            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(appPath + "\\data\\project\\" + fileName));
+            ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(appPath + "/data/project/" + fileName));
             canvas = (Project) (objectInputStream.readObject());
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

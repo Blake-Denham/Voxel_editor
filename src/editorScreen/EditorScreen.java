@@ -118,7 +118,7 @@ public class EditorScreen extends JPanel {
         int h = (int) temp.getHeight();
         BufferedImage image = new BufferedImage(s_maxWidth, s_maxHeight, BufferedImage.TYPE_INT_ARGB);
         paint(image.createGraphics());
-        File imageFile = new File(Main.appPath + "\\data\\projectImages\\" + name + ".png");
+        File imageFile = new File(Main.appPath + "/data/projectImages/" + name + ".png");
         BufferedImage newImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         newImage.getGraphics().drawImage(image, 0, 0, w, h, x, y, x + w, y + h, null);
         try {

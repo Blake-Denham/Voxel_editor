@@ -25,6 +25,7 @@ public class ComponentManager extends JComponent {
     public static Color bgColor = new Color(55, 55, 55);
     public static Settings settings;
     private static SettingsWindow sw;
+    private static HelpWindow hw;
 
     public ComponentManager() {
         settings = new Settings();
@@ -35,12 +36,14 @@ public class ComponentManager extends JComponent {
         cm = new CanvasManipulator(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
         cdm = new CanvasDataManager(EditorScreen.s_maxWidth * (MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * (1 - MU.getPercent(315, 1920)), EditorScreen.s_maxWidth * MU.getPercent(500, 1920) * 0.3, bgColor);
         sw = new SettingsWindow(0, 0, 0, 0, bgColor);
+        hw = new HelpWindow(0, 0, 0, 0);
         addComponent(canvas);
         addComponent(cdm);
         addComponent(colorWheel);
         addComponent(cc);
         addComponent(cm);
         addComponent(sw);
+        addComponent(hw);
     }
 
     public static CanvasManipulator getCanvasManipulator() {

@@ -1,30 +1,31 @@
-package loadScreen;
+package helpScreen;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 /**
- * Created by Blake on 7/15/2016.
+ * Created by Blake on 8/10/2016.
  */
-public class LoadScreen extends JPanel {
+public class HelpScreen extends JPanel {
     private JFrame window;
+    private HelpScreenComponentManager hscm;
     private static int width = 830, height = 600;
-    private LoadScreenComponentManager lscm;
 
-    public LoadScreen() {
+    public HelpScreen() {
         super();
+        hscm = new HelpScreenComponentManager();
         setBackground(new Color(35, 35, 35));
-        lscm = new LoadScreenComponentManager();
         addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                lscm.drag(e);
+                hscm.drag(e);
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                lscm.hover(e);
+                hscm.hover(e);
 
             }
         });
@@ -36,12 +37,12 @@ public class LoadScreen extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                lscm.mousePress(e);
+                hscm.mousePress(e);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                lscm.mouseRelease(e);
+                hscm.mouseRelease(e);
             }
 
             @Override
@@ -52,7 +53,7 @@ public class LoadScreen extends JPanel {
             public void mouseExited(MouseEvent e) {
             }
         });
-        addMouseWheelListener(lscm::mouseWheel);
+        addMouseWheelListener(hscm::mouseWheel);
         addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -60,7 +61,7 @@ public class LoadScreen extends JPanel {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                lscm.keyPress(e);
+                hscm.keyPress(e);
             }
 
             @Override
@@ -69,8 +70,8 @@ public class LoadScreen extends JPanel {
             }
         });
         setFocusable(true);
-        add(lscm);
-        window = new JFrame("Load project");
+        add(hscm);
+        window = new JFrame("Help Screen");
         window.add(this);
         window.setSize(width, height);
         window.setResizable(false);
@@ -93,7 +94,7 @@ public class LoadScreen extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
-        lscm.paintComponent(g2d);
+        hscm.paintComponent(g2d);
     }
 
     public boolean isOpen() {
@@ -103,6 +104,5 @@ public class LoadScreen extends JPanel {
     public void close() {
         window.dispose();
     }
-
 
 }
