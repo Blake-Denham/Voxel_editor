@@ -78,7 +78,7 @@ public class SettingsWindow extends GuiComponent {
             e.printStackTrace();
         }
         setToolBarTitle("OPTIONS");
-
+        setID("settings window");
     }
 
     @Override

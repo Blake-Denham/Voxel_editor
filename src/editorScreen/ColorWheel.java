@@ -79,14 +79,12 @@ public class ColorWheel extends GuiComponent {
         colors[13][1] = PU.saturateColor(new Color(0xb200ff), 0.5);
         colors[14][1] = PU.saturateColor(new Color(0xff00dc), 0.5);
         colors[15][1] = PU.saturateColor(new Color(0xff006e), 0.5);
-
         r = width * 0.4;
         colorWheel = new Ellipse2D.Double(PU.getXInBounds(section, r * 2, 0.5), PU.getYInBounds(section, r * 2, MU.getPercent(30, section.getHeight())), r * 2, r * 2);
         xc = colorWheel.getCenterX() - 32 + 3;
         yc = colorWheel.getCenterY();
         saturation = new Slider(PU.getXInBounds(bounds, width * 0.7, 0.5), PU.getYInBounds(bounds, height * 0.07, 0.7), Slider.HORIZONTAL, width * 0.7, height * 0.07, new Color(130, 130, 130), new Color(20, 20, 20));
-
-        ta = new TextArea(PU.getXInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080) * MU.getPercent(120, 25), 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.81), EditorScreen.s_maxHeight * MU.getPercent(25, 1080) * MU.getPercent(120, 25));
+        ta = new TextArea(PU.getXInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080) * MU.getPercent(120, 25), 0.5), PU.getYInBounds(bounds, EditorScreen.s_maxHeight * MU.getPercent(25, 1080), 0.81), EditorScreen.s_maxHeight * MU.getPercent(25, 1080) * MU.getPercent(120, 25), "0123456789abcdefABCDEF");
         selected = new Rectangle((int) (xc - 1.5), (int) (yc - 1.5), 3, 3);
         selectedC1 = new Color(255, 255, 255);
         selectedC2 = new Color(0, 0, 0);
@@ -96,6 +94,7 @@ public class ColorWheel extends GuiComponent {
         add(ta);
         add(saturation);
         setToolBarTitle("COLOUR PICKER");
+        setID("colour wheel");
     }
 
     @Override
@@ -287,7 +286,9 @@ public class ColorWheel extends GuiComponent {
         g2d.draw(selected);
         PU.castShadow(g2d, displayC1, 8, selectedC1);
         PU.castShadow(g2d, displayC2, 8, selectedC2);
-        ta.setDisplay("#" + Integer.toHexString(selectedC1.getRGB()).substring(2));
+        if (!ta.isTyping()) {
+            ta.setDisplay("#" + Integer.toHexString(selectedC1.getRGB()).substring(2));
+        }
 
     }
 

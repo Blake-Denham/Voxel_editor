@@ -55,7 +55,7 @@ public class Grid {
     private final CirclePoint cent;
 
     //for aesthetics no real function
-    private static final Color colorGridp = new Color(1f, 1f, 1f, 0.6f);
+    private static final Color colorGridp = new Color(1f, 1f, 1f, 0.4f);
     private static final Color colorGridn = new Color(1f, 1f, 1f, 0.3f);
 
     //the polygon of the grid which is being hovered on
@@ -122,8 +122,8 @@ public class Grid {
         for (int xi = 0; xi < side - 1; xi++) {
             for (int yi = 0; yi < side - 1; yi++) {
                 for (int i = 0; i < 4; i++) {
-                    xp[xi][yi][i] = (int) pts[0][xi + MU.makeSquareI(false, i, 4)][yi + MU.makeSquareI(true, i, 4)].getVecs().getX();
-                    yp[xi][yi][i] = (int) pts[0][xi + MU.makeSquareI(false, i, 4)][yi + MU.makeSquareI(true, i, 4)].getVecs().getY();
+                    xp[xi][yi][i] = (int) pts[0][xi + MU.makeSquareI(false, i, 4)][yi + MU.makeSquareI(true, i, 4)].getVec().getX();
+                    yp[xi][yi][i] = (int) pts[0][xi + MU.makeSquareI(false, i, 4)][yi + MU.makeSquareI(true, i, 4)].getVec().getY();
                 }
                 p[xi][yi] = new Polygon(xp[xi][yi], yp[xi][yi], 4);
             }
@@ -147,7 +147,7 @@ public class Grid {
                 }
             }
             pts[zi][0][0].setVec(x_, y_);
-            zAxis[zi].update(x_, (int) (y - (y - cent.getPts()[0].getY())),
+            zAxis[zi].update(x_, (int) ((cent.getPts()[0].getY())),
                     (int) ((zi + 1) * Math.abs(Math.sqrt(MU.square(100 * MU.cos(45)) + MU.square(100 * MU.sin(45)))     //(z+1)*|squareRoot(((100*cos(45))^2)+(100*sin(45))^2) - squareRoot((200*cos(45))^2+(200*sin45)^2)|
                             - Math.sqrt(MU.square(100 * 2 * MU.cos(45)) + MU.square(100 * 2 * MU.sin(45)))) / Math.sqrt(2)),
                     90, 0, rotatey - 90, zoom);
@@ -156,8 +156,8 @@ public class Grid {
         for (int xi = 0; xi < side - 1; xi++) {
             for (int yi = 0; yi < side - 1; yi++) {
                 for (int i = 0; i < 4; i++) {
-                    xp[xi][yi][i] = (int) pts[0][xi + MU.makeSquareI(false, i, 4)][yi + MU.makeSquareI(true, i, 4)].getVecs().getX();
-                    yp[xi][yi][i] = (int) pts[0][xi + MU.makeSquareI(false, i, 4)][yi + MU.makeSquareI(true, i, 4)].getVecs().getY();
+                    xp[xi][yi][i] = (int) pts[0][xi + MU.makeSquareI(false, i, 4)][yi + MU.makeSquareI(true, i, 4)].getVec().getX();
+                    yp[xi][yi][i] = (int) pts[0][xi + MU.makeSquareI(false, i, 4)][yi + MU.makeSquareI(true, i, 4)].getVec().getY();
                 }
                 p[xi][yi].xpoints = xp[xi][yi];
                 p[xi][yi].ypoints = yp[xi][yi];
@@ -183,9 +183,9 @@ public class Grid {
         } else if (rotatey >= 0) {
             for (int xi = 0; xi < side - 1; xi++) {
                 for (int yi = 0; yi < side - 1; yi++) {
-                    g2d.setColor(new Color(0.1f, 0.1f, 0.1f, 1f));
+                    g2d.setColor(new Color(0.1f, 0.1f, 0.1f, 0.4f));
                     g2d.fill(p[xi][yi]);
-                    g2d.setColor(colorGridn);
+                    g2d.setColor(colorGridp);
                     g2d.draw(p[xi][yi]);
                 }
             }
@@ -198,22 +198,22 @@ public class Grid {
     public void paintAxis(@NotNull Graphics2D g2d) {
         g2d.setColor(Color.RED);
         g2d.drawLine(
-                (int) pts[0][0][0].getVecs().getX(),
-                (int) pts[0][0][0].getVecs().getY(),
-                (int) pts[0][side - 1][0].getVecs().getX(),
-                (int) pts[0][side - 1][0].getVecs().getY());
+                (int) pts[0][0][0].getVec().getX(),
+                (int) pts[0][0][0].getVec().getY(),
+                (int) pts[0][side - 1][0].getVec().getX(),
+                (int) pts[0][side - 1][0].getVec().getY());
         g2d.setColor(Color.GREEN);
         g2d.drawLine(
-                (int) pts[0][0][0].getVecs().getX(),
-                (int) pts[0][0][0].getVecs().getY(),
-                (int) pts[0][0][side - 1].getVecs().getX(),
-                (int) pts[0][0][side - 1].getVecs().getY());
+                (int) pts[0][0][0].getVec().getX(),
+                (int) pts[0][0][0].getVec().getY(),
+                (int) pts[0][0][side - 1].getVec().getX(),
+                (int) pts[0][0][side - 1].getVec().getY());
         g2d.setColor(Color.BLUE);
         g2d.drawLine(
-                (int) pts[0][0][0].getVecs().getX(),
-                (int) pts[0][0][0].getVecs().getY(),
-                (int) pts[height - 1][0][0].getVecs().getX(),
-                (int) pts[height - 1][0][0].getVecs().getY());
+                (int) pts[0][0][0].getVec().getX(),
+                (int) pts[0][0][0].getVec().getY(),
+                (int) pts[height - 1][0][0].getVec().getX(),
+                (int) pts[height - 1][0][0].getVec().getY());
     }
 
     public void rotate(double direction) {
@@ -337,5 +337,16 @@ public class Grid {
 
     public void setSelected(Polygon selected) {
         this.selected = selected;
+    }
+
+    public void showPoints(Graphics2D g2d) {
+        g2d.setColor(Color.WHITE);
+        for (int x = 0; x < side; x++) {
+            for (int y = 0; y < side; y++) {
+                for (int z = 0; z < height; z++) {
+                    g2d.fillRect((int) pts[z][x][y].getVec().getX(), (int) pts[z][x][y].getVec().getY(), 2, 2);
+                }
+            }
+        }
     }
 }

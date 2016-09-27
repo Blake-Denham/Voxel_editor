@@ -130,8 +130,8 @@ public class Cube {
                     //sets the top or bottom, depending on 'drawTop'
                     for (int i = 0; i < 4; i++) {
                         //see MU.makeSquareI() for more details
-                        xps[0][i] = (int) grid.getPts()[z + drawTop][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVecs().getX();
-                        yps[0][i] = (int) grid.getPts()[z + drawTop][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVecs().getY();
+                        xps[0][i] = (int) grid.getPts()[z + drawTop][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVec().getX();
+                        yps[0][i] = (int) grid.getPts()[z + drawTop][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVec().getY();
                     }
                     cube[0].xpoints = xps[0];
                     cube[0].ypoints = yps[0];
@@ -147,8 +147,8 @@ public class Cube {
                 } else {
                     tb = true;
                     for (int i = 0; i < 4; i++) {
-                        xps[0][i] = (int) grid.getPts()[z + drawTop][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVecs().getX();
-                        yps[0][i] = (int) grid.getPts()[z + drawTop][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVecs().getY();
+                        xps[0][i] = (int) grid.getPts()[z + drawTop][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVec().getX();
+                        yps[0][i] = (int) grid.getPts()[z + drawTop][x + MU.makeSquareI(false, i, 4)][y + MU.makeSquareI(true, i, 4)].getVec().getY();
                     }
                     cube[0].xpoints = xps[0];
                     cube[0].ypoints = yps[0];
@@ -169,8 +169,8 @@ public class Cube {
                 } else {
                     bf = true;
                     for (int i = 0; i < 4; i++) {
-                        xps[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y + shift].getVecs().getX();
-                        yps[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y + shift].getVecs().getY();
+                        xps[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y + shift].getVec().getX();
+                        yps[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y + shift].getVec().getY();
                     }
                     cube[1].xpoints = xps[1];
                     cube[1].ypoints = yps[1];
@@ -186,8 +186,8 @@ public class Cube {
                 } else {
                     bf = true;
                     for (int i = 0; i < 4; i++) {
-                        xps[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y + shift].getVecs().getX();
-                        yps[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y + shift].getVecs().getY();
+                        xps[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y + shift].getVec().getX();
+                        yps[1][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + MU.makeSquareI(false, i, 4)][y + shift].getVec().getY();
                     }
                     cube[1].xpoints = xps[1];
                     cube[1].ypoints = yps[1];
@@ -208,8 +208,8 @@ public class Cube {
                 } else {
                     lr = true;
                     for (int i = 0; i < 4; i++) {
-                        xps[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + shift][y + MU.makeSquareI(false, i, 4)].getVecs().getX();
-                        yps[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + shift][y + MU.makeSquareI(false, i, 4)].getVecs().getY();
+                        xps[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + shift][y + MU.makeSquareI(false, i, 4)].getVec().getX();
+                        yps[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + shift][y + MU.makeSquareI(false, i, 4)].getVec().getY();
                     }
                     cube[2].xpoints = xps[2];
                     cube[2].ypoints = yps[2];
@@ -225,8 +225,8 @@ public class Cube {
                 } else {
                     lr = true;
                     for (int i = 0; i < 4; i++) {
-                        xps[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + shift][y + MU.makeSquareI(false, i, 4)].getVecs().getX();
-                        yps[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + shift][y + MU.makeSquareI(false, i, 4)].getVecs().getY();
+                        xps[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + shift][y + MU.makeSquareI(false, i, 4)].getVec().getX();
+                        yps[2][i] = (int) grid.getPts()[z + MU.makeSquareI(true, i, 4)][x + shift][y + MU.makeSquareI(false, i, 4)].getVec().getY();
                     }
                     cube[2].xpoints = xps[2];
                     cube[2].ypoints = yps[2];

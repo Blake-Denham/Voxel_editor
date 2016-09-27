@@ -102,6 +102,11 @@ public class EditorScreen extends JPanel {
         jf.setVisible(true);
         jf.setResizable(false);
         jf.setLocationRelativeTo(null);
+        try {
+            jf.setIconImage(ImageIO.read(Main.getResource("Images/logo.png")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         displayScreenInfo();
     }
 

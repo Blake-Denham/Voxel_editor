@@ -28,7 +28,7 @@ public class HelpWindow extends GuiComponent {
             e.printStackTrace();
         }
         setToolBarTitle("HELP");
-
+        setID("help window");
     }
 
     @Override

@@ -13,7 +13,7 @@ class CirclePoint {
     private final Vector2D[] pts;
 
     //constructor sets a circle at origin 'x', 'y' with radius 'r';
-    // rotation offset of 'rotate' degrees rotated in 3D either 'rotatex' degrees horizontally
+    //rotation offset of 'rotate' degrees rotated in 3D either 'rotatex' degrees horizontally
     //or 'rotatey' degrees vertically, finally scaled by 'scale'
     public CirclePoint(int pnts, int x, int y, int r, double rotate, double rotatex, double rotatey, double scale) {
         this.pnts = pnts;
@@ -24,7 +24,6 @@ class CirclePoint {
             // what is happening is the MU.rotate(), MU.rotatex(), MU.rotatey() and MU.zoom() each return a vector2D which are all multiplied together
             //to give a single point on a circle.
             //see MU.rotate(), MU.rotatex(), MU.rotatey() and MU.zoom() for details on the functions.
-
             //the x_ and y_ value will be a coordinate on the screen
             x_ = (int) (x + r * MU.rotate(i, pnts, rotate).getX() * MU.rotatex(rotatex).getX() * MU.rotatey(rotatey).getX() * MU.zoom(scale).getX());
             y_ = (int) (y + r * MU.rotate(i, pnts, rotate).getY() * MU.rotatex(rotatex).getY() * MU.rotatey(rotatey).getY() * MU.zoom(scale).getY());

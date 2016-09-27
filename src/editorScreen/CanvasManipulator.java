@@ -1,5 +1,6 @@
 package editorScreen;
 
+import backend.BoundingBox;
 import guiTools.Button;
 import guiTools.GuiComponent;
 import guiTools.Label;
@@ -47,7 +48,7 @@ public class CanvasManipulator extends GuiComponent {
     private Button paintSelected, inverseSelected, contourDefaultToggle, getCubeColor;
 
     //select sub components
-    private Button selectAll;
+    private Button selectAll, setNewCollisionBounds;
     private Slider fillPercent;
     private guiTools.Label fillPercentLabel;
 
@@ -57,7 +58,7 @@ public class CanvasManipulator extends GuiComponent {
         tool = new Rectangle();
         subTool = new Rectangle();
         try {
-            final Image b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, b18;
+            final Image b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, b18, b19;
             b1 = ImageIO.read(Main.getResource("Images/paintBrush256.png"));
             b2 = ImageIO.read(Main.getResource("Images/select256.png"));
             b3 = ImageIO.read(Main.getResource("Images/add256.png"));
@@ -76,9 +77,10 @@ public class CanvasManipulator extends GuiComponent {
             b16 = ImageIO.read(Main.getResource("Images/addLayer256.png"));
             b17 = ImageIO.read(Main.getResource("Images/removeLayer256.png"));
             b18 = ImageIO.read(Main.getResource("Images/colorPicker256.png"));
-            paint = new guiTools.Button(0, 0, 0, 0, b1, "paint brush", () -> ComponentManager.setTool(PAINT));
+            b19 = ImageIO.read(Main.getResource("Images/collisionBoundsSetter256.png"));
+            paint = new guiTools.Button(0, 0, 0, 0, b1, "paint brush (R)", () -> ComponentManager.setTool(PAINT));
 
-            select = new guiTools.Button(0, 0, 0, 0, b2, "select", () -> {
+            select = new guiTools.Button(0, 0, 0, 0, b2, "select (E)", () -> {
                 ComponentManager.setTool(SELECT);
                 if (ComponentManager.settings.isShowSelectedArea()) {
                     ComponentManager.settings.setShowSelectedArea(false);
@@ -87,38 +89,38 @@ public class CanvasManipulator extends GuiComponent {
                 }
             });
 
-            addCube = new guiTools.Button(0, 0, 0, 0, b3, "add", () -> ComponentManager.setTool(ADD));
+            addCube = new guiTools.Button(0, 0, 0, 0, b3, "add (Q)", () -> ComponentManager.setTool(ADD));
 
-            removeCube = new guiTools.Button(0, 0, 0, 0, b4, "remove", () -> ComponentManager.setTool(REMOVE));
+            removeCube = new guiTools.Button(0, 0, 0, 0, b4, "remove (W)", () -> ComponentManager.setTool(REMOVE));
 
-            addSphere = new Button(0, 0, 0, 0, b6, "add sphere", () -> {
+            addSphere = new Button(0, 0, 0, 0, b6, "add sphere (SHIFT + S)", () -> {
                 Vector3D v1 = ComponentManager.getCanvas().getSpt1();
                 Vector3D v2 = ComponentManager.getCanvas().getSpt2();
                 ComponentManager.getCanvas().addSphere((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX() - 1), (int) (v2.getY() - v1.getY() - 1), (int) (v2.getZ() - v1.getZ()) - 1);
             });
-            addCuboid = new Button(0, 0, 0, 0, b5, "add cuboid", () -> {
+            addCuboid = new Button(0, 0, 0, 0, b5, "add cuboid (SHIFT + C)", () -> {
                 Vector3D v1 = ComponentManager.getCanvas().getSpt1();
                 Vector3D v2 = ComponentManager.getCanvas().getSpt2();
                 ComponentManager.getCanvas().addCuboid((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX()), (int) (v2.getY() - v1.getY()), (int) (v2.getZ() - v1.getZ()));
 
             });
-            addCuboidFrame = new Button(0, 0, 0, 0, b9, "add cuboid frame", () -> {
+            addCuboidFrame = new Button(0, 0, 0, 0, b9, "add cuboid frame (SHIFT + F)", () -> {
                 Vector3D v1 = ComponentManager.getCanvas().getSpt1();
                 Vector3D v2 = ComponentManager.getCanvas().getSpt2();
                 ComponentManager.getCanvas().addCuboidFrame((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX() - 1), (int) (v2.getY() - v1.getY() - 1), (int) (v2.getZ() - v1.getZ() - 1));
 
             });
-            paintSelected = new Button(0, 0, 0, 0, b10, "paint selected area", () -> {
+            paintSelected = new Button(0, 0, 0, 0, b10, "paint selected area (SHIFT + F)", () -> {
                 Vector3D v1 = ComponentManager.getCanvas().getSpt1();
                 Vector3D v2 = ComponentManager.getCanvas().getSpt2();
                 ComponentManager.getCanvas().fillSelected((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX()), (int) (v2.getY() - v1.getY()), (int) (v2.getZ() - v1.getZ()));
             });
-            inverseSelected = new Button(0, 0, 0, 0, b11, "inverse selected area", () -> {
+            inverseSelected = new Button(0, 0, 0, 0, b11, "inverse selected area (SHIFT + I)", () -> {
                 Vector3D v1 = ComponentManager.getCanvas().getSpt1();
                 Vector3D v2 = ComponentManager.getCanvas().getSpt2();
                 ComponentManager.getCanvas().inverseColors((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX()), (int) (v2.getY() - v1.getY()), (int) (v2.getZ() - v1.getZ()));
             });
-            contourDefaultToggle = new Button(0, 0, 0, 0, b12, "contour/original colours", () -> {
+            contourDefaultToggle = new Button(0, 0, 0, 0, b12, "contour/original colours (SHIFT + C)", () -> {
                 if (ComponentManager.getCanvas().isNormalColours()) {
                     contourDefaultToggle.setButtonImage(b13);
                 } else {
@@ -126,23 +128,30 @@ public class CanvasManipulator extends GuiComponent {
                 }
                 ComponentManager.switchContourDefault();
             });
-            removeCuboid = new Button(0, 0, 0, 0, b7, "remove cuboid", () -> {
+            removeCuboid = new Button(0, 0, 0, 0, b7, "remove cuboid (SHIFT + C)", () -> {
                 Vector3D v1 = ComponentManager.getCanvas().getSpt1();
                 Vector3D v2 = ComponentManager.getCanvas().getSpt2();
                 ComponentManager.getCanvas().removeCuboid((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX()), (int) (v2.getY() - v1.getY()), (int) (v2.getZ() - v1.getZ()));
             });
-            removeSphere = new Button(0, 0, 0, 0, b8, "remove sphere", () -> {
+            removeSphere = new Button(0, 0, 0, 0, b8, "remove sphere (SHIFT + S)", () -> {
                 Vector3D v1 = ComponentManager.getCanvas().getSpt1();
                 Vector3D v2 = ComponentManager.getCanvas().getSpt2();
                 ComponentManager.getCanvas().removeSphere((int) v1.getX(), (int) v1.getY(), (int) v1.getZ(), (int) (v2.getX() - v1.getX() - 1), (int) (v2.getY() - v1.getY() - 1), (int) (v2.getZ() - v1.getZ()) - 1);
             });
-            selectAll = new Button(0, 0, 0, 0, b14, "select all", () -> ComponentManager.getCanvas().selectAll());
+            selectAll = new Button(0, 0, 0, 0, b14, "select all (SHIFT + A)", () -> ComponentManager.getCanvas().selectAll());
             fillPercent = new Slider(0, 0, Slider.HORIZONTAL, 0, 0, new Color(130, 130, 130), new Color(20, 20, 20));
             fillPercentLabel = new Label(0, 0, 0);
-            clearCanvas = new guiTools.Button(0, 0, 0, 0, b15, "clear canvas", ComponentManager::clearCanvas);
-            addLayer = new guiTools.Button(0, 0, 0, 0, b16, "add layer", ComponentManager::addLayer);
-            removeLayer = new guiTools.Button(0, 0, 0, 0, b17, "remove layer", ComponentManager::removeLayer);
-            getCubeColor = new Button(0, 0, 0, 0, b18, "Colour sampler", () -> ComponentManager.setHoveredColor(!ComponentManager.getCanvas().isSampling()));
+            clearCanvas = new guiTools.Button(0, 0, 0, 0, b15, "clear canvas (SHIFT + D)", ComponentManager::clearCanvas);
+            addLayer = new guiTools.Button(0, 0, 0, 0, b16, "add layer (SHIFT + L)", ComponentManager::addLayer);
+            removeLayer = new guiTools.Button(0, 0, 0, 0, b17, "remove layer (SHIFT + L)", ComponentManager::removeLayer);
+            getCubeColor = new Button(0, 0, 0, 0, b18, "Colour sampler (SHIFT + P)", () -> ComponentManager.setHoveredColor(!ComponentManager.getCanvas().isSampling()));
+            setNewCollisionBounds = new Button(0, 0, 0, 0, b19, "add collision box (SHIFT + C)", () -> {
+                Vector3D v1 = new Vector3D(0, 0, 0);
+                v1.set((int) ComponentManager.getCanvas().getSpt1().getX(), (int) ComponentManager.getCanvas().getSpt1().getY(), (int) ComponentManager.getCanvas().getSpt1().getZ());
+                Vector3D v2 = new Vector3D(0, 0, 0);
+                v2.set((int) ComponentManager.getCanvas().getSpt2().getX(), (int) ComponentManager.getCanvas().getSpt2().getY(), (int) ComponentManager.getCanvas().getSpt2().getZ());
+                ComponentManager.getCanvas().getCollisionMap().addCollisionBox(new BoundingBox(v1, v2));
+            });
             add(addCube);
             add(removeCube);
             add(select);
@@ -162,13 +171,14 @@ public class CanvasManipulator extends GuiComponent {
             add(addLayer);
             add(removeLayer);
             add(getCubeColor);
-
+            add(setNewCollisionBounds);
         } catch (IOException e) {
 
             e.printStackTrace();
         }
 
         setToolBarTitle("TOOLS");
+        setID("canvas manipulator");
     }
 
     @Override
@@ -236,11 +246,13 @@ public class CanvasManipulator extends GuiComponent {
             fillPercent.setBounds(PU.getXInBounds(bounds, 100, 0.558), PU.getYInBounds(bounds, 20, 0.75), 100, 20);
             fillPercentLabel.setBounds(PU.getXInBounds(bounds, 100, 0.555), PU.getYInBounds(bounds, 20, 0.25), 105, 20);
             fillPercentLabel.setDisplay("Opacity: " + (int) (fillPercent.getPercent() * 100) + "%");
+            setNewCollisionBounds.setBounds(PU.getXInBounds(bounds, height * 0.9, 0.678), PU.getYInBounds(bounds, height * 0.9, 0.5), height * 0.9, height * 0.9);
             tool.setBounds((int) select.getX() - 2, (int) select.getY() - 2, (int) select.getWidth() + 4, (int) select.getHeight() + 4);
         } else {
             selectAll.hide();
             fillPercent.hide();
             fillPercentLabel.hide();
+            setNewCollisionBounds.hide();
 
         }
 

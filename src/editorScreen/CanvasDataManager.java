@@ -44,13 +44,15 @@ public class CanvasDataManager extends GuiComponent {
                     }
                     System.out.println("-----------------");
                 }
-                if (!name.equals(("")) || !name.equals("null")) {
+                if (!name.equals(("")) && !name.equals("null") && !name.contains("/")) {
                     ComponentManager.getCanvas().setDisplayPicture();
                     Main.getEditor().getModelImage(name);
                     Main.serialize(new Project(temp, ComponentManager.getCanvas().getSide(), ComponentManager.getCanvas().getCanvasHeight()), name);
+                    Main.serialize(ComponentManager.getCanvas().getCollisionMap(), name);
+                    ComponentManager.getCanvas().getCollisionMap().display();
                     ComponentManager.turnOnSettings();
                 } else {
-                    JOptionPane.showConfirmDialog(null, "no name was entered", "error", JOptionPane.DEFAULT_OPTION);
+                    JOptionPane.showConfirmDialog(null, "invalid name. please do not use '/' or leave the name blank", "error", JOptionPane.DEFAULT_OPTION);
                 }
             });
             add(save);
@@ -62,6 +64,7 @@ public class CanvasDataManager extends GuiComponent {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        setID("canvas data manager");
     }
 
     @Override

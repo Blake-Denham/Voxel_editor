@@ -176,8 +176,8 @@ public class Slider extends GuiComponent {
         if (!slider.contains(e.getX(), e.getY())) {
             grow = false;
             ssize = height/2;
-            changing = false;
         }
+        changing = false;
     }
 
     public float getPercent() {

@@ -18,31 +18,41 @@ import java.io.IOException;
 /**
  * Created by Blake on 5/13/2016.
  */
-@SuppressWarnings("DefaultFileTemplate")
+
 public class CameraControl extends GuiComponent {
+    //the label which shows the rotate value of the canvas
     @NotNull
     private final guiTools.Label rotate;
+    //the label which shows the vertical rotation of the canvas
     @NotNull
     private final guiTools.Label rotatey;
+    //the label which shows the zoom percentage of the canvas
     @NotNull
     private final guiTools.Label zoom;
+    //a slider which is used to rotate the canvas horizontally
     @NotNull
     private final guiTools.Slider rotateSlider;
+    //a slider which rotates the canvas vertically
     @NotNull
     private final guiTools.Slider rotateySlider;
+    //a slider which zooms in or out
     @NotNull
     private final guiTools.Slider zoomSlider;
+    //a button which makes the model rotate horizontally without any user interaction
     @NotNull
     private final guiTools.Button rotator;
+    //a button which makes the model rotate vertically without any user interaction
     @NotNull
     private final guiTools.Button rotatorY;
+    //sets the canvas to an isometric view, ie: 45 degrees horizontal and 36 degrees vertical
     @NotNull
     private final guiTools.Button isometricView;
-
+    //Integers used to control the horizontal and vertical rotation speed and direction
     private int rotationx = -1, rotationy = -1;
+
     private int direction = 1;
 
-
+    //the screen coordinates where the panel is drawn
     public CameraControl(double x, double y, double width, Color bgColor) {
         //noinspection SuspiciousNameCombination
         super(x, y, width, width, bgColor, 14, true);
@@ -79,10 +89,11 @@ public class CameraControl extends GuiComponent {
             ComponentManager.setRotateyCamera(35);
         });
         add(isometricView);
-
+        setID("camera control");
         setToolBarTitle("CAMERA CONTROL");
     }
 
+    //paint method, will be called to draw the component on the screen
     @Override
     protected void paintGuiComponent(@NotNull Graphics2D g2d) {
         g2d.setColor(Color.white);
@@ -204,27 +215,22 @@ public class CameraControl extends GuiComponent {
     protected void hover(MouseEvent e) {
 
     }
-
     @Override
     protected void drag(MouseEvent e) {
 
     }
-
     @Override
     protected void scroll(MouseWheelEvent mwe) {
 
     }
-
     @Override
     protected void keyPress(KeyEvent e) {
 
     }
-
     @Override
     protected void mousePress(MouseEvent e) {
 
     }
-
     @Override
     protected void mouseRelease(MouseEvent e) {
 

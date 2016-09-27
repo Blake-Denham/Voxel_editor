@@ -1,8 +1,12 @@
 package loadScreen;
 
+import editorScreen.Main;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 /**
  * Created by Blake on 7/15/2016.
@@ -77,7 +81,11 @@ public class LoadScreen extends JPanel {
         window.setLocation(75, 75);
         window.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         window.setVisible(true);
-
+        try {
+            window.setIconImage(ImageIO.read(Main.getResource("Images/logo.png")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 

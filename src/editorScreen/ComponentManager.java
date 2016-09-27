@@ -13,7 +13,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 
-
 public class ComponentManager extends JComponent {
     @NotNull
     private final ArrayList<GuiComponent> guiComponents;
@@ -167,9 +166,9 @@ public class ComponentManager extends JComponent {
                 for (int z = 0; z < p.getCanvasHeight() - 1; z++) {
                     System.out.print(Integer.toHexString(p.getCubeData()[z][x][y]) + "\t");
                     if (p.getCubeData()[z][x][y] >= 0) {
-                        r = (p.getCubeData()[z][x][y] & 0xff0000) >> 16;
-                        g = (p.getCubeData()[z][x][y] & 0xff00) >> 8;
-                        b = (p.getCubeData()[z][x][y] & 0xff);
+                        r = (p.getCubeData()[z][x][y] & 0xff0000) >> 16; //extracts the red component of a colour
+                        g = (p.getCubeData()[z][x][y] & 0xff00) >> 8;   //extracts the green component of a colour
+                        b = (p.getCubeData()[z][x][y] & 0xff);          //extracts the blue component of a colour
                         c.setCube(x, y, z, r, g, b);
                     }
                 }
@@ -193,7 +192,6 @@ public class ComponentManager extends JComponent {
         for (int z = 0; z < canvas.getCanvasHeight() - 1; z++) {
             for (int x = 0; x < canvas.getSide() - 1; x++) {
                 for (int y = 0; y < canvas.getSide() - 1; y++) {
-
                     if (ComponentManager.getCanvas().checkForCube(x, y, zc)) {
                         zc++;
                         break;
@@ -245,5 +243,15 @@ public class ComponentManager extends JComponent {
         for (int i = 1; i < cm.guiComponents.size(); i++) {
             cm.guiComponents.get(i).maximize();
         }
+    }
+
+    public static boolean isIntersectingComponent(ComponentManager cm, int mx, int my) {
+        for (int i = 0; i < cm.guiComponents.size(); i++) {
+            if (cm.guiComponents.get(i).getBounds().contains(mx, my) && !cm.guiComponents.get(i).getID().equals("canvas")) {
+                System.out.println("intersects: " + cm.guiComponents.get(i).ID);
+                return true;
+            }
+        }
+        return false;
     }
 }

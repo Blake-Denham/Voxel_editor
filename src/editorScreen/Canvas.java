@@ -1,5 +1,7 @@
 package editorScreen;
 
+import backend.BoundingBox;
+import backend.CollisionMap;
 import backend.Cube;
 import backend.Grid;
 import guiTools.GuiComponent;
@@ -8,6 +10,7 @@ import util.MU;
 import util.PU;
 import util.Vector3D;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -35,6 +38,8 @@ public class Canvas extends GuiComponent {
     private Vector3D spt1, spt2;// two corners of a selected volume
     private boolean isNormalColour = true;
     private boolean isSampling = false;
+    private CollisionMap collisionMap;
+    private boolean showingPoints = false;
 
     public Canvas(int side, int height) {  //constructor
         super(0, 0, EditorScreen.s_maxWidth, EditorScreen.s_maxHeight); // the canvas counts as a gui component
@@ -119,7 +124,8 @@ public class Canvas extends GuiComponent {
             }
         };
         displayPicture = new Rectangle();
-
+        collisionMap = new CollisionMap();
+        setID("canvas");
     }
 
     private void addCubeFromClick(int x, int y, int z) {
@@ -135,7 +141,6 @@ public class Canvas extends GuiComponent {
         }
         if (Cube.getFace() == 0) {
             if (grid.getRotateY() >= 0) {
-
                 setCube(x, y, z + 1, r, g, b);
                 if (checkIfInBounds(x, y, z + 1))
                     normalBuffer[z + 1][x][y] = cubes[z + 1][x][y].getColorHex();
@@ -217,7 +222,6 @@ public class Canvas extends GuiComponent {
             for (int x = 0; x < side - 1; x++) {
                 for (int y = 0; y < side - 1; y++) {
                     for (int z = 0; z < height - 1; z++) {
-
                         if (checkForCube(x, y, z)) {
                             normalBuffer[z][x][y] = cubes[z][x][y].getColorHex();
                             cubes[z][x][y].setColors(PU.saturateColor(new Color(255, 255, 255), (z / (height - 1.0))));
@@ -254,8 +258,6 @@ public class Canvas extends GuiComponent {
                 }
             }
         }
-
-
     }
 
     public void fillSelected(int x, int y, int z, int width, int length, int height) {
@@ -270,7 +272,6 @@ public class Canvas extends GuiComponent {
                             normalBuffer[(int) Math.round(zi)][(int) Math.round(xi)][(int) Math.round(yi)] = new Color(ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue()).getRGB();
                         }
                     }
-
                 }
             }
         }
@@ -316,7 +317,6 @@ public class Canvas extends GuiComponent {
         for (double i = 0; i < h; i += 1) {             // follows
             setCube((int) (x + i * dx), (int) (y + i * dy), (int) (z + i * dz), ComponentManager.getColorWheel().getC1Red(), ComponentManager.getColorWheel().getC1Green(), ComponentManager.getColorWheel().getC1Blue());
         }
-
     }
 
     public void addCuboidFrame(int x, int y, int z, int width, int length, int height) {
@@ -402,15 +402,15 @@ public class Canvas extends GuiComponent {
         int height = grid.getHeight() - 1;
         g2d.setColor(Color.white);
         g2d.setFont(EditorScreen.font.deriveFont(11f));
-        g2d.drawString("(z,x,y)", (int) grid.getPts()[0][0][0].getVecs().getX(), (int) grid.getPts()[0][0][0].getVecs().getY() - 14);
-        g2d.drawString("(0,0,0)", (int) grid.getPts()[0][0][0].getVecs().getX(), (int) grid.getPts()[0][0][0].getVecs().getY());
-        g2d.drawString("(0," + side + ",0)", (int) grid.getPts()[0][x_][0].getVecs().getX(), (int) grid.getPts()[0][x_][0].getVecs().getY());
-        g2d.drawString("(0,0," + side + ")", (int) grid.getPts()[0][0][y_].getVecs().getX(), (int) grid.getPts()[0][0][y_].getVecs().getY());
-        g2d.drawString("(0," + side + "," + side + ")", (int) grid.getPts()[0][x_][y_].getVecs().getX(), (int) grid.getPts()[0][x_][y_].getVecs().getY());
-        g2d.drawString("(" + height + ",0,0)", (int) grid.getPts()[z_][0][0].getVecs().getX(), (int) grid.getPts()[z_][0][0].getVecs().getY());
-        g2d.drawString("(" + height + "," + side + ",0)", (int) grid.getPts()[z_][x_][0].getVecs().getX(), (int) grid.getPts()[z_][x_][0].getVecs().getY());
-        g2d.drawString("(" + height + ",0," + side + ")", (int) grid.getPts()[z_][0][y_].getVecs().getX(), (int) grid.getPts()[z_][0][y_].getVecs().getY());
-        g2d.drawString("(" + height + "," + side + "," + side + ")", (int) grid.getPts()[z_][x_][y_].getVecs().getX(), (int) grid.getPts()[z_][x_][y_].getVecs().getY());
+        g2d.drawString("(z,x,y)", (int) grid.getPts()[0][0][0].getVec().getX(), (int) grid.getPts()[0][0][0].getVec().getY() - 14);
+        g2d.drawString("(0,0,0)", (int) grid.getPts()[0][0][0].getVec().getX(), (int) grid.getPts()[0][0][0].getVec().getY());
+        g2d.drawString("(0," + side + ",0)", (int) grid.getPts()[0][x_][0].getVec().getX(), (int) grid.getPts()[0][x_][0].getVec().getY());
+        g2d.drawString("(0,0," + side + ")", (int) grid.getPts()[0][0][y_].getVec().getX(), (int) grid.getPts()[0][0][y_].getVec().getY());
+        g2d.drawString("(0," + side + "," + side + ")", (int) grid.getPts()[0][x_][y_].getVec().getX(), (int) grid.getPts()[0][x_][y_].getVec().getY());
+        g2d.drawString("(" + height + ",0,0)", (int) grid.getPts()[z_][0][0].getVec().getX(), (int) grid.getPts()[z_][0][0].getVec().getY());
+        g2d.drawString("(" + height + "," + side + ",0)", (int) grid.getPts()[z_][x_][0].getVec().getX(), (int) grid.getPts()[z_][x_][0].getVec().getY());
+        g2d.drawString("(" + height + ",0," + side + ")", (int) grid.getPts()[z_][0][y_].getVec().getX(), (int) grid.getPts()[z_][0][y_].getVec().getY());
+        g2d.drawString("(" + height + "," + side + "," + side + ")", (int) grid.getPts()[z_][x_][y_].getVec().getX(), (int) grid.getPts()[z_][x_][y_].getVec().getY());
     }
 
     private void paintSelectedArea(Graphics2D g2d) {
@@ -422,18 +422,79 @@ public class Canvas extends GuiComponent {
         x1 = (int) spt2.getX();
         y = (int) spt1.getY();
         y1 = (int) spt2.getY();
-        g2d.drawLine((int) grid.getPts()[z][x][y].getVecs().getX(), (int) grid.getPts()[z][x][y].getVecs().getY(), (int) grid.getPts()[z1][x][y].getVecs().getX(), (int) grid.getPts()[z1][x][y].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z][x][y].getVecs().getX(), (int) grid.getPts()[z][x][y].getVecs().getY(), (int) grid.getPts()[z][x1][y].getVecs().getX(), (int) grid.getPts()[z][x1][y].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z][x][y].getVecs().getX(), (int) grid.getPts()[z][x][y].getVecs().getY(), (int) grid.getPts()[z][x][y1].getVecs().getX(), (int) grid.getPts()[z][x][y1].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z][x1][y].getVecs().getX(), (int) grid.getPts()[z][x1][y].getVecs().getY(), (int) grid.getPts()[z1][x1][y].getVecs().getX(), (int) grid.getPts()[z1][x1][y].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z][x][y1].getVecs().getX(), (int) grid.getPts()[z][x][y1].getVecs().getY(), (int) grid.getPts()[z1][x][y1].getVecs().getX(), (int) grid.getPts()[z1][x][y1].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z][x1][y].getVecs().getX(), (int) grid.getPts()[z][x1][y].getVecs().getY(), (int) grid.getPts()[z][x1][y1].getVecs().getX(), (int) grid.getPts()[z][x1][y1].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z][x1][y1].getVecs().getX(), (int) grid.getPts()[z][x1][y1].getVecs().getY(), (int) grid.getPts()[z][x][y1].getVecs().getX(), (int) grid.getPts()[z][x][y1].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z1][x1][y1].getVecs().getX(), (int) grid.getPts()[z1][x1][y1].getVecs().getY(), (int) grid.getPts()[z][x1][y1].getVecs().getX(), (int) grid.getPts()[z][x1][y1].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z1][x1][y1].getVecs().getX(), (int) grid.getPts()[z1][x1][y1].getVecs().getY(), (int) grid.getPts()[z1][x][y1].getVecs().getX(), (int) grid.getPts()[z1][x][y1].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z1][x1][y1].getVecs().getX(), (int) grid.getPts()[z1][x1][y1].getVecs().getY(), (int) grid.getPts()[z1][x1][y].getVecs().getX(), (int) grid.getPts()[z1][x1][y].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z1][x][y].getVecs().getX(), (int) grid.getPts()[z1][x][y].getVecs().getY(), (int) grid.getPts()[z1][x1][y].getVecs().getX(), (int) grid.getPts()[z1][x1][y].getVecs().getY());
-        g2d.drawLine((int) grid.getPts()[z1][x][y].getVecs().getX(), (int) grid.getPts()[z1][x][y].getVecs().getY(), (int) grid.getPts()[z1][x][y1].getVecs().getX(), (int) grid.getPts()[z1][x][y1].getVecs().getY());
+        //zxy-zxy
+        //000-100
+        g2d.drawLine(
+                (int) grid.getPts()[z][x][y].getVec().getX(),
+                (int) grid.getPts()[z][x][y].getVec().getY(),
+                (int) grid.getPts()[z1][x][y].getVec().getX(),
+                (int) grid.getPts()[z1][x][y].getVec().getY());
+        //000-010
+        g2d.drawLine(
+                (int) grid.getPts()[z][x][y].getVec().getX(),
+                (int) grid.getPts()[z][x][y].getVec().getY(),
+                (int) grid.getPts()[z][x1][y].getVec().getX(),
+                (int) grid.getPts()[z][x1][y].getVec().getY());
+        //000-001
+        g2d.drawLine(
+                (int) grid.getPts()[z][x][y].getVec().getX(),
+                (int) grid.getPts()[z][x][y].getVec().getY(),
+                (int) grid.getPts()[z][x][y1].getVec().getX(),
+                (int) grid.getPts()[z][x][y1].getVec().getY());
+        //010-110
+        g2d.drawLine(
+                (int) grid.getPts()[z][x1][y].getVec().getX(),
+                (int) grid.getPts()[z][x1][y].getVec().getY(),
+                (int) grid.getPts()[z1][x1][y].getVec().getX(),
+                (int) grid.getPts()[z1][x1][y].getVec().getY());
+        //001-101
+        g2d.drawLine(
+                (int) grid.getPts()[z][x][y1].getVec().getX(),
+                (int) grid.getPts()[z][x][y1].getVec().getY(),
+                (int) grid.getPts()[z1][x][y1].getVec().getX(),
+                (int) grid.getPts()[z1][x][y1].getVec().getY());
+        //010-011
+        g2d.drawLine(
+                (int) grid.getPts()[z][x1][y].getVec().getX(),
+                (int) grid.getPts()[z][x1][y].getVec().getY(),
+                (int) grid.getPts()[z][x1][y1].getVec().getX(),
+                (int) grid.getPts()[z][x1][y1].getVec().getY());
+        //011-001
+        g2d.drawLine(
+                (int) grid.getPts()[z][x1][y1].getVec().getX(),
+                (int) grid.getPts()[z][x1][y1].getVec().getY(),
+                (int) grid.getPts()[z][x][y1].getVec().getX(),
+                (int) grid.getPts()[z][x][y1].getVec().getY());
+        //111-011
+        g2d.drawLine(
+                (int) grid.getPts()[z1][x1][y1].getVec().getX(),
+                (int) grid.getPts()[z1][x1][y1].getVec().getY(),
+                (int) grid.getPts()[z][x1][y1].getVec().getX(),
+                (int) grid.getPts()[z][x1][y1].getVec().getY());
+        //111-101
+        g2d.drawLine(
+                (int) grid.getPts()[z1][x1][y1].getVec().getX(),
+                (int) grid.getPts()[z1][x1][y1].getVec().getY(),
+                (int) grid.getPts()[z1][x][y1].getVec().getX(),
+                (int) grid.getPts()[z1][x][y1].getVec().getY());
+        //111-110
+        g2d.drawLine(
+                (int) grid.getPts()[z1][x1][y1].getVec().getX(),
+                (int) grid.getPts()[z1][x1][y1].getVec().getY(),
+                (int) grid.getPts()[z1][x1][y].getVec().getX(),
+                (int) grid.getPts()[z1][x1][y].getVec().getY());
+        //100-110
+        g2d.drawLine(
+                (int) grid.getPts()[z1][x][y].getVec().getX(),
+                (int) grid.getPts()[z1][x][y].getVec().getY(),
+                (int) grid.getPts()[z1][x1][y].getVec().getX(),
+                (int) grid.getPts()[z1][x1][y].getVec().getY());
+        //100-101
+        g2d.drawLine(
+                (int) grid.getPts()[z1][x][y].getVec().getX(),
+                (int) grid.getPts()[z1][x][y].getVec().getY(),
+                (int) grid.getPts()[z1][x][y1].getVec().getX(),
+                (int) grid.getPts()[z1][x][y1].getVec().getY());
 
 
     }
@@ -465,6 +526,9 @@ public class Canvas extends GuiComponent {
         if (ComponentManager.settings.isShowSelectedArea()) {
             paintSelectedArea(g2d);
         }
+        collisionMap.paintMap(grid, g2d);
+        if (showingPoints)
+            grid.showPoints(g2d);
     }
 
     @Override
@@ -497,7 +561,6 @@ public class Canvas extends GuiComponent {
         if (selectedTool == CanvasManipulator.SELECT) {
             ComponentManager.settings.setShowSelectedArea(true);
         }
-
     }
 
     @Override
@@ -523,24 +586,21 @@ public class Canvas extends GuiComponent {
         int dx = mx - e.getX();
         int dy = my - e.getY();
 
-
         if (mb == 2) {              //mouse wheel click
             grid.update();          // translates the canvas to the mouses location
             grid.setLocation(mx, my);
         }
         mx = e.getX();
         my = e.getY();
-        if (mb == 3) {              //right click
-            grid.rotate(dx / 2);    // rotates the canvas vertically and horizontally
-            grid.rotatey(-dy / 2);
-        }
+
         if (mb == 1) {
             if (detected) {
                 if (checkForCube(hx, hy, hz)) {
                     if (cubes[hz][hx][hy].contains(mx, my))
                         switch (selectedTool) {
                             case CanvasManipulator.PAINT:
-                                cubes[hz][hx][hy].paint(e);
+                                if (!ComponentManager.isIntersectingComponent(EditorScreen.getComponentManager(), mx, my))
+                                    cubes[hz][hx][hy].paint(e);
                                 break;
                         }
                 }
@@ -548,6 +608,11 @@ public class Canvas extends GuiComponent {
                 grid.gridInterfaceHover(mx, my);
             }
         }
+        if (mb == 3) {              //right click
+            grid.rotate(dx / 2);    // rotates the canvas vertically and horizontally
+            grid.rotatey(-dy / 2);
+        }
+
     }
 
     @Override
@@ -555,7 +620,7 @@ public class Canvas extends GuiComponent {
         mb = e.getButton();
         mx = e.getX();
         my = e.getY();
-        if (mb == 1) {
+        if (mb == 1 && !ComponentManager.isIntersectingComponent(EditorScreen.getComponentManager(), mx, my)) {
             if (detected) {
                 if (checkForCube(hx, hy, hz)) {
                     if (cubes[hz][hx][hy].contains(mx, my))
@@ -675,6 +740,84 @@ public class Canvas extends GuiComponent {
         if (ke.getKeyCode() == KeyEvent.VK_R) {
             selectedTool = CanvasManipulator.PAINT;
         }
+        if (ke.isShiftDown()) {
+            switch (selectedTool) {
+                case CanvasManipulator.ADD:
+                    if (ke.getKeyCode() == KeyEvent.VK_S) {
+                        addSphere(
+                                (int) spt1.getX(), (int) spt1.getY(), (int) spt1.getZ(),
+                                (int) (spt2.getX() - spt1.getX() - 1), (int) (spt2.getY() - spt1.getY() - 1), (int) (spt2.getZ() - spt1.getZ()) - 1);
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_C) {
+                        addCuboid(
+                                (int) spt1.getX(), (int) spt1.getY(), (int) spt1.getZ(),
+                                (int) (spt2.getX() - spt1.getX()), (int) (spt2.getY() - spt1.getY()), (int) (spt2.getZ() - spt1.getZ()));
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_F) {
+                        addCuboidFrame(
+                                (int) spt1.getX(), (int) spt1.getY(), (int) spt1.getZ(),
+                                (int) (spt2.getX() - spt1.getX() - 1), (int) (spt2.getY() - spt1.getY() - 1), (int) (spt2.getZ() - spt1.getZ() - 1));
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_L) {
+                        ComponentManager.addLayer();
+                    }
+                    break;
+                case CanvasManipulator.PAINT:
+                    if (ke.getKeyCode() == KeyEvent.VK_F) {
+                        fillSelected(
+                                (int) spt1.getX(), (int) spt1.getY(), (int) spt1.getZ(),
+                                (int) (spt2.getX() - spt1.getX()), (int) (spt2.getY() - spt1.getY()), (int) (spt2.getZ() - spt1.getZ()));
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_I) {
+                        inverseColors(
+                                (int) spt1.getX(), (int) spt1.getY(), (int) spt1.getZ(),
+                                (int) (spt2.getX() - spt1.getX()), (int) (spt2.getY() - spt1.getY()), (int) (spt2.getZ() - spt1.getZ()));
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_C) {
+                        switchContourDefault();
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_P) {
+                        isSampling = !isSampling;
+                    }
+                    break;
+                case CanvasManipulator.REMOVE:
+                    if (ke.getKeyCode() == KeyEvent.VK_S) {
+                        removeSphere(
+                                (int) spt1.getX(), (int) spt1.getY(), (int) spt1.getZ(),
+                                (int) (spt2.getX() - spt1.getX() - 1), (int) (spt2.getY() - spt1.getY() - 1), (int) (spt2.getZ() - spt1.getZ()) - 1);
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_C) {
+                        removeCuboid(
+                                (int) spt1.getX(), (int) spt1.getY(), (int) spt1.getZ(),
+                                (int) (spt2.getX() - spt1.getX()), (int) (spt2.getY() - spt1.getY()), (int) (spt2.getZ() - spt1.getZ()));
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_D) {
+                        int clear = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the canvas", "Clear dialogue", JOptionPane.YES_NO_OPTION);
+                        if (clear == 0) {
+                            System.out.println("clearing canvas");
+                            clearCanvas();
+                        }
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_L) {
+                        ComponentManager.removeLayer();
+                    }
+                    break;
+                case CanvasManipulator.SELECT:
+                    if (ke.getKeyCode() == KeyEvent.VK_A) {
+                        selectAll();
+                    }
+                    if (ke.getKeyCode() == KeyEvent.VK_C) {
+                        collisionMap.addCollisionBox(new BoundingBox(spt1, spt2));
+                    }
+                    break;
+            }
+            if (ke.isControlDown() && ke.isAltDown()) {
+                if (ke.getKeyCode() == KeyEvent.VK_P) {
+                    showingPoints = !showingPoints;
+                }
+            }
+        }
+
     }
 
     @Override
@@ -726,10 +869,10 @@ public class Canvas extends GuiComponent {
             ComponentManager.getCanvasManipulator().getContourDefaultToggle().getActionEvent();
         update();
         displayPicture.setBounds(   //sets the rectangle
-                (int) (grid.getPts()[0][0][side - 1].getVecs().getX()),
-                (int) (grid.getPts()[height - 1][0][0].getVecs().getY()),
-                (int) (grid.getPts()[height - 1][side - 1][0].getVecs().getX() - grid.getPts()[0][0][side - 1].getVecs().getX()),
-                (int) (grid.getPts()[0][side - 1][side - 1].getVecs().getY() - grid.getPts()[height - 1][0][0].getVecs().getY()));
+                (int) (grid.getPts()[0][0][side - 1].getVec().getX()),
+                (int) (grid.getPts()[height - 1][0][0].getVec().getY()),
+                (int) (grid.getPts()[height - 1][side - 1][0].getVec().getX() - grid.getPts()[0][0][side - 1].getVec().getX()),
+                (int) (grid.getPts()[0][side - 1][side - 1].getVec().getY() - grid.getPts()[height - 1][0][0].getVec().getY()));
         ComponentManager.minimizeAll(EditorScreen.getComponentManager());
         ComponentManager.turnOffSettings();
 
@@ -791,5 +934,9 @@ public class Canvas extends GuiComponent {
 
     public boolean isSampling() {
         return isSampling;
+    }
+
+    public CollisionMap getCollisionMap() {
+        return collisionMap;
     }
 }

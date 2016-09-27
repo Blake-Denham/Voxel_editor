@@ -112,5 +112,4 @@ public class PU {
         System.out.println(Integer.toHexString((rgb << 8) | 0xff));
         return new Color((rgb << 8) | 0xff);
     }
-
 }

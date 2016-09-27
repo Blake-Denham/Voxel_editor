@@ -1,5 +1,6 @@
 package editorScreen;
 
+import backend.CollisionMap;
 import backend.Project;
 import helpScreen.HelpScreen;
 import loadScreen.LoadScreen;
@@ -70,6 +71,18 @@ public class Main {
     public static void serialize(Project p, String newFileName) {
         new File(appPath + "/data/project/").mkdirs();
         File f = new File(appPath + "/data/project/" + newFileName + ".vem");
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f))) {
+            out.writeObject(p);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            System.err.println("serialization has failed");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void serialize(CollisionMap p, String newFileName) {
+        new File(appPath + "/data/projectCollisionMaps/").mkdirs();
+        File f = new File(appPath + "/data/projectCollisionMaps/" + newFileName + ".vmcm");
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f))) {
             out.writeObject(p);
         } catch (IOException e) {

@@ -35,6 +35,8 @@ public abstract class GuiComponent {
     private String toolBarTitle = "";
     private String minimizeToolTip = "minimize";
     private boolean disabled = false;
+    private boolean miniziable;
+    public String ID;
 
     protected GuiComponent(double x, double y, double width, double height, Color bgColor, int shadowSize, boolean minimizable) {
         this.minimizable = minimizable;
@@ -75,6 +77,10 @@ public abstract class GuiComponent {
         this.shadowSize = shadowSize;
         drawBackground = true;
         setDimensions(width, height);
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
     protected GuiComponent(double x, double y, double width, double height) {
@@ -337,5 +343,13 @@ public abstract class GuiComponent {
 
     public void maximize() {
         minimized = 1;
+    }
+
+    public boolean isMinizable() {
+        return miniziable;
+    }
+
+    public String getID() {
+        return ID;
     }
 }
